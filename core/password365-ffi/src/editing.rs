@@ -193,7 +193,9 @@ fn reveal_all(app: &mut AppService, id: &str) -> password365_app::Result<ItemDra
     let secret = |app: &mut AppService, field| app.reveal(id, field).map(Option::unwrap_or_default);
     let mut fields = Vec::new();
     for f in item.fields {
-        let value = if f.concealed {
+        // Concealed values and one-time password secrets are not in the view:
+        // read them, or saving the draft would erase them.
+        let value = if f.concealed || f.value.is_none() {
             app.reveal_field(id, &f.label)?.unwrap_or_default()
         } else {
             f.value.unwrap_or_default()

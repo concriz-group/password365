@@ -168,6 +168,30 @@ fn creating_twice_or_with_a_weak_password_fails() {
 }
 
 #[test]
+fn editing_keeps_one_time_password_fields_that_are_not_hidden() {
+    let dir = tempfile::tempdir().unwrap();
+    let p = vault(&dir, Arc::new(MemoryKeeper::default()));
+    p.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+    let mut draft = p.new_draft("login".into()).unwrap();
+    draft.title = "Bank".into();
+    draft.fields.push(crate::editing::FieldDraft {
+        label: "backup code".into(),
+        value: "otpauth://totp/x?secret=JBSWY3DPEHPK3PXP".into(),
+        section: "More".into(),
+        input: "totp".into(),
+        concealed: false,
+    });
+    let id = p.create_item(draft).unwrap();
+    let mut edit = p.edit_draft(id.clone()).unwrap();
+    edit.title = "Bank 2".into();
+    p.update_item(id.clone(), edit).unwrap();
+    assert_eq!(
+        p.reveal_field(id, "backup code".into()).unwrap().as_deref(),
+        Some("otpauth://totp/x?secret=JBSWY3DPEHPK3PXP")
+    );
+}
+
+#[test]
 fn drafts_create_edit_and_keep_secrets_until_cleared() {
     let dir = tempfile::tempdir().unwrap();
     let p = vault(&dir, Arc::new(MemoryKeeper::default()));
