@@ -23,5 +23,8 @@
   "autofillAll": "Todos os logins",
   "autofillNoMatch": "Ainda não há login para este site.",
   "allTags": "Todas as etiquetas",
-  "filterByTag": "Filtrar por etiqueta"
+  "filterByTag": "Filtrar por etiqueta",
+  "fingerprint": "Desbloquear com impressão digital",
+  "biometryHintAndroid": "A senha mestra continua sendo pedida a cada 14 dias, quando ela muda e quando as impressões digitais deste celular mudam.",
+  "unlockFingerprint": "Usar impressão digital"
 }

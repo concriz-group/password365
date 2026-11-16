@@ -23,5 +23,8 @@
   "autofillAll": "Todos los inicios de sesión",
   "autofillNoMatch": "Todavía no hay un inicio de sesión para este sitio.",
   "allTags": "Todas las etiquetas",
-  "filterByTag": "Filtrar por etiqueta"
+  "filterByTag": "Filtrar por etiqueta",
+  "fingerprint": "Desbloquear con huella digital",
+  "biometryHintAndroid": "La contraseña maestra se sigue pidiendo cada 14 días, cuando cambia y cuando cambian las huellas de este móvil.",
+  "unlockFingerprint": "Usar huella digital"
 }

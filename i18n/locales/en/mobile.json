@@ -23,5 +23,8 @@
   "autofillAll": "All logins",
   "autofillNoMatch": "No login for this site yet.",
   "allTags": "All tags",
-  "filterByTag": "Filter by tag"
+  "filterByTag": "Filter by tag",
+  "fingerprint": "Unlock with fingerprint",
+  "biometryHintAndroid": "Your master password is still needed every 14 days, after it changes, and when the fingerprints on this phone change.",
+  "unlockFingerprint": "Use fingerprint"
 }
