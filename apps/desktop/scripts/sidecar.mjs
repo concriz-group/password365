@@ -31,7 +31,10 @@ function build(target) {
 mkdirSync(out, { recursive: true });
 const dest = join(out, `password365-host-${triple}${exe}`);
 if (triple === "universal-apple-darwin") {
-  const parts = ["aarch64-apple-darwin", "x86_64-apple-darwin"].map(build);
+  // Tauri compiles each architecture on its own (each needs its helper), then bundles the lipo'd one.
+  const arches = ["aarch64-apple-darwin", "x86_64-apple-darwin"];
+  const parts = arches.map(build);
+  arches.forEach((arch, i) => copyFileSync(parts[i], join(out, `password365-host-${arch}`)));
   execFileSync("lipo", ["-create", "-output", dest, ...parts], { stdio: "inherit" });
 } else {
   copyFileSync(build(triple), dest);
