@@ -67,6 +67,8 @@ pub struct AppService {
     pub(crate) profile_choice: crate::profile::ProfileChoice,
     settings: Settings,
     attempts: crate::attempts::Attempts,
+    /// Unlocks so far (permissions given "until the vault locks" belong to one).
+    unlocks: u64,
 }
 
 impl AppService {
@@ -96,6 +98,7 @@ impl AppService {
             profile_choice,
             settings,
             attempts: crate::attempts::load(config_settings_path.as_deref()),
+            unlocks: 0,
         }
     }
 
@@ -198,6 +201,17 @@ impl AppService {
     /// The Secret Key, after checking the master password like an unlock.
     pub fn reveal_secret_key(&mut self, password: SecretString) -> Result<String> {
         self.guarded(|s| s.reveal_secret_key_unguarded(password))
+    }
+
+    /// Which unlock is in effect (a new number after every unlock); 0 while
+    /// locked. Permissions given until the vault locks remember this number.
+    #[must_use]
+    pub const fn unlock_number(&self) -> u64 {
+        if self.session.is_some() {
+            self.unlocks
+        } else {
+            0
+        }
     }
 
     /// Locks immediately, wiping keys from memory.
@@ -587,6 +601,7 @@ impl AppService {
 
     pub(crate) fn start_session(&mut self, session: Session) {
         self.session = Some(session);
+        self.unlocks += 1;
         self.auto_lock = AutoLock::new(self.config.auto_lock_ms, Timestamp::now());
     }
 

@@ -13,7 +13,11 @@ export function SshApprovalPrompt({ request, onDone }: { request: SshApproval; o
     <div className="modal-backdrop">
       <div className="modal" role="alertdialog" aria-labelledby="ssh-approve-title" aria-describedby="ssh-approve-text">
         <h2 id="ssh-approve-title">{t("developer.approveTitle")}</h2>
-        <p id="ssh-approve-text">{t("developer.approveText", { title: request.title })}</p>
+        <p id="ssh-approve-text">
+          {request.program
+            ? t("developer.approveTextProgram", { title: request.title, program: request.program })
+            : t("developer.approveText", { title: request.title })}
+        </p>
         <p>
           <code className="muted">{request.fingerprint}</code>
         </p>

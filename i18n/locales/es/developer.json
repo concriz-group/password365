@@ -10,6 +10,7 @@
   "problem_encrypted": "Protegida con frase de contraseña: añade un campo llamado “passphrase” con ella.",
   "approveTitle": "¿Permitir la clave SSH?",
   "approveText": "Un programa quiere usar la clave SSH “{title}”. ¿Permitirlo hasta que Password365 se bloquee?",
+  "approveTextProgram": "“{program}” quiere usar la clave SSH “{title}”. ¿Permitir este programa hasta que Password365 se bloquee?",
   "allow": "Permitir",
   "deny": "Denegar"
 }

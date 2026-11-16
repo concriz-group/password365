@@ -262,6 +262,8 @@ export interface SshApproval {
   id: number;
   title: string;
   fingerprint: string;
+  /** The program asking (file name), when the system tells. */
+  program?: string | null;
 }
 
 export type ErrorCode =

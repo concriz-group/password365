@@ -62,4 +62,12 @@ describe("SshApprovalPrompt", () => {
     await user.click(screen.getByRole("button", { name: "Deny" }));
     expect(client.sshAnswer).toHaveBeenLastCalledWith(7, false);
   });
+
+  it("names the program that asks", () => {
+    renderWithClient(
+      <SshApprovalPrompt request={{ id: 8, title: "GitHub", fingerprint: "SHA256:abc", program: "git" }} onDone={vi.fn()} />,
+      fakeClient(),
+    );
+    expect(screen.getByRole("alertdialog")).toHaveTextContent("“git” wants to use the SSH key “GitHub”");
+  });
 });

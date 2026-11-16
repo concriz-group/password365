@@ -2,8 +2,10 @@
 //! it to sign with SSH Key items. It listens on `~/.password365/agent.sock`
 //! (a folder only this user can open) or, on Windows, the named pipe
 //! `\\.\pipe\password365-ssh-agent`. Each key needs the user's OK once per
-//! unlock; while the vault is locked the app comes forward and the request
-//! waits a little for the unlock.
+//! unlock *and per program* (the prompt names the program that asked, found
+//! from the connection's process); approvals end when the vault locks. While
+//! the vault is locked the app comes forward and the request waits a little
+//! for the unlock.
 
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
@@ -50,12 +52,15 @@ pub struct Approval {
     pub title: String,
     /// Key fingerprint.
     pub fingerprint: String,
+    /// The program asking (its file name), when the system tells.
+    pub program: Option<String>,
 }
 
-/// Approvals: asked once per key per unlock.
+/// Approvals: asked once per key, per program, per unlock.
 #[derive(Default)]
 pub struct Approvals {
-    allowed: Mutex<HashSet<String>>,
+    /// (unlock it belongs to, (item id, program)).
+    allowed: Mutex<(u64, HashSet<(String, String)>)>,
     waiting: Mutex<HashMap<u64, Sender<bool>>>,
     next: AtomicU64,
     started: AtomicBool,
@@ -84,7 +89,41 @@ struct AppKeys<R: Runtime> {
     approvals: SharedApprovals,
 }
 
+/// The program at the other end of an agent connection: its path when the
+/// system tells (macOS, Linux), else its process id; `None` if unknown.
+fn client_program(stream: &interprocess::local_socket::Stream) -> Option<String> {
+    let pid = stream.peer_creds().ok()?.pid()?;
+    program_path(i64::from(pid)).or_else(|| Some(format!("process {pid}")))
+}
+
+#[cfg(target_os = "macos")]
+fn program_path(pid: i64) -> Option<String> {
+    let out = std::process::Command::new("/bin/ps")
+        .args(["-o", "comm=", "-p", &pid.to_string()])
+        .output()
+        .ok()?;
+    let path = String::from_utf8(out.stdout).ok()?.trim().to_owned();
+    (!path.is_empty()).then_some(path)
+}
+
+#[cfg(target_os = "linux")]
+fn program_path(pid: i64) -> Option<String> {
+    std::fs::read_link(format!("/proc/{pid}/exe"))
+        .ok()
+        .map(|p| p.display().to_string())
+}
+
+#[cfg(not(any(target_os = "macos", target_os = "linux")))]
+fn program_path(_pid: i64) -> Option<String> {
+    None
+}
+
 impl<R: Runtime> AppKeys<R> {
+    /// Which unlock this is (approvals from an earlier one no longer count).
+    fn unlock_number(&self) -> u64 {
+        self.state.with(|s| Ok(s.unlock_number())).unwrap_or(0)
+    }
+
     fn unlocked(&self) -> bool {
         self.state
             .with(|s| Ok(s.status().unlocked))
@@ -95,9 +134,6 @@ impl<R: Runtime> AppKeys<R> {
     fn wait_for_unlock(&self) -> bool {
         if self.unlocked() {
             return true;
-        }
-        if let Ok(mut allowed) = self.approvals.allowed.lock() {
-            allowed.clear(); // a new unlock asks again
         }
         crate::auto_typer::bring_forward(&self.app);
         let deadline = Instant::now() + WAIT;
@@ -111,8 +147,24 @@ impl<R: Runtime> AppKeys<R> {
     }
 }
 
-impl<R: Runtime> KeySource for AppKeys<R> {
+/// One connection's view of the keys: approvals are for its program.
+struct ClientKeys<R: Runtime> {
+    keys: Arc<AppKeys<R>>,
+    program: Option<String>,
+}
+
+impl<R: Runtime> KeySource for ClientKeys<R> {
     fn keys(&self) -> Vec<AgentKey> {
+        self.keys.list()
+    }
+
+    fn approve(&self, key: &AgentKey) -> bool {
+        self.keys.approve(key, self.program.as_deref())
+    }
+}
+
+impl<R: Runtime> AppKeys<R> {
+    fn list(&self) -> Vec<AgentKey> {
         let on = self
             .state
             .with(|s| Ok(s.settings().ssh_agent))
@@ -125,14 +177,16 @@ impl<R: Runtime> KeySource for AppKeys<R> {
             .unwrap_or_default()
     }
 
-    fn approve(&self, key: &AgentKey) -> bool {
-        if self
-            .approvals
-            .allowed
-            .lock()
-            .is_ok_and(|a| a.contains(&key.item_id))
-        {
-            return true;
+    fn approve(&self, key: &AgentKey, program: Option<&str>) -> bool {
+        let unlock = self.unlock_number();
+        let wanted = (key.item_id.clone(), program.unwrap_or("?").to_owned());
+        if let Ok(mut allowed) = self.approvals.allowed.lock() {
+            if allowed.0 != unlock {
+                *allowed = (unlock, HashSet::new()); // locked since: ask again
+            }
+            if allowed.1.contains(&wanted) {
+                return true;
+            }
         }
         let id = self.approvals.next.fetch_add(1, Ordering::Relaxed);
         let (send, receive) = channel();
@@ -144,16 +198,26 @@ impl<R: Runtime> KeySource for AppKeys<R> {
             id,
             title: key.title.clone(),
             fingerprint: key.fingerprint(),
+            program: program.map(|p| {
+                std::path::Path::new(p)
+                    .file_name()
+                    .map_or_else(|| p.to_owned(), |n| n.to_string_lossy().into_owned())
+            }),
         };
         let _ = self.app.emit(APPROVE_EVENT, prompt);
         let allowed = receive.recv_timeout(WAIT).unwrap_or(false);
         if let Ok(mut waiting) = self.approvals.waiting.lock() {
             waiting.remove(&id);
         }
-        if allowed && let Ok(mut set) = self.approvals.allowed.lock() {
-            set.insert(key.item_id.clone());
+        // Still the same unlock (the vault did not lock while the prompt was up).
+        if allowed
+            && self.unlock_number() == unlock
+            && let Ok(mut set) = self.approvals.allowed.lock()
+            && set.0 == unlock
+        {
+            set.1.insert(wanted);
         }
-        allowed
+        allowed && self.unlocked()
     }
 }
 
@@ -204,10 +268,14 @@ pub fn start<R: Runtime>(app: &AppHandle<R>) {
     });
     thread::spawn(move || {
         for connection in listener.incoming().flatten() {
-            let source = Arc::clone(&source);
+            let keys = Arc::clone(&source);
             thread::spawn(move || {
                 let mut stream = connection;
-                password365_ssh::serve(&mut stream, source.as_ref());
+                let client = ClientKeys {
+                    keys,
+                    program: client_program(&stream),
+                };
+                password365_ssh::serve(&mut stream, &client);
             });
         }
     });
@@ -227,6 +295,15 @@ pub fn start_if_enabled<R: Runtime>(app: &AppHandle<R>) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(any(target_os = "macos", target_os = "linux"))]
+    #[test]
+    fn the_program_behind_a_process_is_found() {
+        let me = program_path(i64::from(std::process::id())).unwrap();
+        let exe = std::env::current_exe().unwrap();
+        let name = exe.file_name().unwrap().to_string_lossy();
+        assert!(me.ends_with(name.as_ref()), "{me} vs {name}");
+    }
 
     #[test]
     fn the_address_is_in_a_private_folder() {

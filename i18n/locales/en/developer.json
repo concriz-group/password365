@@ -10,6 +10,7 @@
   "problem_encrypted": "Protected by a passphrase: add a field called “passphrase” with it.",
   "approveTitle": "Allow SSH key?",
   "approveText": "A program wants to use the SSH key “{title}”. Allow it until Password365 locks?",
+  "approveTextProgram": "“{program}” wants to use the SSH key “{title}”. Allow this program until Password365 locks?",
   "allow": "Allow",
   "deny": "Deny"
 }

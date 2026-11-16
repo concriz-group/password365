@@ -163,6 +163,17 @@ fn auto_lock_after_idle() {
 }
 
 #[test]
+fn every_unlock_has_its_own_number() {
+    let mut fx = with_account();
+    let first = fx.app.unlock_number();
+    assert!(first > 0);
+    fx.app.lock();
+    assert_eq!(fx.app.unlock_number(), 0);
+    fx.app.unlock(PW.into(), None).unwrap();
+    assert!(fx.app.unlock_number() > first);
+}
+
+#[test]
 fn only_the_user_postpones_the_idle_lock() {
     let dir = tempfile::tempdir().unwrap();
     let mut cfg = config(&dir);
