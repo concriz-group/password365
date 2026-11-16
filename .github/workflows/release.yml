@@ -112,9 +112,34 @@ jobs:
           path: out/*
           if-no-files-found: error
 
+  extension:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: extension
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Store packages (Chrome Web Store / Edge Add-ons, and Firefox Add-ons)
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          (cd dist && zip -qr "$GITHUB_WORKSPACE/out/Password365-extension-Chromium.zip" .)
+          (cd dist-firefox && zip -qr "$GITHUB_WORKSPACE/out/Password365-extension-Firefox.zip" .)
+          ls -la "$GITHUB_WORKSPACE/out"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: extension
+          path: out/*
+          if-no-files-found: error
+
   publish:
     if: github.ref_type == 'tag'
-    needs: [version, build]
+    needs: [version, build, extension]
     runs-on: ubuntu-latest
     permissions:
       contents: write

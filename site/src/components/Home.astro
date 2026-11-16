@@ -1,7 +1,7 @@
 ---
 import Icon from "./Icon.astro";
 import { href, translator } from "../i18n";
-import { site } from "../config";
+import { download } from "../config";
 
 const { tag } = Astro.props as { tag: string };
 const t = translator(tag);
@@ -29,7 +29,7 @@ const sources = [
   "Chrome", "Safari", "Firefox", "Edge",
 ];
 const faq = [0, 1, 2, 3, 4, 5];
-const mac = site.downloads.mac;
+const mac = download("Password365-macOS.dmg");
 ---
 <section class="hero">
   <div class="wrap">

@@ -2,17 +2,16 @@
 import Base from "../../layouts/Base.astro";
 import Icon from "../../components/Icon.astro";
 import { languagePaths, translator } from "../../i18n";
-import { site } from "../../config";
+import { download, site } from "../../config";
 export const getStaticPaths = languagePaths;
 const { tag } = Astro.props;
 const t = translator(tag);
-const d = site.downloads;
 const rows = [
-  { icon: "work", name: t("download.mac"), text: t("download.macText"), link: d.mac },
-  { icon: "globe", name: t("download.extension"), text: t("download.extensionText"), link: d.chrome },
-  { icon: "phone", name: t("download.ios"), text: t("download.iosText"), link: d.appStore },
-  { icon: "code", name: t("download.windows"), text: "", link: d.windows },
-  { icon: "code", name: t("download.linux"), text: "", link: d.linux },
+  { icon: "work", name: t("download.mac"), text: t("download.macText"), link: download("Password365-macOS.dmg") },
+  { icon: "code", name: t("download.windows"), text: "", link: download("Password365-Windows-setup.exe") },
+  { icon: "code", name: t("download.linux"), text: "AppImage", link: download("Password365-Linux.AppImage") },
+  { icon: "globe", name: t("download.extension"), text: t("download.extensionText"), link: site.stores.chrome },
+  { icon: "phone", name: t("download.ios"), text: t("download.iosText"), link: site.stores.appStore },
 ];
 ---
 <Base tag={tag} page="download" title={t("download.title")}>
