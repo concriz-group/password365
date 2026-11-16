@@ -1,5 +1,6 @@
-import { BADGE_ID_PREFIX, createInline, MENU_HOST_ID, MENU_WIDTH } from "./inline";
+import { BADGE_ID_PREFIX, createInline, MENU_ARMING_MS, MENU_HOST_ID, MENU_WIDTH } from "./inline";
 
+const menuSrc = (mode: string) => new RegExp(`^chrome-extension://abc/menu\\.html\\?mode=${mode}&t=[0-9a-f]{32}$`);
 const OPTS = { menuUrl: "chrome-extension://abc/menu.html", iconUrl: "chrome-extension://abc/icons/32.png" };
 
 function page(html: string) {
@@ -42,7 +43,7 @@ describe("createInline", () => {
     const inline = createInline(document, OPTS);
     inline.open(inline.anchors()[1]!);
     const frame = createElement.mock.results.map((r) => r.value).find((e) => e instanceof HTMLIFrameElement);
-    expect((frame as HTMLIFrameElement).src).toBe(`${OPTS.menuUrl}?mode=signup`);
+    expect((frame as HTMLIFrameElement).src).toMatch(menuSrc('signup'));
     createElement.mockRestore();
     inline.destroy();
   });
@@ -53,7 +54,7 @@ describe("createInline", () => {
     const inline = createInline(document, OPTS);
     inline.openPasskey();
     const frame = createElement.mock.results.map((r) => r.value).find((e) => e instanceof HTMLIFrameElement);
-    expect((frame as HTMLIFrameElement).src).toBe(`${OPTS.menuUrl}?mode=passkey`);
+    expect((frame as HTMLIFrameElement).src).toMatch(menuSrc('passkey'));
     expect(inline.anchor).toBeUndefined();
     document.querySelector("p")!.dispatchEvent(new MouseEvent("mousedown", { bubbles: true }));
     expect(menuHost(), "a click on the page does not dismiss it").not.toBeNull();
@@ -85,9 +86,9 @@ describe("createInline", () => {
     const frames = () =>
       createElement.mock.results.map((r) => r.value).filter((e): e is HTMLIFrameElement => e instanceof HTMLIFrameElement);
     inline.open(document.querySelector<HTMLInputElement>("[autocomplete=cc-csc]")!);
-    expect(frames().at(-1)!.src).toBe(`${OPTS.menuUrl}?mode=card`);
+    expect(frames().at(-1)!.src).toMatch(menuSrc('card'));
     inline.open(document.querySelector<HTMLInputElement>("[autocomplete=given-name]")!);
-    expect(frames().at(-1)!.src).toBe(`${OPTS.menuUrl}?mode=identity`);
+    expect(frames().at(-1)!.src).toMatch(menuSrc('identity'));
     createElement.mockRestore();
     inline.destroy();
   });
@@ -221,6 +222,69 @@ describe("createInline", () => {
     expect(focusSpy).toHaveBeenCalled();
     expect(menuHost()).toBeNull(); // the refocus did not reopen it
     inline.close(); // nothing open: no-op
+    inline.destroy();
+  });
+});
+
+describe("menu protection", () => {
+  afterEach(() => vi.useRealTimers());
+
+  it("loads the menu only after the background knows its token", async () => {
+    page(`<input name="user"><input type="password">`);
+    let release!: () => void;
+    const registerMenu = vi.fn(() => new Promise<void>((r) => (release = r)));
+    const createElement = vi.spyOn(document, "createElement");
+    const inline = createInline(document, { ...OPTS, registerMenu });
+    inline.open(inline.anchors()[0]!);
+    const frame = createElement.mock.results.map((r) => r.value).find((e) => e instanceof HTMLIFrameElement)!;
+    createElement.mockRestore();
+    expect(frame.getAttribute("src")).toBeNull();
+    const token = (registerMenu.mock.calls[0] as unknown as [string])[0];
+    expect(token).toMatch(/^[0-9a-f]{32}$/);
+    release();
+    await new Promise((r) => setTimeout(r, 0));
+    expect(frame.src).toBe(`${OPTS.menuUrl}?mode=login&t=${token}`);
+    inline.destroy();
+  });
+
+  it("trusts a click in the menu only once it has been visible for a moment, uncovered", () => {
+    vi.useFakeTimers();
+    page(`<input name="user"><input type="password">`);
+    const inline = createInline(document, OPTS);
+    expect(inline.menuTrusted()).toBe(false); // no menu
+    inline.open(inline.anchors()[0]!);
+    expect(inline.menuTrusted()).toBe(false); // just opened: a page could pop it under the pointer
+    vi.advanceTimersByTime(MENU_ARMING_MS);
+    expect(inline.menuTrusted()).toBe(true);
+    // The page makes it see-through, or hides it.
+    menuHost()!.style.setProperty("opacity", "0");
+    expect(inline.menuTrusted()).toBe(false);
+    menuHost()!.style.removeProperty("opacity");
+    document.documentElement.style.filter = "opacity(0)";
+    expect(inline.menuTrusted()).toBe(false);
+    document.documentElement.style.filter = "";
+    menuHost()!.style.visibility = "hidden";
+    expect(inline.menuTrusted()).toBe(false);
+    menuHost()!.style.visibility = "";
+    expect(inline.menuTrusted()).toBe(true);
+    inline.destroy();
+  });
+
+  it("refuses a menu covered by something of the page's", () => {
+    vi.useFakeTimers();
+    page(`<input name="user"><input type="password"><div id="cover"></div>`);
+    const inline = createInline(document, OPTS);
+    inline.open(inline.anchors()[0]!);
+    vi.advanceTimersByTime(MENU_ARMING_MS);
+    const original = HTMLIFrameElement.prototype.getBoundingClientRect;
+    HTMLIFrameElement.prototype.getBoundingClientRect = () => rect(10, 50, 320, 120);
+    const cover = document.getElementById("cover")!;
+    document.elementFromPoint = () => cover;
+    expect(inline.menuTrusted()).toBe(false);
+    document.elementFromPoint = () => menuHost();
+    expect(inline.menuTrusted()).toBe(true);
+    HTMLIFrameElement.prototype.getBoundingClientRect = original;
+    delete (document as { elementFromPoint?: unknown }).elementFromPoint;
     inline.destroy();
   });
 });

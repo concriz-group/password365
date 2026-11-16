@@ -43,6 +43,12 @@ export interface PromptStore {
   delete(tabId: number): Promise<void>;
 }
 
+/** Per-tab token of the inline menu the content script opened (memory only). */
+export interface MenuTokens {
+  get(tabId: number): Promise<string | undefined>;
+  set(tabId: number, token: string): Promise<void>;
+}
+
 export const PROMPT_TTL_MS = 5 * 60_000;
 /** Path of the inline menu page (see `static/menu.html`). */
 export const MENU_PATH = "/menu.html";
@@ -54,6 +60,7 @@ interface Deps {
   bridge: Pick<Bridge, "request">;
   tabs: TabsApi;
   prompts: PromptStore;
+  menus: MenuTokens;
   /** Opens the toolbar popup (where the master password is typed). */
   openPopup: () => Promise<void>;
   now?: () => number;
@@ -66,10 +73,14 @@ interface Deps {
  * - content-script actions use the sender's URL from the browser, never one
  *   supplied in the message, and only from the top frame;
  * - inline-menu actions (fill, suggest) are accepted only from this
- *   extension's own `menu.html` frame, which the page can neither read nor
- *   script; the page URL comes from the browser's record of the tab.
+ *   extension's own `menu.html` frame carrying the one-time token the content
+ *   script put in the URL of the menu it opened (a page can frame `menu.html`
+ *   itself, but cannot know the token); the page URL comes from the browser's
+ *   record of the tab;
+ * - fills asked by the menu are marked `fromMenu`: the content script applies
+ *   them only while its menu is really visible (no clickjacking).
  */
-export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prompts, openPopup, now = Date.now }: Deps) {
+export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prompts, menus, openPopup, now = Date.now }: Deps) {
   const { tabUrl, fillTab, generate } = createActions({ bridge, tabs });
   const passkeys = createPasskeys({ bridge, tabs, openPopup });
   async function fromPopup(message: PopupMessage): Promise<unknown> {
@@ -102,10 +113,10 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
         return { state: "ready", logins, profile, passkeys: passkeys.offeredChoices(tabId) } satisfies MenuState;
       }
       case "menu-fill":
-        return fillTab(tabId, message.itemId);
+        return fillTab(tabId, message.itemId, true);
       case "menu-suggest": {
         const { value } = await generate();
-        await tabs.send(tabId, { kind: "fill-new-password", password: value });
+        await tabs.send(tabId, { kind: "fill-new-password", password: value, fromMenu: true });
         return true;
       }
       case "menu-close":
@@ -141,7 +152,7 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
           item_id: typeof message.itemId === "string" ? message.itemId : null,
           page_url: await tabUrl(tabId),
         });
-        await tabs.send(tabId, { kind: "fill-profile", profile, values });
+        await tabs.send(tabId, { kind: "fill-profile", profile, values, fromMenu: true });
         return true;
       }
       case "menu-resize":
@@ -163,6 +174,10 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
 
   async function fromContent(message: ContentMessage, tabId: number, pageUrl: string): Promise<unknown> {
     switch (message.kind) {
+      case "menu-opened":
+        if (typeof message.token !== "string" || message.token.length < 16) return false;
+        await menus.set(tabId, message.token);
+        return true;
       case "submitted": {
         if (!message.password) return null;
         const login: SubmittedLogin = {
@@ -223,6 +238,8 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
     }
     if (MENU_KINDS.has(kind)) {
       if (!isMenuPage(sender.url)) throw new Password365Error("forbidden", "not allowed from here");
+      const token = await menus.get(tabId);
+      if (!token || message.token !== token) throw new Password365Error("forbidden", "not our menu");
       return fromMenu(message as unknown as MenuMessage, tabId);
     }
     if (!CONTENT_KINDS.has(kind) || sender.frameId !== 0 || !sender.url) {

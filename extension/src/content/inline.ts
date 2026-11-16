@@ -26,6 +26,17 @@ export interface InlineOptions {
   menuUrl: string;
   /** URL of the icon shown inside the fields. */
   iconUrl: string;
+  /** Tells the background the token of a menu about to open (the menu proves itself with it). */
+  registerMenu?: (token: string) => Promise<unknown>;
+}
+
+/** How long the menu must have been on screen before a click in it fills anything. */
+export const MENU_ARMING_MS = 500;
+
+/** A fresh one-time token for a menu. */
+function newToken(): string {
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return [...bytes].map((b) => b.toString(16).padStart(2, "0")).join("");
 }
 
 /**
@@ -34,13 +45,13 @@ export interface InlineOptions {
  * is clicked). The menu itself is an extension page in an iframe, so the site
  * can't read the saved logins or click on them.
  */
-export function createInline(doc: Document, { menuUrl, iconUrl }: InlineOptions) {
+export function createInline(doc: Document, { menuUrl, iconUrl, registerMenu }: InlineOptions) {
   const win = doc.defaultView!;
   let login: LoginFields | null = null;
   let profile: Record<ProfileKind, ProfileField[]> = { identity: [], card: [] };
   const badges = new Map<FormField, Overlay>();
   /** The open menu; `anchor` is `null` for the passkey prompt (top right, no field). */
-  let menu: { overlay: Overlay; frame: HTMLIFrameElement; anchor: FormField | null } | null = null;
+  let menu: { overlay: Overlay; frame: HTMLIFrameElement; anchor: FormField | null; openedAt: number } | null = null;
   /** Set while we move focus back to the field ourselves, so it doesn't reopen the menu. */
   let refocusing = false;
   // `URL.origin` is "null" for non-web schemes in some runtimes; build it explicitly.
@@ -121,17 +132,52 @@ export function createInline(doc: Document, { menuUrl, iconUrl }: InlineOptions)
     return null;
   }
 
+  /** Loads the menu page in `frame` once the background knows its token. */
+  function load(frame: HTMLIFrameElement, mode: string) {
+    const token = newToken();
+    const src = `${menuUrl}?mode=${mode}&t=${token}`;
+    if (!registerMenu) {
+      frame.src = src;
+      return;
+    }
+    void registerMenu(token).then(() => {
+      if (menu?.frame === frame) frame.src = src;
+    });
+  }
+
   function open(anchor: FormField) {
     if (menu?.anchor === anchor) return;
     close();
     const overlay = createOverlay(doc, MENU_HOST_ID, MENU_CSS);
     const frame = doc.createElement("iframe");
     const mode = profileKind(anchor) ?? (login?.isSignup ? "signup" : "login");
-    frame.src = `${menuUrl}?mode=${mode}`;
     frame.title = "Password365";
     overlay.root.append(frame);
-    menu = { overlay, frame, anchor };
+    menu = { overlay, frame, anchor, openedAt: Date.now() };
+    load(frame, mode);
     reposition();
+  }
+
+  /**
+   * Whether a click in the menu was really the user's: the menu has been on
+   * screen for a moment, nothing on the page makes it see-through or covers
+   * it. Otherwise a page could hide or cover it and trick a click into it.
+   */
+  function menuTrusted(): boolean {
+    if (!menu || !menu.overlay.host.isConnected) return false;
+    if (Date.now() - menu.openedAt < MENU_ARMING_MS) return false;
+    for (const node of [menu.overlay.host, doc.documentElement]) {
+      const style = win.getComputedStyle(node);
+      if (style.display === "none" || style.visibility !== "visible") return false;
+      if (style.opacity !== "1" || (style.filter && style.filter !== "none")) return false;
+    }
+    const rect = menu.frame.getBoundingClientRect();
+    if (typeof doc.elementFromPoint === "function" && rect.width > 0 && rect.height > 0) {
+      // Something of the page's on top of our menu: refuse.
+      const top = doc.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+      if (top !== menu.overlay.host) return false;
+    }
+    return true;
   }
 
   function close() {
@@ -153,10 +199,10 @@ export function createInline(doc: Document, { menuUrl, iconUrl }: InlineOptions)
     close();
     const overlay = createOverlay(doc, MENU_HOST_ID, MENU_CSS);
     const frame = doc.createElement("iframe");
-    frame.src = `${menuUrl}?mode=passkey`;
     frame.title = "Password365";
     overlay.root.append(frame);
-    menu = { overlay, frame, anchor: null };
+    menu = { overlay, frame, anchor: null, openedAt: Date.now() };
+    load(frame, "passkey");
     reposition();
     frame.focus();
   }
@@ -228,6 +274,7 @@ export function createInline(doc: Document, { menuUrl, iconUrl }: InlineOptions)
       refresh();
     },
     openWithKeyboard,
+    menuTrusted,
     close,
     resize,
     /** Field the menu is open on, if any. */

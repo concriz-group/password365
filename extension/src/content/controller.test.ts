@@ -125,3 +125,24 @@ describe("suggest from the context menu", () => {
     content.stop();
   });
 });
+
+describe("fills asked by the inline menu", () => {
+  it("are applied only while the menu is really there and visible", async () => {
+    vi.useFakeTimers();
+    const doc = page(`<form><input name="user"><input type="password"></form>`);
+    const content = startContent(doc, sender({}), OPTS);
+    const fill = { kind: "fill" as const, username: "u", password: "p", fromMenu: true };
+    expect(content.onMessage(fill)).toBe(false); // no menu open: a page cannot have clicked it
+    const user = doc.querySelector<HTMLInputElement>("input[name=user]")!;
+    user.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+    expect(content.onMessage(fill)).toBe(false); // opened a moment ago
+    user.dispatchEvent(new FocusEvent("focusin", { bubbles: true }));
+    vi.advanceTimersByTime(1000);
+    expect(content.onMessage(fill)).toBe(true);
+    expect(user.value).toBe("u");
+    // From the toolbar popup (not the menu): no menu needed.
+    expect(content.onMessage({ kind: "fill", username: "v", password: "p" })).toBe(true);
+    content.stop();
+    vi.useRealTimers();
+  });
+});

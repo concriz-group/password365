@@ -15,7 +15,10 @@ export type SendToBackground = (message: ContentMessage) => Promise<Reply | unde
  * when the background asks.
  */
 export function startContent(doc: Document, send: SendToBackground, inlineOptions: InlineOptions) {
-  const inline = createInline(doc, inlineOptions);
+  const inline = createInline(doc, {
+    ...inlineOptions,
+    registerMenu: (token) => send({ kind: "menu-opened", token }),
+  });
   // The field the user last right-clicked (target of Password365 › Suggest password).
   let contextTarget: HTMLInputElement | null = null;
   const onContextMenu = (e: Event) => {
@@ -52,6 +55,11 @@ export function startContent(doc: Document, send: SendToBackground, inlineOption
 
   /** Handles a message from the background; returns whether it did something. */
   function onMessage(message: TabMessage): boolean {
+    // A fill clicked in the inline menu counts only if the menu was really visible.
+    if ("fromMenu" in message && message.fromMenu && !inline.menuTrusted()) {
+      inline.close();
+      return false;
+    }
     switch (message.kind) {
       case "fill":
         return fill((fields) => fillLogin(fields, message));

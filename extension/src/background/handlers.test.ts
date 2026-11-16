@@ -2,6 +2,7 @@ import type { StoredPrompt } from "./handlers";
 import { createHandler, PROMPT_TTL_MS } from "./handlers";
 
 const EXT = "ext-id";
+const MENU_TOKEN = "0123456789abcdef0123456789abcdef";
 const POPUP = { id: EXT };
 const tab = (url = "https://github.com/login") => ({ id: EXT, url, frameId: 0, tab: { id: 7 } });
 
@@ -14,7 +15,8 @@ function setup(responses: Record<string, unknown> = {}) {
   const tabs = { url: vi.fn(async () => "https://github.com/x"), send: vi.fn(async () => {}) };
   const openPopup = vi.fn(async () => {});
   let time = 1_000;
-  const handle = createHandler({
+  const menus = new Map<number, string>([[7, MENU_TOKEN]]);
+  const raw = createHandler({
     extensionId: EXT,
     extensionOrigin: `chrome-extension://${EXT}/`,
     bridge: { request } as never,
@@ -25,9 +27,13 @@ function setup(responses: Record<string, unknown> = {}) {
       set: async (id, p) => void store.set(id, p),
       delete: async (id) => void store.delete(id),
     },
+    menus: { get: async (id) => menus.get(id), set: async (id, t) => void menus.set(id, t) },
     now: () => time,
   });
-  return { handle, request, tabs, openPopup, store, advance: (ms: number) => (time += ms) };
+  // Menu messages carry the token of the menu the content script opened in tab 7.
+  const handle: typeof raw = (message, sender) =>
+    raw(String(message?.kind).startsWith("menu-") && !("token" in message) ? { ...message, token: MENU_TOKEN } : message, sender);
+  return { handle, raw, menus, request, tabs, openPopup, store, advance: (ms: number) => (time += ms) };
 }
 
 describe("security checks", () => {
@@ -137,6 +143,22 @@ describe("inline menu", () => {
     tab: { id: 7 },
   });
 
+  it("only accepts menu messages carrying the token of the menu the content script opened", async () => {
+    const { raw, menus } = setup();
+    await expect(raw({ kind: "menu-state" }, menu())).rejects.toMatchObject({ code: "forbidden" });
+    await expect(raw({ kind: "menu-state", token: "guess" }, menu())).rejects.toMatchObject({ code: "forbidden" });
+    // The content script (top frame of tab 7) opens a new menu: only its token works now.
+    const fresh = "fedcba9876543210fedcba9876543210";
+    await expect(raw({ kind: "menu-opened", token: fresh }, { ...tab(), tab: { id: 7 } })).resolves.toBe(true);
+    expect(menus.get(7)).toBe(fresh);
+    await expect(raw({ kind: "menu-state", token: MENU_TOKEN }, menu())).rejects.toMatchObject({ code: "forbidden" });
+    await expect(raw({ kind: "menu-opened", token: "short" }, tab())).resolves.toBe(false);
+    // Another tab has no menu.
+    await expect(raw({ kind: "menu-state", token: fresh }, { ...menu(), tab: { id: 8 } })).rejects.toMatchObject({
+      code: "forbidden",
+    });
+  });
+
   it("only accepts menu messages from this extension's menu page", async () => {
     const { handle } = setup();
     await expect(handle({ kind: "menu-state" }, tab())).rejects.toMatchObject({ code: "forbidden" });
@@ -176,7 +198,7 @@ describe("inline menu", () => {
     await expect(handle({ kind: "menu-state" }, menu())).resolves.toEqual({ state: "ready", logins: [], profile });
     await expect(handle({ kind: "menu-fill-profile", profile: "card" }, menu())).resolves.toBe(true);
     expect(request).toHaveBeenLastCalledWith({ type: "profile_fill", profile: "card", item_id: null, page_url: "https://github.com/x" });
-    expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "fill-profile", profile: "card", values });
+    expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "fill-profile", profile: "card", values, fromMenu: true });
     await handle({ kind: "menu-fill-profile", profile: "identity", itemId: "work" }, menu());
     expect(request).toHaveBeenLastCalledWith(expect.objectContaining({ item_id: "work" }));
     await handle({ kind: "menu-fill-profile", profile: "anything else" }, menu());
@@ -195,9 +217,9 @@ describe("inline menu", () => {
   it("fills the tab, suggests passwords and closes", async () => {
     const { handle, tabs } = setup({ fill: { username: "u", password: "p" }, generate: { value: "Gen3rated!" } });
     await expect(handle({ kind: "menu-fill", itemId: "i1" }, menu())).resolves.toBe(true);
-    expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "fill", username: "u", password: "p" });
+    expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "fill", username: "u", password: "p", fromMenu: true });
     await expect(handle({ kind: "menu-suggest" }, menu())).resolves.toBe(true);
-    expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "fill-new-password", password: "Gen3rated!" });
+    expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "fill-new-password", password: "Gen3rated!", fromMenu: true });
     await expect(handle({ kind: "menu-close" }, menu())).resolves.toBe(true);
     expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "close-menu" });
     await handle({ kind: "menu-resize", height: 180 }, menu());

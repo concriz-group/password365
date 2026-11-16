@@ -1,3 +1,4 @@
+import { hiddenFromUser } from "./visible";
 // Address and payment forms: which field wants what, and how to fill it.
 // Field names are HTML autocomplete names (`given-name`, `cc-number` …), the
 // same keys the app sends values under.
@@ -75,6 +76,8 @@ function fromAutocomplete(element: FormField): string | null {
 
 function usable(element: FormField): boolean {
   if (element.disabled || (element instanceof HTMLInputElement && element.readOnly)) return false;
+  // Never boxes the user cannot see (a page could collect a card through them).
+  if (hiddenFromUser(element)) return false;
   if (element instanceof HTMLInputElement) {
     return ["text", "email", "tel", "number", "search", "month", "date", ""].includes(element.type);
   }

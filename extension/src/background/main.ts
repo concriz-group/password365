@@ -4,7 +4,7 @@ import { DEFAULT_GENERATE, type Generated, HOST_NAME, Password365Error } from ".
 import { Bridge } from "./bridge";
 import { CONTEXT_MENUS, handleContextMenuClick } from "./contextMenu";
 import { handleShortcut } from "./shortcut";
-import { createHandler, type PromptStore, type StoredPrompt } from "./handlers";
+import { createHandler, type MenuTokens, type PromptStore, type StoredPrompt } from "./handlers";
 
 const bridge = new Bridge(
   () => chrome.runtime.connectNative(HOST_NAME),
@@ -19,6 +19,14 @@ const prompts: PromptStore = {
   },
   set: (tabId, prompt) => chrome.storage.session.set({ [`prompt:${tabId}`]: prompt }),
   delete: (tabId) => chrome.storage.session.remove(`prompt:${tabId}`),
+};
+
+const menus: MenuTokens = {
+  async get(tabId) {
+    const key = `menu:${tabId}`;
+    return (await chrome.storage.session.get(key))[key] as string | undefined;
+  },
+  set: (tabId, token) => chrome.storage.session.set({ [`menu:${tabId}`]: token }),
 };
 
 const openPopup = () => chrome.action.openPopup();
@@ -36,6 +44,7 @@ const handle = createHandler({
   extensionOrigin: chrome.runtime.getURL("/"),
   bridge,
   prompts,
+  menus,
   openPopup,
   tabs: {
     url: async (tabId) => (await chrome.tabs.get(tabId)).url,
@@ -54,7 +63,10 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse: (reply: Rep
   return true; // async response
 });
 
-chrome.tabs.onRemoved.addListener((tabId) => void prompts.delete(tabId));
+chrome.tabs.onRemoved.addListener((tabId) => {
+  void prompts.delete(tabId);
+  void chrome.storage.session.remove(`menu:${tabId}`);
+});
 
 chrome.runtime.onInstalled.addListener(() => {
   chrome.contextMenus.removeAll(() => {

@@ -20,7 +20,9 @@ export type ContentMessage =
   | { kind: "passkey-create"; options: CreateOptions }
   | { kind: "passkey-get"; options: GetOptions }
   | { kind: "passkey-conditional"; options: GetOptions }
-  | { kind: "passkey-abort" };
+  | { kind: "passkey-abort" }
+  /** The content script opened its inline menu with this one-time `token` in the menu's URL. */
+  | { kind: "menu-opened"; token: string };
 
 /**
  * Sent by the inline menu (an extension page in an iframe the content script
@@ -39,6 +41,9 @@ export type MenuMessage =
   | { kind: "menu-passkey-other" }
   | { kind: "menu-passkey-unlock" }
   | { kind: "menu-passkey-autofill"; itemId: string };
+
+/** Every menu message carries the token of the menu the content script opened. */
+export type FromMenu = MenuMessage & { token: string };
 
 /** A login that holds a passkey for the page (no secrets). */
 export interface PasskeyChoice {
@@ -61,15 +66,15 @@ export type MenuState =
 
 /** Sent by the background to a tab's content script. */
 export type TabMessage =
-  | { kind: "fill"; username: string | null; password: string | null }
-  | { kind: "fill-new-password"; password: string }
+  | { kind: "fill"; username: string | null; password: string | null; fromMenu?: boolean }
+  | { kind: "fill-new-password"; password: string; fromMenu?: boolean }
   | { kind: "suggest-at-target"; password: string }
   | { kind: "close-menu" }
   | { kind: "open-menu" }
   | { kind: "open-passkey" }
   | { kind: "passkey-fields"; active: boolean }
   | { kind: "resize-menu"; height: number }
-  | { kind: "fill-profile"; profile: ProfileKind; values: Record<string, string> };
+  | { kind: "fill-profile"; profile: ProfileKind; values: Record<string, string>; fromMenu?: boolean };
 
 export type Reply<T = unknown> = { ok: true; result: T } | { ok: false; error: { code: string; message: string } };
 
@@ -94,4 +99,4 @@ export const MENU_KINDS = new Set([
   "menu-passkey-unlock",
   "menu-passkey-autofill",
 ]);
-export const CONTENT_KINDS = new Set(["submitted", "pending", "save-pending", "dismiss-pending", "passkey-create", "passkey-get", "passkey-conditional", "passkey-abort"]);
+export const CONTENT_KINDS = new Set(["menu-opened", "submitted", "pending", "save-pending", "dismiss-pending", "passkey-create", "passkey-get", "passkey-conditional", "passkey-abort"]);

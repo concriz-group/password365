@@ -140,3 +140,18 @@ describe("country and own fields", () => {
     expect(normalize("  Nº  Matrícula! ")).toBe("nº matricula");
   });
 });
+
+describe("hidden boxes", () => {
+  it("never get a card or address", () => {
+    const doc = page(`
+      <form>
+        <input autocomplete="cc-number" id="shown">
+        <input autocomplete="cc-csc" style="opacity:0">
+        <div style="display:none"><input autocomplete="cc-name"></div>
+        <input autocomplete="street-address" type="hidden">
+      </form>`);
+    const fields = findProfileFields(doc);
+    expect(fields.card.map((f) => f.element.id)).toEqual(["shown"]);
+    expect(fields.identity).toEqual([]);
+  });
+});
