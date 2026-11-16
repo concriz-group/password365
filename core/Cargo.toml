@@ -100,6 +100,13 @@ codegen-units = 1
 panic = "abort"
 strip = true
 
+# Development builds: file and line numbers in panics and backtraces, but no full debug
+# info (it was most of the multi-GB target folders). Dependencies get none.
+[profile.dev]
+debug = "line-tables-only"
+[profile.dev.package."*"]
+debug = false
+
 # Argon2 is unbearably slow unoptimised; keep tests fast.
 [profile.dev.package.argon2]
 opt-level = 3
