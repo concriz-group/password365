@@ -37,7 +37,7 @@ describe("startContent", () => {
       if (m.kind === "pending") return { ok: true, result: pendingCalls++ ? { status: "new" } : null };
       return { ok: true, result: null };
     });
-    startContent(doc, send, OPTS);
+    startContent(doc, send, OPTS, () => true);
     doc.querySelector("form")!.dispatchEvent(new Event("submit"));
     await flush();
     await flush();
@@ -51,7 +51,7 @@ describe("startContent", () => {
       if (m.kind === "submitted") return { ok: true, result: "known" };
       throw new Error("extension reloaded");
     });
-    startContent(doc, send, OPTS);
+    startContent(doc, send, OPTS, () => true);
     doc.querySelector("form")!.dispatchEvent(new Event("submit"));
     await flush();
     expect(doc.getElementById(PROMPT_HOST_ID)).toBeNull();

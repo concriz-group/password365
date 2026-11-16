@@ -14,7 +14,12 @@ export type SendToBackground = (message: ContentMessage) => Promise<Reply | unde
  * save/update prompt, puts the inline menu on login fields, and fills fields
  * when the background asks.
  */
-export function startContent(doc: Document, send: SendToBackground, inlineOptions: InlineOptions) {
+export function startContent(
+  doc: Document,
+  send: SendToBackground,
+  inlineOptions: InlineOptions,
+  isUser?: (e: Event) => boolean,
+) {
   const inline = createInline(doc, {
     ...inlineOptions,
     registerMenu: (token) => send({ kind: "menu-opened", token }),
@@ -44,7 +49,7 @@ export function startContent(doc: Document, send: SendToBackground, inlineOption
       // Single-page apps do not navigate: offer the prompt right away.
       (status) => (status === "new" || status === "password_changed" ? offerPendingSave() : undefined),
     );
-  });
+  }, undefined, isUser);
 
   /** Fills the page's login form; closes the inline menu. */
   function fill(apply: (fields: NonNullable<ReturnType<typeof findLoginFields>>) => boolean): boolean {

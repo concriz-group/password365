@@ -9,14 +9,27 @@ export interface Submission {
 export const DEDUPE_MS = 1_000;
 
 /**
+ * Whether an event is the user's own: trusted (not dispatched by a script)
+ * and, where the browser tells, right after a real click or key press. A page
+ * that could fire submissions itself could test password guesses against the
+ * vault by watching whether the "save login" prompt appears.
+ */
+export function byUser(e: Event): boolean {
+  const activation = (navigator as { userActivation?: { isActive: boolean } }).userActivation;
+  return e.isTrusted && (activation?.isActive ?? true);
+}
+
+/**
  * Calls `onSubmit` when the user submits a login form: form `submit` events,
  * clicks on submit buttons and Enter in the password field (single-page apps
- * often never fire a real submit). Returns an unsubscribe function.
+ * often never fire a real submit). Only the user's own actions count (see
+ * {@link byUser}). Returns an unsubscribe function.
  */
 export function watchSubmissions(
   doc: Document,
   onSubmit: (submission: Submission) => void,
   now: () => number = Date.now,
+  isUser: (e: Event) => boolean = byUser,
 ): () => void {
   let last = { key: "", at: -Infinity };
 
@@ -31,8 +44,11 @@ export function watchSubmissions(
     onSubmit({ username, password });
   }
 
-  const onSubmitEvent = () => capture();
+  const onSubmitEvent = (e: Event) => {
+    if (isUser(e)) capture();
+  };
   const onClick = (e: Event) => {
+    if (!isUser(e)) return;
     const target = e.target as Element | null;
     const button = target?.closest?.("button, input[type=submit]");
     if (!button) return;
@@ -40,7 +56,7 @@ export function watchSubmissions(
     if (type === "submit") capture();
   };
   const onKey = (e: KeyboardEvent) => {
-    if (e.key === "Enter" && (e.target as HTMLInputElement | null)?.type === "password") capture();
+    if (isUser(e) && e.key === "Enter" && (e.target as HTMLInputElement | null)?.type === "password") capture();
   };
 
   doc.addEventListener("submit", onSubmitEvent, true);

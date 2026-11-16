@@ -76,7 +76,7 @@ describe("watchSubmissions", () => {
     f.password.value = "pw";
     let time = 0;
     const onSubmit = vi.fn();
-    const stop = watchSubmissions(doc, onSubmit, () => time);
+    const stop = watchSubmissions(doc, onSubmit, () => time, () => true);
     return { doc, onSubmit, stop, advance: (ms: number) => (time += ms), f };
   }
 
@@ -119,7 +119,7 @@ describe("watchSubmissions", () => {
   it("does nothing on pages without a login form", () => {
     const onSubmit = vi.fn();
     const doc = page(`<form><input name="q"></form>`);
-    watchSubmissions(doc, onSubmit);
+    watchSubmissions(doc, onSubmit, undefined, () => true);
     doc.querySelector("form")!.dispatchEvent(new Event("submit"));
     expect(onSubmit).not.toHaveBeenCalled();
   });
@@ -186,3 +186,20 @@ describe("fillSuggested", () => {
     expect(fillSuggested(p1, "zzz")).toBe(false);
   });
 });
+
+describe("submissions a script fires", () => {
+  it("are ignored (a page could test password guesses through the save prompt)", () => {
+    const doc = page(`<form><input name="user" value="me"><input type="password" value="guess"><button>Go</button></form>`);
+    const onSubmit = vi.fn();
+    // No click or key press by the user just now (what browsers report to scripts' submits).
+    Object.defineProperty(navigator, "userActivation", { value: { isActive: false }, configurable: true });
+    const stop = watchSubmissions(doc, onSubmit);
+    doc.querySelector("form")!.dispatchEvent(new Event("submit"));
+    doc.querySelector("button")!.click();
+    doc.querySelector("input[type=password]")!.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
+    expect(onSubmit).not.toHaveBeenCalled();
+    stop();
+    delete (navigator as { userActivation?: unknown }).userActivation;
+  });
+});
+
