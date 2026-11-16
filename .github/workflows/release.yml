@@ -86,8 +86,14 @@ jobs:
         run: |
           extra=()
           if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ]; then
-            echo "::warning::no update signing key: building installers without update bundles"
-            extra=(--config '{"bundle":{"createUpdaterArtifacts":false}}')
+            if [ "${GITHUB_REF_TYPE}" = tag ]; then
+              echo "::error::a release needs the update signing key (scripts/release/README.md)"; exit 1
+            fi
+            # A test build: a throwaway key just so the app builds; no update bundles, nothing published.
+            echo "::warning::no update signing key: test build with a throwaway updater key"
+            npx tauri signer generate --ci -w "$RUNNER_TEMP/throwaway.key" >/dev/null
+            pub=$(cat "$RUNNER_TEMP/throwaway.key.pub")
+            extra=(--config "{\"bundle\":{\"createUpdaterArtifacts\":false},\"plugins\":{\"updater\":{\"pubkey\":\"$pub\"}}}")
           fi
           npx tauri build --target ${{ matrix.target }} --bundles ${{ matrix.bundles }} "${extra[@]}"
       - name: Collect the installers and update bundles under stable names
@@ -161,7 +167,7 @@ jobs:
               "https://github.com/${GITHUB_REPOSITORY}/releases/download/v$VERSION" CHANGELOG.md > bundles/latest.json
             cat bundles/latest.json
           else
-            echo "::warning::no signed update bundles: this release will not reach installed apps"
+            echo "::error::no signed update bundles: a release must carry them" >&2; exit 1
           fi
       - name: GitHub release
         run: gh release create "v$VERSION" bundles/* --title "Password365 $VERSION" --notes-file notes.md --verify-tag
