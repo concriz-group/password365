@@ -8,5 +8,5 @@
   "unlock": "Unlock",
   "wait_one": "Too many wrong passwords. Try again in {count} second.",
   "wait_other": "Too many wrong passwords. Try again in {count} seconds.",
-  "secretKeyForgotten": "After many wrong passwords this computer forgets the Secret Key. Type it from your Emergency Kit (or see it in Settings on another device)."
+  "secretKeyForgotten": "This computer does not have the Secret Key. Type it from your Emergency Kit (or see it in Settings on another device)."
 }

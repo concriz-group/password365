@@ -163,19 +163,10 @@ impl AppService {
     pub(crate) fn guarded<T>(&mut self, check: impl FnOnce(&mut Self) -> Result<T>) -> Result<T> {
         let now = Timestamp::now().as_millis();
         self.attempts.check(now)?;
-        let mut result = check(self);
+        let result = check(self);
         match &result {
-            Err(AppError::WrongCredentials) => {
-                self.attempts.failed(now);
-                if self.attempts.failures() >= crate::attempts::FORGET_SECRET_KEY_AFTER
-                    && self.keys.load().ok().flatten().is_some()
-                {
-                    // Someone may be guessing at this computer: make them need the Emergency Kit too.
-                    self.lock();
-                    self.keys.remove()?;
-                    result = Err(AppError::SecretKeyRequired);
-                }
-            }
+            // Never deletes anything: only makes the next try wait longer.
+            Err(AppError::WrongCredentials) => self.attempts.failed(now),
             Ok(_) if self.attempts.failures() > 0 => self.attempts.succeeded(),
             _ => return result,
         }

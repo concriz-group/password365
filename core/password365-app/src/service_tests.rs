@@ -979,9 +979,8 @@ fn the_ssh_agent_offers_usable_keys_only_when_turned_on() {
 }
 
 #[test]
-fn wrong_passwords_make_the_next_try_wait_and_ten_forget_the_secret_key() {
+fn wrong_passwords_make_the_next_try_wait_and_never_delete_anything() {
     let mut fx = with_account();
-    let key = fx.keys.load().unwrap().unwrap().to_display_string();
     fx.app.lock();
     let wrong = || SecretString::from("not the password");
     for _ in 0..2 {
@@ -1005,21 +1004,17 @@ fn wrong_passwords_make_the_next_try_wait_and_ten_forget_the_secret_key() {
             AppError::WrongCredentials
         );
     }
+    for _ in 0..5 {
+        fx.app.attempts.skip_wait();
+        assert_eq!(
+            fx.app.unlock(wrong(), None).unwrap_err(),
+            AppError::WrongCredentials,
+            "many wrong passwords never delete the Secret Key"
+        );
+    }
+    assert!(fx.keys.load().unwrap().is_some());
     fx.app.attempts.skip_wait();
-    assert_eq!(
-        fx.app.unlock(wrong(), None).unwrap_err(),
-        AppError::SecretKeyRequired,
-        "the 10th forgets the key"
-    );
-    assert!(fx.keys.load().unwrap().is_none());
-    fx.app.attempts.skip_wait();
-    assert_eq!(
-        fx.app.unlock(PW.into(), None).unwrap_err(),
-        AppError::SecretKeyRequired
-    );
-    fx.app.attempts.skip_wait();
-    fx.app.unlock(PW.into(), Some(&key)).unwrap();
-    assert!(fx.keys.load().unwrap().is_some(), "typed key kept again");
+    fx.app.unlock(PW.into(), None).unwrap();
     fx.app.lock();
     assert_eq!(
         fx.app.unlock(wrong(), None).unwrap_err(),

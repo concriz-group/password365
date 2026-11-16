@@ -80,7 +80,7 @@ describe("Unlock — wrong passwords", () => {
     }
     expect(screen.getByRole("button", { name: "Unlock" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Unlock" }));
-    expect(await screen.findByText(/forgets the Secret Key/)).toBeInTheDocument();
+    expect(await screen.findByText(/does not have the Secret Key/)).toBeInTheDocument();
     await user.type(screen.getByLabelText("Secret Key"), "P365-ABC");
     await user.click(screen.getByRole("button", { name: "Unlock" }));
     expect(unlock).toHaveBeenLastCalledWith("guess", "P365-ABC");

@@ -35,15 +35,34 @@ impl App<'_> {
         Ok(AccountSecretKey::parse(typed.expose())?)
     }
 
-    /// Asks for the master password and unlocks the store.
+    /// Asks for the master password and unlocks the store. Wrong passwords
+    /// make the next try wait, like the app (the count is shared with it when
+    /// both use the same folder).
     pub fn unlock(&mut self) -> Result<Session> {
+        use password365_app::attempts;
         let store = Store::open(&self.paths.store)?;
+        let store_path = self.paths.store.clone();
+        let beside = Some(store_path.as_path());
+        let mut tries = attempts::load(beside);
+        tries.check(password365_model::Timestamp::now().as_millis())?;
         let secret_key = self.secret_key()?;
         let password = self.prompter.secret("Master password")?;
-        Ok(store.unlock(&Credentials {
+        let result = store.unlock(&Credentials {
             password,
             secret_key,
-        })?)
+        });
+        match &result {
+            Err(password365_vault::VaultError::WrongCredentials) => {
+                tries.failed(password365_model::Timestamp::now().as_millis());
+                attempts::save(beside, &tries);
+            }
+            Ok(_) if tries.failures() > 0 => {
+                tries.succeeded();
+                attempts::save(beside, &tries);
+            }
+            _ => {}
+        }
+        Ok(result?)
     }
 
     /// Asks for a new master password twice and validates it.
@@ -144,6 +163,23 @@ mod tests {
         let mut fx = Fixture::initialized(&["wrong password"]);
         let err = fx.app().unlock().err().unwrap();
         assert!(err.to_string().contains("wrong master password"));
+    }
+
+    #[test]
+    fn wrong_passwords_make_the_next_try_wait() {
+        let mut fx = Fixture::initialized(&["wrong 1", "wrong 2", "wrong 3", PASSWORD]);
+        for _ in 0..3 {
+            assert!(
+                fx.app()
+                    .unlock()
+                    .err()
+                    .unwrap()
+                    .to_string()
+                    .contains("wrong master password")
+            );
+        }
+        let err = fx.app().unlock().err().unwrap();
+        assert!(err.to_string().contains("try again"), "{err}");
     }
 
     #[test]
