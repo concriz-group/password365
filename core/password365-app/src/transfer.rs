@@ -20,7 +20,8 @@ pub fn import_csv<R: Read>(
 ) -> Result<ImportSummary> {
     let parsed = csv_import::parse(reader)?;
     session.vault(vault_id)?;
-    let existing = items(session, None)?;
+    // Only the destination vault: an import never touches items in other vaults.
+    let existing = items(session, Some(vault_id))?;
     let plan = dedupe::plan(parsed.logins, &existing);
 
     let new_items = plan
@@ -187,6 +188,23 @@ mod tests {
 
         let third = import_csv(&mut s, changed.as_bytes(), v, true, Timestamp::now()).unwrap();
         assert_eq!(third.updated, 1);
+    }
+
+    #[test]
+    fn importing_into_one_vault_never_changes_another() {
+        let (_d, mut s) = session();
+        let personal = s.vault_by_name("Personal").unwrap().id;
+        let work = s.create_vault("Work").unwrap();
+        let csv = "name,url,username,password\nA,https://a.com,u,old\n";
+        import_csv(&mut s, csv.as_bytes(), work, false, Timestamp::now()).unwrap();
+        let other = "name,url,username,password\nA,https://a.com,u,NEW\n";
+        let r = import_csv(&mut s, other.as_bytes(), personal, true, Timestamp::now()).unwrap();
+        assert_eq!((r.imported, r.updated), (1, 0));
+        let work_items = items(&s, Some(work)).unwrap();
+        assert_eq!(
+            work_items[0].details.password.as_ref().unwrap().expose(),
+            "old"
+        );
     }
 
     #[test]

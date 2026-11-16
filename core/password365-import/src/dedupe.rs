@@ -2,7 +2,7 @@
 
 use std::collections::HashSet;
 
-use password365_model::{Item, ItemId};
+use password365_model::{Item, ItemId, ItemKind};
 
 use crate::ImportedLogin;
 use crate::url_key::origin_key;
@@ -37,7 +37,7 @@ pub fn plan(imported: Vec<ImportedLogin>, existing: &[Item]) -> ImportPlan {
         if login.note_only {
             // Notes have no site or username: the same title and text is already there.
             let same = existing.iter().find(|i| {
-                i.kind == password365_model::ItemKind::SecureNote
+                i.kind == ItemKind::SecureNote
                     && i.overview.title == login.title.trim()
                     && i.details.notes == login.notes
             });
@@ -52,9 +52,27 @@ pub fn plan(imported: Vec<ImportedLogin>, existing: &[Item]) -> ImportPlan {
             result.duplicates_in_file += 1;
             continue;
         }
+        if key.0.is_empty() {
+            // No site: nothing identifies it safely. Only an exact copy (same title,
+            // username and password) is recognised; otherwise it is new, never an update.
+            match same_without_site(&login, existing) {
+                Some(item) => result.identical.push((login, item.id)),
+                None => result.new.push(login),
+            }
+            continue;
+        }
         match find_existing(&key, existing) {
             None => result.new.push(login),
             Some(item) if item.details.password == login.password => {
+                result.identical.push((login, item.id));
+            }
+            // An empty password in the file never replaces a stored one.
+            Some(item)
+                if login
+                    .password
+                    .as_ref()
+                    .is_none_or(|p| p.expose().is_empty()) =>
+            {
                 result.identical.push((login, item.id));
             }
             Some(item) => result.changed.push((login, item.id)),
@@ -63,19 +81,40 @@ pub fn plan(imported: Vec<ImportedLogin>, existing: &[Item]) -> ImportPlan {
     result
 }
 
+/// A stored login with the same site (non-empty origin) and username.
 fn find_existing<'a>(key: &(String, String), existing: &'a [Item]) -> Option<&'a Item> {
-    existing.iter().find(|item| {
-        let username = item.overview.username.as_deref();
-        let urls: Vec<Option<&str>> = if item.overview.urls.is_empty() {
-            vec![None]
-        } else {
+    existing
+        .iter()
+        .filter(|i| i.kind == ItemKind::Login)
+        .find(|item| {
+            let username = item.overview.username.as_deref();
             item.overview
                 .urls
                 .iter()
-                .map(|u| Some(u.as_str()))
-                .collect()
-        };
-        urls.into_iter().any(|url| &identity(url, username) == key)
+                .any(|url| &identity(Some(url), username) == key)
+        })
+}
+
+/// A stored login without a site that is an exact copy of `login`.
+fn same_without_site<'a>(login: &ImportedLogin, existing: &'a [Item]) -> Option<&'a Item> {
+    let username = login
+        .username
+        .as_deref()
+        .unwrap_or_default()
+        .trim()
+        .to_lowercase();
+    existing.iter().find(|i| {
+        i.kind == ItemKind::Login
+            && i.overview.urls.iter().all(|u| origin_key(u).is_empty())
+            && i.overview.title == login.title.trim()
+            && i.overview
+                .username
+                .as_deref()
+                .unwrap_or_default()
+                .trim()
+                .to_lowercase()
+                == username
+            && i.details.password == login.password
     })
 }
 
@@ -157,10 +196,60 @@ mod tests {
     }
 
     #[test]
-    fn items_without_urls_match_logins_without_urls() {
+    fn a_login_without_a_site_matches_only_an_exact_copy() {
         let mut item = existing("https://ignored", "u", "pw");
         item.overview.urls.clear();
-        let p = plan(vec![login("t", None, Some("u"), Some("pw"))], &[item]);
+        item.overview.title = "t".into();
+        let p = plan(
+            vec![login("t", None, Some("u"), Some("pw"))],
+            std::slice::from_ref(&item),
+        );
         assert_eq!(p.identical.len(), 1);
+        // Different password, title or no username: new, never an update of `item`.
+        let p = plan(
+            vec![
+                login("t", None, Some("u"), Some("other")),
+                login("bank", None, None, Some("pw2")),
+            ],
+            &[item],
+        );
+        assert_eq!(p.new.len(), 2);
+        assert!(p.changed.is_empty());
+    }
+
+    #[test]
+    fn a_row_without_site_or_username_never_updates_an_item_without_them() {
+        let mut item = existing("https://ignored", "", "secret");
+        item.overview.urls.clear();
+        item.overview.username = None;
+        let p = plan(vec![login("x", None, None, Some("attacker"))], &[item]);
+        assert!(p.changed.is_empty());
+        assert_eq!(p.new.len(), 1);
+    }
+
+    #[test]
+    fn an_empty_password_never_replaces_a_stored_one() {
+        let stored = vec![existing("https://a.com", "u", "pw")];
+        let p = plan(
+            vec![login("", Some("https://a.com"), Some("u"), Some(""))],
+            &stored,
+        );
+        assert!(p.changed.is_empty());
+        let p = plan(
+            vec![login("", Some("https://a.com"), Some("u"), None)],
+            &stored,
+        );
+        assert!(p.changed.is_empty());
+    }
+
+    #[test]
+    fn only_logins_are_matched() {
+        let mut card = existing("https://a.com", "u", "pw");
+        card.kind = ItemKind::CreditCard;
+        let p = plan(
+            vec![login("", Some("https://a.com"), Some("u"), Some("new"))],
+            &[card],
+        );
+        assert_eq!(p.new.len(), 1);
     }
 }
