@@ -57,10 +57,25 @@ impl KdfParams {
         }
     }
 
-    /// Checks these parameters against the security floor.
+    /// Ceiling: parameters from a file or another device above this are
+    /// refused before deriving, so nobody can make an unlock take hours or
+    /// exhaust memory (4 GiB, 64 passes).
+    pub const MAXIMUM: Self = Self {
+        memory_kib: 4 * 1024 * 1024,
+        iterations: 64,
+        parallelism: 16,
+    };
+
+    /// Checks these parameters against the security floor and the ceiling.
     pub fn validate(&self) -> Result<()> {
-        if self.parallelism == 0 || self.parallelism > 16 {
+        if self.parallelism == 0 || self.parallelism > Self::MAXIMUM.parallelism {
             return Err(CryptoError::WeakKdfParams("parallelism must be 1..=16"));
+        }
+        if self.memory_kib > Self::MAXIMUM.memory_kib || self.iterations > Self::MAXIMUM.iterations
+        {
+            return Err(CryptoError::WeakKdfParams(
+                "unreasonably costly (over 4 GiB or 64 passes)",
+            ));
         }
         #[cfg(any(test, feature = "insecure-test-params"))]
         if *self == Self::insecure_for_tests() {
@@ -117,6 +132,25 @@ pub fn derive_password_key(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn absurd_costs_are_refused_before_deriving() {
+        let salt = [0u8; 16];
+        for params in [
+            KdfParams {
+                memory_kib: u32::MAX,
+                ..KdfParams::DESKTOP
+            },
+            KdfParams {
+                iterations: 1_000_000,
+                ..KdfParams::DESKTOP
+            },
+        ] {
+            assert!(params.validate().is_err());
+            assert!(derive_password_key(&"pw".into(), &salt, params).is_err());
+        }
+        assert!(KdfParams::MAXIMUM.validate().is_ok());
+    }
 
     const SALT: [u8; 16] = [9; 16];
 
