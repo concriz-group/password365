@@ -62,6 +62,8 @@ pub struct Session {
     pub(crate) revoked: std::collections::BTreeSet<password365_sync::DeviceId>,
     /// The account's latest master password change.
     pub(crate) password: Option<records::PasswordRecord>,
+    /// The app's sealed data (see `session_app_data`).
+    pub(crate) app_data: Option<Vec<u8>>,
 }
 
 impl Session {
@@ -83,6 +85,7 @@ impl Session {
             review: std::collections::BTreeSet::new(),
             revoked: std::collections::BTreeSet::new(),
             password: None,
+            app_data: None,
         };
         // Before anything is read or written: nothing rolled back or removed.
         session.db.check_integrity(crate::integrity::key(
@@ -114,6 +117,7 @@ impl Session {
                 Ok(RecordBody::Review(r)) => review = Some(r),
                 Ok(RecordBody::Revoked(r)) => revoked = Some(r),
                 Ok(RecordBody::Password(r)) => password = Some(r),
+                Ok(RecordBody::AppData(d)) => session.app_data = Some(d),
                 Err(_) => {}
             }
         }

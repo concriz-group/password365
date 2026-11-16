@@ -26,6 +26,7 @@ pub mod private_file;
 mod quick_unlock;
 mod records;
 mod session;
+mod session_app_data;
 mod session_items;
 mod session_password;
 mod session_peers;

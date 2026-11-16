@@ -163,6 +163,50 @@ fn auto_lock_after_idle() {
 }
 
 #[test]
+fn security_settings_edited_in_the_file_are_put_back_on_unlock() {
+    let dir = tempfile::tempdir().unwrap();
+    let settings_path = dir.path().join("settings.json");
+    let cfg = AppConfig {
+        settings_path: Some(settings_path.clone()),
+        ..config(&dir)
+    };
+    let keys = MemorySecretKeyStore::default();
+    let mut app = AppService::new(cfg.clone(), Box::new(keys.clone()));
+    app.create_account(PW.into(), &PW.into()).unwrap();
+    app.update_settings(Settings {
+        auto_lock_minutes: 5,
+        zoom_percent: 100,
+        ..app.settings()
+    })
+    .unwrap();
+    app.lock();
+    drop(app);
+    // Another program loosens the file while the app is closed.
+    let loose = Settings {
+        auto_lock_minutes: 240,
+        ssh_agent: true,
+        zoom_percent: 125,
+        ..Settings::load(&settings_path).unwrap()
+    };
+    loose.save(&settings_path).unwrap();
+
+    let mut app = AppService::new(cfg, Box::new(keys));
+    app.unlock(PW.into(), None).unwrap();
+    let now = app.settings();
+    assert_eq!(
+        (now.auto_lock_minutes, now.ssh_agent),
+        (5, false),
+        "the vault's copy wins"
+    );
+    assert_eq!(now.zoom_percent, 125, "other preferences are the file's");
+    assert_eq!(
+        Settings::load(&settings_path).unwrap().auto_lock_minutes,
+        5,
+        "the file is put right"
+    );
+}
+
+#[test]
 fn every_unlock_has_its_own_number() {
     let mut fx = with_account();
     let first = fx.app.unlock_number();

@@ -368,3 +368,45 @@ mod tests {
         );
     }
 }
+
+/// The settings that protect the vault. A copy is kept sealed in the vault
+/// (this device only) and wins over the settings file on unlock, so a
+/// program that edits the file cannot loosen them unnoticed.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct SecuritySettings {
+    auto_lock_minutes: u32,
+    lock_on_sleep: bool,
+    clipboard_clear_seconds: u32,
+    ssh_agent: bool,
+    check_breached_passwords: bool,
+    update_checks: UpdateChecks,
+}
+
+impl SecuritySettings {
+    /// The protecting part of `settings`.
+    #[must_use]
+    pub fn of(settings: &Settings) -> Self {
+        Self {
+            auto_lock_minutes: settings.auto_lock_minutes,
+            lock_on_sleep: settings.lock_on_sleep,
+            clipboard_clear_seconds: settings.clipboard_clear_seconds,
+            ssh_agent: settings.ssh_agent,
+            check_breached_passwords: settings.check_breached_passwords,
+            update_checks: settings.update_checks,
+        }
+    }
+
+    /// `settings` with these values.
+    #[must_use]
+    pub fn applied_to(&self, settings: &Settings) -> Settings {
+        Settings {
+            auto_lock_minutes: self.auto_lock_minutes,
+            lock_on_sleep: self.lock_on_sleep,
+            clipboard_clear_seconds: self.clipboard_clear_seconds,
+            ssh_agent: self.ssh_agent,
+            check_breached_passwords: self.check_breached_passwords,
+            update_checks: self.update_checks,
+            ..settings.clone()
+        }
+    }
+}

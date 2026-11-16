@@ -203,6 +203,33 @@ impl AppService {
         self.guarded(|s| s.reveal_secret_key_unguarded(password))
     }
 
+    /// After an unlock: the security settings sealed in the vault win over
+    /// the settings file (which any program can edit); a vault without them
+    /// gets the current ones.
+    fn adopt_sealed_settings(&mut self) {
+        let Some(session) = self.session.as_mut() else {
+            return;
+        };
+        let sealed = session
+            .app_data()
+            .and_then(|d| serde_json::from_slice::<crate::settings::SecuritySettings>(d).ok());
+        match sealed {
+            Some(sealed) if sealed != crate::settings::SecuritySettings::of(&self.settings) => {
+                let restored = sealed.applied_to(&self.settings);
+                if let Some(path) = &self.config.settings_path {
+                    let _ = restored.save(path);
+                }
+                self.config.auto_lock_ms = restored.auto_lock_ms();
+                self.auto_lock = AutoLock::new(self.config.auto_lock_ms, Timestamp::now());
+                self.settings = restored;
+            }
+            Some(_) => {}
+            None => {
+                let _ = seal_security(session, &self.settings);
+            }
+        }
+    }
+
     /// Which unlock is in effect (a new number after every unlock); 0 while
     /// locked. Permissions given until the vault locks remember this number.
     #[must_use]
@@ -309,6 +336,9 @@ impl AppService {
         settings.validate()?;
         if let Some(path) = &self.config.settings_path {
             settings.save(path)?;
+        }
+        if let Some(session) = self.session.as_mut() {
+            seal_security(session, &settings)?;
         }
         self.config.auto_lock_ms = settings.auto_lock_ms();
         self.auto_lock = AutoLock::new(self.config.auto_lock_ms, Timestamp::now());
@@ -618,6 +648,7 @@ impl AppService {
     pub(crate) fn start_session(&mut self, session: Session) {
         self.session = Some(session);
         self.unlocks += 1;
+        self.adopt_sealed_settings();
         self.auto_lock = AutoLock::new(self.config.auto_lock_ms, Timestamp::now());
     }
 
@@ -662,6 +693,13 @@ impl AppService {
                 .ok_or(AppError::NotFound("vault")),
         }
     }
+}
+
+/// Keeps `settings`' security part sealed in the vault.
+fn seal_security(session: &mut Session, settings: &Settings) -> Result<()> {
+    let json = serde_json::to_vec(&crate::settings::SecuritySettings::of(settings))
+        .map_err(|e| AppError::Internal(e.to_string()))?;
+    Ok(session.set_app_data(&json)?)
 }
 
 pub(crate) fn parse_id<T: FromStr>(id: &str) -> Result<T> {

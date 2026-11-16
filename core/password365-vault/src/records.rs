@@ -35,6 +35,8 @@ pub(crate) enum RecordBody {
     Password(PasswordRecord),
     /// A paired device and the vaults it was given (replaces `Peer`).
     PeerWithVaults(PeerRecord),
+    /// The app's own data kept sealed on this device (its security settings).
+    AppData(Vec<u8>),
 }
 
 /// The latest master password change and whether this store uses it yet.
