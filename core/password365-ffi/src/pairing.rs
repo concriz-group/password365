@@ -35,7 +35,7 @@ pub(crate) type JoinSlot = Mutex<JoinState>;
 fn step_missing() -> Failure {
     Failure::Failed {
         code: "not_found".into(),
-        message: "no device to join is waiting — scan the code again".into(),
+        reason: "no device to join is waiting — scan the code again".into(),
     }
 }
 

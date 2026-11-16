@@ -42,16 +42,17 @@ pub trait KeyKeeper: Send + Sync {
     fn remove(&self);
 }
 
-/// An error a screen can show (`code` is stable, `message` is English).
+/// An error a screen can show (`code` is stable, `reason` is English). Not `message`:
+/// in Kotlin that would clash with every exception's own `message`.
 #[derive(Debug, thiserror::Error, uniffi::Error)]
 pub enum Failure {
     /// Something went wrong.
-    #[error("{message}")]
+    #[error("{reason}")]
     Failed {
         /// Stable identifier (`locked`, `wrong_credentials`, `validation`, …).
         code: String,
-        /// Human-readable message.
-        message: String,
+        /// What went wrong, in English.
+        reason: String,
     },
 }
 
@@ -59,7 +60,7 @@ impl From<AppError> for Failure {
     fn from(e: AppError) -> Self {
         Self::Failed {
             code: e.code().to_owned(),
-            message: e.to_string(),
+            reason: e.to_string(),
         }
     }
 }

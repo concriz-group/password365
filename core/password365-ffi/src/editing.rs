@@ -26,7 +26,7 @@ fn input_of(name: &str) -> Option<FieldInput> {
 fn invalid(message: impl Into<String>) -> Failure {
     Failure::Failed {
         code: "validation".into(),
-        message: message.into(),
+        reason: message.into(),
     }
 }
 
