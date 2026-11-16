@@ -21,5 +21,7 @@
   "autofillNeedsFaceId": "Open Password365 and turn on Face ID in Settings to fill from here.",
   "autofillChoose": "Choose a login",
   "autofillAll": "All logins",
-  "autofillNoMatch": "No login for this site yet."
+  "autofillNoMatch": "No login for this site yet.",
+  "allTags": "All tags",
+  "filterByTag": "Filter by tag"
 }

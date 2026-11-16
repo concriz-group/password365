@@ -122,6 +122,7 @@ impl Password365 {
                 subtitle: c.username.unwrap_or_default(),
                 kind: "login".into(),
                 favorite: false,
+                tags: Vec::new(),
             })
             .collect())
     }

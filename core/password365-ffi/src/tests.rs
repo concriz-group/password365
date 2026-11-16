@@ -78,7 +78,8 @@ fn creates_unlocks_lists_and_reveals_one_secret_at_a_time() {
             title: "GitHub".into(),
             subtitle: "octo".into(),
             kind: "login".into(),
-            favorite: false
+            favorite: false,
+            tags: Vec::new(),
         }]
     );
     assert!(p.items("nothing".into()).unwrap().is_empty());
@@ -232,6 +233,11 @@ fn drafts_create_edit_and_keep_secrets_until_cleared() {
     p.set_favorite(id.clone(), true).unwrap();
     assert!(p.items(String::new()).unwrap()[0].favorite);
     assert_eq!(p.tags().unwrap(), ["bank"]);
+    assert_eq!(
+        p.items(String::new()).unwrap()[0].tags,
+        ["bank"],
+        "rows carry their tags (list filter)"
+    );
     p.set_archived(id.clone(), true).unwrap();
     assert!(p.items(String::new()).unwrap().is_empty());
     assert_eq!(p.archived(String::new()).unwrap().len(), 1);

@@ -87,6 +87,8 @@ pub struct ItemRow {
     pub kind: String,
     /// Starred.
     pub favorite: bool,
+    /// Tags (for the list's tag filter).
+    pub tags: Vec<String>,
 }
 
 impl From<password365_app::dto::ItemSummaryDto> for ItemRow {
@@ -97,6 +99,7 @@ impl From<password365_app::dto::ItemSummaryDto> for ItemRow {
             subtitle: s.username.unwrap_or_default(),
             kind: s.kind,
             favorite: s.favorite,
+            tags: s.tags,
         }
     }
 }
