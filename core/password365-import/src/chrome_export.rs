@@ -1,7 +1,8 @@
 //! Writing items as a Chrome-compatible password CSV.
 //!
 //! Format: `name,url,username,password,note` — importable at
-//! `chrome://password-manager/settings`. The output is **plaintext**.
+//! `chrome://password-manager/settings`. The output is **plaintext**. Cells
+//! that a spreadsheet would run as formulas are made inert (except passwords).
 
 use std::io::Write;
 
@@ -20,16 +21,28 @@ pub fn write<W: Write>(writer: W, items: &[Item]) -> Result<usize> {
     let mut written = 0;
     for item in items.iter().filter(|i| is_exportable(i)) {
         csv.write_record([
-            item.overview.title.as_str(),
-            item.overview.urls.first().map_or("", String::as_str),
-            item.overview.username.as_deref().unwrap_or_default(),
+            inert(&item.overview.title).as_ref(),
+            inert(item.overview.urls.first().map_or("", String::as_str)).as_ref(),
+            inert(item.overview.username.as_deref().unwrap_or_default()).as_ref(),
+            // Never changed: the file must import back with the same password.
             expose(item.details.password.as_ref()),
-            expose(item.details.notes.as_ref()),
+            inert(expose(item.details.notes.as_ref())).as_ref(),
         ])?;
         written += 1;
     }
     csv.flush().map_err(csv::Error::from)?;
     Ok(written)
+}
+
+/// `text` made inert for spreadsheets: a cell starting with `=`, `+`, `-`,
+/// `@`, a tab or a carriage return would run as a formula when the file is
+/// opened in Excel or Sheets, so it gets a leading `'` (passwords excepted).
+fn inert(text: &str) -> std::borrow::Cow<'_, str> {
+    if text.starts_with(['=', '+', '-', '@', '\t', '\r']) {
+        format!("'{text}").into()
+    } else {
+        text.into()
+    }
 }
 
 fn is_exportable(item: &Item) -> bool {
@@ -61,6 +74,19 @@ mod tests {
             details.notes("a, \"note\"".into()),
             Timestamp::now(),
         )
+    }
+
+    #[test]
+    fn formulas_are_made_inert_but_passwords_are_kept() {
+        let mut evil = item(ItemKind::Login, "=HYPERLINK(\"http://x\")", Some("=pass"));
+        evil.overview.username = Some("@SUM(1)".into());
+        let mut out = Vec::new();
+        write(&mut out, &[evil]).unwrap();
+        let text = String::from_utf8(out).unwrap();
+        assert!(text.contains("\"'=HYPERLINK(\"\"http://x\"\")\""), "{text}");
+        assert!(text.contains(",'@SUM(1),=pass,"), "{text}");
+        assert_eq!(inert("plain"), "plain");
+        assert_eq!(inert("-1"), "'-1");
     }
 
     #[test]
