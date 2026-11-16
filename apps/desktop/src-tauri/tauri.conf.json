@@ -45,7 +45,7 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "SET_BY_scripts/updater-key.md",
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDk3NkY0NTlENkE4M0EyQjcKUldTM29vTnFuVVZ2bDZEVXduT0NuTU1BK0hucEgxT2tqOUp2N3J4L3BxQjRWajdCWU4vUytPTXoK",
       "endpoints": [
         "https://github.com/remofurlanetto/password365/releases/latest/download/latest.json"
       ],
