@@ -9,7 +9,7 @@ rust-version.workspace = true
 publish = false
 
 [lib]
-crate-type = ["lib", "staticlib"]
+crate-type = ["lib", "staticlib", "cdylib"] # staticlib: iOS; cdylib: Android
 
 [dependencies]
 password365-app.workspace = true
