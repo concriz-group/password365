@@ -25,14 +25,16 @@ pub(crate) enum RecordBody {
     ItemSync(ItemSyncRecord),
     /// This install's pairing key and display name (one per store).
     DeviceKeys(DeviceKeysRecord),
-    /// A paired device.
-    Peer(PeerRecord),
+    /// A paired device (before the vaults it was given were kept).
+    Peer(LegacyPeerRecord),
     /// Items to review on this device (two passwords set at once elsewhere).
     Review(ReviewRecord),
     /// Devices removed from the account (synced to every paired device).
     Revoked(RevokedRecord),
     /// The account's latest master password change.
     Password(PasswordRecord),
+    /// A paired device and the vaults it was given (replaces `Peer`).
+    PeerWithVaults(PeerRecord),
 }
 
 /// The latest master password change and whether this store uses it yet.
@@ -66,6 +68,14 @@ pub(crate) struct DeviceKeysRecord {
 /// A paired device and how far sync with it has got.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct PeerRecord {
+    pub peer: crate::Peer,
+    /// `None` in records written before the grant was kept (`Peer` variant).
+    pub vaults: Option<Vec<VaultId>>,
+}
+
+/// The original peer record (no vaults): still read, never written.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub(crate) struct LegacyPeerRecord {
     pub peer: crate::Peer,
 }
 

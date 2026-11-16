@@ -69,6 +69,7 @@ fn a_new_device_joins_and_syncs() {
         let peer = pairing
             .approve(&mut session, &secret_key, &[vault], 9)
             .expect("approve");
+        assert_eq!(peer.vaults, Some(vec![vault]), "only the vault it was sent");
         (session, shown, peer)
     });
 

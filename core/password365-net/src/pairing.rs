@@ -92,7 +92,11 @@ impl PairingHost {
     fn handshake(self, socket: TcpStream, from: SocketAddr) -> Result<HostPairing> {
         prepare(&socket)?;
         let stream = SecureStream::establish(socket, Handshake::inviter(&self.key, &self.invite)?)?;
-        Ok(HostPairing { stream, from })
+        Ok(HostPairing {
+            stream,
+            from,
+            vaults: Vec::new(),
+        })
     }
 }
 
@@ -100,6 +104,8 @@ impl PairingHost {
 pub struct HostPairing {
     stream: SecureStream<TcpStream>,
     from: SocketAddr,
+    /// The vaults sent to the new device: the only ones it will sync.
+    vaults: Vec<password365_model::VaultId>,
 }
 
 impl HostPairing {
@@ -134,6 +140,7 @@ impl HostPairing {
         vaults: &[password365_model::VaultId],
     ) -> Result<()> {
         let bundle = session.join_bundle(secret_key, vaults)?;
+        self.vaults = vaults.to_vec();
         self.send(&PairMessage::Bundle(bundle.to_vec()))
     }
 
@@ -149,6 +156,7 @@ impl HostPairing {
             } => {
                 let mut peer = Peer::new(device_id, &name, static_public, Timestamp::now());
                 peer.addr = Some(SocketAddr::new(self.from.ip(), sync_port).to_string());
+                peer.vaults = Some(self.vaults);
                 Ok(peer)
             }
             PairMessage::Cancelled => Err(NetError::Cancelled),

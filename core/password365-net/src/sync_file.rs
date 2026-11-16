@@ -51,7 +51,7 @@ pub fn export(session: &Session, peer: DeviceId) -> Result<Vec<u8>> {
     if let Some(change) = session.password_change() {
         messages.push(Message::Password(change.clone()));
     }
-    let changes = session.changes_since(target.acked_seq)?;
+    let changes = session.changes_for(target, target.acked_seq)?;
     let attachments: Vec<_> = changes
         .iter()
         .filter_map(|state| match state {
@@ -146,7 +146,8 @@ pub fn import(session: &mut Session, bytes: &[u8]) -> Result<SyncOutcome> {
             _ => return Err(VaultError::SyncProtocol("unexpected message in sync file").into()),
         }
     }
-    let mut report = session.apply_changes(&states)?;
+    let from = session.peer(sender)?.clone();
+    let mut report = session.apply_changes_from(&from, &states)?;
     for (id, sealed) in files {
         if session.store_received_attachment(id, &sealed)? {
             report.files += 1;

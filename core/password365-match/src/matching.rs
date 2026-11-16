@@ -118,15 +118,39 @@ mod tests {
     #[test]
     fn android_apps_match_only_their_own_package() {
         assert_eq!(
-            level("androidapp://com.example.bank", "androidapp://com.example.bank"),
+            level(
+                "androidapp://com.example.bank",
+                "androidapp://com.example.bank"
+            ),
             Some(MatchLevel::Origin)
         );
-        assert!(allowed("androidapp://com.example.bank", "androidapp://COM.example.bank"));
-        assert_eq!(level("androidapp://com.example.bank", "androidapp://com.example.bank.evil"), None);
-        assert_eq!(level("androidapp://com.example.bank", "androidapp://com.other.bank"), None);
+        assert!(allowed(
+            "androidapp://com.example.bank",
+            "androidapp://COM.example.bank"
+        ));
+        assert_eq!(
+            level(
+                "androidapp://com.example.bank",
+                "androidapp://com.example.bank.evil"
+            ),
+            None
+        );
+        assert_eq!(
+            level(
+                "androidapp://com.example.bank",
+                "androidapp://com.other.bank"
+            ),
+            None
+        );
         // An app is not a website, and a website is not an app.
-        assert_eq!(level("androidapp://com.example.bank", "https://example.bank"), None);
-        assert_eq!(level("https://bank.example.com", "androidapp://com.example.bank"), None);
+        assert_eq!(
+            level("androidapp://com.example.bank", "https://example.bank"),
+            None
+        );
+        assert_eq!(
+            level("https://bank.example.com", "androidapp://com.example.bank"),
+            None
+        );
     }
 
     #[test]

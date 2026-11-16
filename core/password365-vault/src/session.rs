@@ -101,7 +101,11 @@ impl Session {
                     sync_records.insert(r.item_id, r);
                 }
                 Ok(RecordBody::DeviceKeys(k)) => device_keys = Some(k),
-                Ok(RecordBody::Peer(p)) => peers.push(p),
+                Ok(RecordBody::Peer(p)) => peers.push(records::PeerRecord {
+                    peer: p.peer,
+                    vaults: None,
+                }),
+                Ok(RecordBody::PeerWithVaults(p)) => peers.push(p),
                 Ok(RecordBody::Review(r)) => review = Some(r),
                 Ok(RecordBody::Revoked(r)) => revoked = Some(r),
                 Ok(RecordBody::Password(r)) => password = Some(r),

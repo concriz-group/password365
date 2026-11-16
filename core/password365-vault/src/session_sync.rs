@@ -74,6 +74,48 @@ impl Session {
         Ok(out)
     }
 
+    /// [`Self::changes_since`] limited to what `peer` was given: items of the
+    /// vaults it may use (and deletion markers, which carry no content).
+    pub fn changes_for(&self, peer: &crate::Peer, since: Option<u64>) -> Result<Vec<ItemState>> {
+        Ok(self
+            .changes_since(since)?
+            .into_iter()
+            .filter(|state| match state {
+                ItemState::Live(item) => peer.may_use(item.fields.vault_id.value),
+                ItemState::Purged { .. } => true,
+            })
+            .collect())
+    }
+
+    /// Merges states received from `peer`, keeping only changes to the vaults
+    /// it was given: an item it may not use (here or in the change) is skipped.
+    pub fn apply_changes_from(
+        &mut self,
+        peer: &crate::Peer,
+        incoming: &[ItemState],
+    ) -> Result<ApplyReport> {
+        let mut allowed = Vec::with_capacity(incoming.len());
+        let mut refused = 0;
+        for remote in incoming {
+            let here = match self.state_of(remote.id())? {
+                Some(ItemState::Live(item)) => Some(item.fields.vault_id.value),
+                _ => None,
+            };
+            let there = match remote {
+                ItemState::Live(item) => Some(item.fields.vault_id.value),
+                ItemState::Purged { .. } => None,
+            };
+            if here.into_iter().chain(there).all(|v| peer.may_use(v)) {
+                allowed.push(remote.clone());
+            } else {
+                refused += 1;
+            }
+        }
+        let mut report = self.apply_changes(&allowed)?;
+        report.skipped += refused;
+        Ok(report)
+    }
+
     /// Merges states received from a peer, atomically.
     pub fn apply_changes(&mut self, incoming: &[ItemState]) -> Result<ApplyReport> {
         let now = Timestamp::now().as_millis();

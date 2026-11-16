@@ -2,7 +2,7 @@
 
 use std::collections::BTreeMap;
 
-use password365_model::Timestamp;
+use password365_model::{Timestamp, VaultId};
 use password365_sync::DeviceId;
 use password365_sync::pairing::StaticKey;
 use serde::{Deserialize, Serialize};
@@ -43,6 +43,11 @@ pub struct Peer {
     pub last_sync: Option<Timestamp>,
     /// Where it was last reachable on the local network (`host:port`).
     pub addr: Option<String>,
+    /// The vaults it was given when it joined: the only ones it receives and
+    /// may change. `None`: every vault (devices paired before this was kept,
+    /// and the device that invited this one). Stored beside the peer record.
+    #[serde(skip)]
+    pub vaults: Option<Vec<VaultId>>,
 }
 
 impl Peer {
@@ -58,7 +63,14 @@ impl Peer {
             received_seq: None,
             last_sync: None,
             addr: None,
+            vaults: None,
         }
+    }
+
+    /// Whether this device may receive and change items of `vault`.
+    #[must_use]
+    pub fn may_use(&self, vault: VaultId) -> bool {
+        self.vaults.as_ref().is_none_or(|v| v.contains(&vault))
     }
 }
 
@@ -176,14 +188,21 @@ impl Session {
     pub(crate) fn load_peers(&mut self, peers: Vec<PeerRecord>) {
         self.peers = peers
             .into_iter()
-            .map(|r| (r.peer.device_id, r.peer))
+            .map(|r| {
+                let mut peer = r.peer;
+                peer.vaults = r.vaults;
+                (peer.device_id, peer)
+            })
             .collect::<BTreeMap<_, _>>();
     }
 
     fn write_peer(&self, peer: &Peer) -> Result<()> {
         self.write_record(
             &peer_record_id(peer.device_id),
-            &RecordBody::Peer(PeerRecord { peer: peer.clone() }),
+            &RecordBody::PeerWithVaults(PeerRecord {
+                peer: peer.clone(),
+                vaults: peer.vaults.clone(),
+            }),
         )
     }
 }

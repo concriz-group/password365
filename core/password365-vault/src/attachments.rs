@@ -144,6 +144,28 @@ impl Session {
         Ok(all)
     }
 
+    /// Ids of the attachments named by items in the vaults `include` accepts.
+    pub fn attachments_in(
+        &self,
+        include: impl Fn(password365_model::VaultId) -> bool,
+    ) -> Result<HashSet<AttachmentId>> {
+        let mut out = HashSet::new();
+        for entry in self.items.values() {
+            if !include(entry.record.vault_id) {
+                continue;
+            }
+            let key = &self.vault_entry(entry.record.vault_id)?.key;
+            out.extend(
+                crate::item_crypto::open_item(key, &entry.record)?
+                    .details
+                    .attachments
+                    .into_iter()
+                    .map(|a| a.id),
+            );
+        }
+        Ok(out)
+    }
+
     /// Attachments the items refer to whose bytes this device does not have
     /// yet (they come with the next sync).
     pub fn missing_attachments(&self) -> Result<Vec<Attachment>> {

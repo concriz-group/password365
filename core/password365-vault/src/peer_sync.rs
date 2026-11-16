@@ -145,7 +145,8 @@ impl PeerSync {
             Message::Done { seq } => {
                 self.require_hello()?;
                 let received = std::mem::take(&mut self.inbox);
-                let report = session.apply_changes(&received)?;
+                let peer = session.peer(self.peer)?.clone();
+                let report = session.apply_changes_from(&peer, &received)?;
                 self.merge_report(report);
                 session.record_sync(self.peer, None, Some(seq), Timestamp::now())?;
                 self.done_handled = true;
@@ -196,9 +197,16 @@ impl PeerSync {
 
     /// The pieces of every asked-for file this device has (`NoFile` for the others).
     fn send_files(&self, session: &Session, ids: Vec<AttachmentId>) -> Result<Vec<Message>> {
+        let peer = session.peer(self.peer)?;
+        let allowed = session.attachments_in(|vault| peer.may_use(vault))?;
         let mut out = Vec::new();
         for id in ids {
-            match session.sealed_attachment(id)? {
+            let sealed = if allowed.contains(&id) {
+                session.sealed_attachment(id)?
+            } else {
+                None
+            };
+            match sealed {
                 Some(sealed) => out.extend(file_parts(id, &sealed, self.max_message)),
                 None => out.push(Message::NoFile(id)),
             }
@@ -242,7 +250,8 @@ impl PeerSync {
 
     fn send_changes(&mut self, session: &Session, since: Option<u64>) -> Result<Vec<Message>> {
         let seq = session.sync_seq();
-        let mut out = chunk(session.changes_since(since)?, self.max_message)?;
+        let peer = session.peer(self.peer)?;
+        let mut out = chunk(session.changes_for(peer, since)?, self.max_message)?;
         out.push(Message::Done { seq });
         self.last_sent_done = Some(seq);
         Ok(out)
@@ -342,6 +351,96 @@ mod tests {
         }
         assert!(to_a.is_empty() && to_b.is_empty());
         (sa.report().clone(), sb.report().clone(), count)
+    }
+
+    /// `b` was given only Personal; `a` also has Work, with item "Payroll".
+    fn given_personal_only() -> (
+        tempfile::TempDir,
+        Session,
+        Session,
+        password365_model::ItemId,
+    ) {
+        let (dir, mut a, b) = paired();
+        let personal = a.vault_by_name("Personal").unwrap().id;
+        let mut peer = a.peer(b.device_id()).unwrap().clone();
+        peer.vaults = Some(vec![personal]);
+        a.add_peer(peer).unwrap();
+        let work = a.create_vault("Work").unwrap();
+        let payroll = a
+            .add_item(
+                work,
+                ItemKind::Login,
+                ItemOverview::new("Payroll").unwrap(),
+                ItemDetails::with_password("p".into()),
+            )
+            .unwrap();
+        (dir, a, b, payroll)
+    }
+
+    #[test]
+    fn a_device_receives_only_the_vaults_it_was_given() {
+        let (_dir, mut a, mut b, payroll) = given_personal_only();
+        add(&mut a, "Mail");
+        let peer = a.peer(b.device_id()).unwrap().clone();
+        let sent = a.changes_for(&peer, None).unwrap();
+        assert!(sent.iter().all(|s| s.id() != payroll), "Work never leaves");
+        assert_eq!(a.changes_since(None).unwrap().len(), sent.len() + 1);
+        converse(&mut a, &mut b);
+        assert_eq!(titles(&b), vec!["Mail"]);
+    }
+
+    #[test]
+    fn a_device_cannot_change_or_move_items_of_vaults_it_was_not_given() {
+        let (_dir, mut a, b, payroll) = given_personal_only();
+        let personal = a.vault_by_name("Personal").unwrap().id;
+        let work = a.vault_by_name("Work").unwrap().id;
+        let peer = a.peer(b.device_id()).unwrap().clone();
+        let state = |s: &Session, id| {
+            s.changes_since(None)
+                .unwrap()
+                .into_iter()
+                .find(|st| st.id() == id)
+                .unwrap()
+        };
+        // An item of Work changed by the device: refused.
+        let report = a.apply_changes_from(&peer, &[state(&a, payroll)]).unwrap();
+        assert_eq!(report.skipped, 1);
+        // Work's item said to be in Personal now (moving it out): refused.
+        let mut moved = state(&a, payroll);
+        if let ItemState::Live(item) = &mut moved {
+            item.fields.vault_id.value = personal;
+        }
+        assert_eq!(a.apply_changes_from(&peer, &[moved]).unwrap().skipped, 1);
+        // A Personal item put in Work by the device: refused.
+        let mail = add(&mut a, "Mail");
+        let mut into_work = state(&a, mail);
+        if let ItemState::Live(item) = &mut into_work {
+            item.fields.vault_id.value = work;
+        }
+        assert_eq!(
+            a.apply_changes_from(&peer, &[into_work]).unwrap().skipped,
+            1
+        );
+        // Its own vault: accepted (nothing new to merge here, nothing skipped).
+        assert_eq!(
+            a.apply_changes_from(&peer, &[state(&a, mail)])
+                .unwrap()
+                .skipped,
+            0
+        );
+        assert_eq!(a.item(payroll).unwrap().overview.title, "Payroll");
+    }
+
+    #[test]
+    fn the_vaults_a_device_was_given_survive_reopening() {
+        let (dir, a, b, _) = given_personal_only();
+        let personal = a.vault_by_name("Personal").unwrap().id;
+        a.lock();
+        let a = Store::open(&dir.path().join("test.qlvault"))
+            .unwrap()
+            .unlock(&credentials("master"))
+            .unwrap();
+        assert_eq!(a.peer(b.device_id()).unwrap().vaults, Some(vec![personal]));
     }
 
     #[test]

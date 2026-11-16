@@ -189,7 +189,7 @@ impl AppService {
         let session = self.session()?;
         let bytes = password365_net::sync_file::export(session, id).map_err(net_error)?;
         let peer = session.peer(id)?;
-        let carried = session.changes_since(peer.acked_seq)?.len();
+        let carried = session.changes_for(peer, peer.acked_seq)?.len();
         write_private(path, &bytes)?;
         Ok(carried)
     }
