@@ -1,0 +1,11 @@
+{
+  "title": "Help and feedback",
+  "intro": "Password365 is developed in the open. Tell us what does not work, what you would like, or help translate it.",
+  "bug": "Report a bug",
+  "idea": "Suggest an improvement",
+  "translate": "Help translate Password365",
+  "security": "Report a security problem privately",
+  "securityHint": "Please never post security problems in public: this form reaches only the maintainers.",
+  "email": "Write to us",
+  "never": "We will never ask for your master password or your Secret Key."
+}

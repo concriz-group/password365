@@ -179,7 +179,7 @@
     "p1": "Your data is encrypted on your device before it is written anywhere.",
     "p2": "Only you hold the keys. We never see your master password, your Secret Key or your items, and we cannot recover them.",
     "p3": "Devices sync directly with each other. There is no Password365 server.",
-    "p4": "The app works without the internet. The only online feature, the breached-password check, is off until you turn it on.",
+    "p4": "The only online features, the breached-password check and update checks, are off until you turn them on.",
     "unlockTitle": "Unlocking your vault",
     "unlock1": "Your master password is stretched with Argon2id (256 MB of memory on computers, 128 MB on phones), which makes every guess slow and costly.",
     "unlock2": "Your Secret Key — 128 random bits created on your device — is mixed in with HKDF-SHA-256. A copy of your vault cannot be attacked with password guesses alone.",
@@ -212,7 +212,8 @@
     "siteTitle": "This website",
     "site1": "This website uses no cookies and no analytics. It is served by Cloudflare, which processes technical data such as IP addresses to deliver and protect it.",
     "contactTitle": "Contact",
-    "contact1": "Questions about privacy: {email}."
+    "contact1": "Questions about privacy: {email}.",
+    "apps5": "If you turn on update checks (the app asks the first time you open it), the desktop app asks GitHub (github.com), where Password365 is published, for the newest version once a day. GitHub sees the request, like any website visit; nothing about you or your vault is sent."
   },
   "supportPage": {
     "title": "Support",

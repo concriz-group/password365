@@ -232,6 +232,8 @@ export interface Settings {
   region: string;
   /** Looking for new versions (off until the first-run question is answered). */
   update_checks: "unasked" | "automatic" | "manual";
+  /** A version not to announce automatically ("" for none). */
+  skipped_update: string;
 }
 
 /** A login whose password appeared in data breaches. */
@@ -351,3 +353,6 @@ export interface UpdateInfo {
   version: string;
   notes: string | null;
 }
+
+/** Help and feedback destinations (Settings › About). */
+export type HelpTopic = "bug" | "idea" | "translate" | "security" | "email";

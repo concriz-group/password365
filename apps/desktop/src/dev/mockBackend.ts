@@ -435,6 +435,7 @@ export function createMockBackend(): Invoke {
         return version ? { version, notes: null } : null;
       }
       case "update_install":
+      case "open_help":
         return null;
       case "breached_passwords":
         return items.filter((i) => i.password === "another demo").map((i) => ({ item: { id: i.id, title: i.title, kind: i.kind }, count: 3 }));

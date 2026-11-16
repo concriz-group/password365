@@ -1,0 +1,30 @@
+name: Translation
+description: Translate Password365 into a new language, or fix a translation.
+labels: [translation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every text of the apps lives in [`i18n/locales/<language>/*.json`](https://github.com/remofurlanetto/password365/tree/main/i18n)
+        (the website's in `i18n/site/`). The easiest way to help is a pull request — see
+        [CONTRIBUTING.md](https://github.com/remofurlanetto/password365/blob/main/CONTRIBUTING.md#translations).
+        You can also just tell us here.
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: "Français, Deutsch, Italiano …"
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What
+      options: [A new language, A wrong or awkward text, Something not translated]
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Where the text appears (screen, app) and what it should say.

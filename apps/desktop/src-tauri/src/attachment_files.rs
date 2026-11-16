@@ -2,7 +2,7 @@
 //! (owner-only), opened with the system's default program. Copies are
 //! deleted after a few minutes and whenever the app starts.
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 use std::process::Command;
 use std::time::{Duration, SystemTime};
 
@@ -40,7 +40,7 @@ pub fn clean<R: Runtime>(app: &AppHandle<R>, everything: bool) {
     }
 }
 
-fn open_with_system(path: &Path) -> std::io::Result<()> {
+pub(crate) fn open_with_system(path: &std::ffi::OsStr) -> std::io::Result<()> {
     let mut command = if cfg!(target_os = "macos") {
         let mut c = Command::new("open");
         c.arg(path);
@@ -77,7 +77,7 @@ pub fn open<R: Runtime>(app: &AppHandle<R>, name: &str, bytes: &[u8]) -> Result<
     password365_vault::private_file::create_private_file(&path)
         .and_then(|mut f| f.write_all(bytes))
         .map_err(fail)?;
-    open_with_system(&path).map_err(fail)
+    open_with_system(path.as_os_str()).map_err(fail)
 }
 
 fn uuid_like() -> String {

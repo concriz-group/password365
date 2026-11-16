@@ -57,10 +57,18 @@ async fn check<R: Runtime>(app: &AppHandle<R>) -> Result<Option<UpdateInfo>> {
     Ok(info)
 }
 
-fn automatic<R: Runtime>(app: &AppHandle<R>) -> bool {
+/// Whether automatic checks are on, and the version the user skipped.
+fn automatic<R: Runtime>(app: &AppHandle<R>) -> Option<String> {
     app.state::<SharedState>()
-        .with(|s| Ok(s.settings().update_checks == UpdateChecks::Automatic))
-        .unwrap_or(false)
+        .with(|s| Ok(s.settings()))
+        .ok()
+        .filter(|s| s.update_checks == UpdateChecks::Automatic)
+        .map(|s| s.skipped_update)
+}
+
+/// An automatic check announces a version unless the user skipped it.
+fn announce(found: &UpdateInfo, skipped: &str) -> bool {
+    found.version != skipped
 }
 
 /// Starts the automatic checks; each one runs only if the setting allows it
@@ -70,8 +78,9 @@ pub fn start<R: Runtime>(app: &AppHandle<R>) {
     tauri::async_runtime::spawn(async move {
         tokio_sleep(FIRST_CHECK).await;
         loop {
-            if automatic(&app)
+            if let Some(skipped) = automatic(&app)
                 && let Ok(Some(info)) = check(&app).await
+                && announce(&info, &skipped)
             {
                 let _ = app.emit(UPDATE_EVENT, info);
             }
@@ -104,4 +113,20 @@ pub async fn update_install(app: AppHandle, found: State<'_, Found>) -> Result<(
         .await
         .map_err(|e| AppError::Io(format!("Could not install the update: {e}")))?;
     app.restart()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_skipped_version_is_not_announced_but_a_newer_one_is() {
+        let found = |v: &str| UpdateInfo {
+            version: v.into(),
+            notes: None,
+        };
+        assert!(!announce(&found("0.2.0"), "0.2.0"));
+        assert!(announce(&found("0.3.0"), "0.2.0"));
+        assert!(announce(&found("0.2.0"), ""));
+    }
 }

@@ -398,3 +398,13 @@ textarea.concealed { -webkit-text-security: disc; }
 }
 :root[data-theme="dark"] .brand-mark.on-light { display: none; }
 :root[data-theme="dark"] .brand-mark.on-dark { display: block; }
+
+/* Update notice: what changed in the new version. */
+.update-notes { flex-basis: 100%; }
+.update-notes summary { cursor: pointer; }
+.release-notes { margin-top: 6px; display: grid; gap: 2px; }
+.release-notes p { margin: 0; }
+
+/* Settings › About › Help and feedback. */
+.help-links { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 6px; }
+.help-links .hint { margin: 2px 0 0; }

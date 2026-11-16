@@ -42,6 +42,25 @@ describe("UpdateBanner", () => {
     expect(client.updateInstall).toHaveBeenCalled();
   });
 
+  it("lists what changed, and a skipped version stays quiet", async () => {
+    const client = withSettings("automatic");
+    let emit: (u: UpdateInfo) => void = () => {};
+    renderWithClient(
+      <SettingsProvider>
+        <UpdateBanner subscribeUpdate={(on) => ((emit = on), () => {})} />
+      </SettingsProvider>,
+      client,
+    );
+    await waitFor(() => expect(client.settings).toHaveBeenCalled());
+    emit({ version: "0.2.0", notes: "### Added\n- Skip a version.\n- What's new." });
+    await userEvent.click(await screen.findByText("What's new"));
+    expect(screen.getByText("Added")).toBeInTheDocument();
+    expect(screen.getByText("• Skip a version.")).toBeInTheDocument();
+    await userEvent.click(screen.getByRole("button", { name: "Skip this version" }));
+    expect(client.updateSettings).toHaveBeenCalledWith(expect.objectContaining({ skipped_update: "0.2.0" }));
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+
   it("shows an install failure and lets the user try again", async () => {
     const client = withSettings("manual", { updateInstall: vi.fn().mockRejectedValue({ code: "io", message: "Could not install the update: offline" }) });
     let emit: (u: UpdateInfo) => void = () => {};

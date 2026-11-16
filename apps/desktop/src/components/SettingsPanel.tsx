@@ -18,6 +18,7 @@ import { CountrySelect } from "./CountrySelect";
 import { ShortcutInput } from "./ShortcutInput";
 import { ThirdPartyLicenses } from "./ThirdPartyLicenses";
 import { UpdateSettings } from "./UpdateSettings";
+import { HelpSection } from "./HelpSection";
 import { StrengthMeter } from "./StrengthMeter";
 import packageInfo from "../../package.json";
 
@@ -323,6 +324,7 @@ function About() {
       </p>
       <p className="hint">{t("settings.aboutText")}</p>
       <UpdateSettings />
+      <HelpSection />
       <p className="hint">{t("settings.license")}</p>
       <button type="button" className="link" aria-expanded={licences} onClick={() => setLicences(!licences)}>
         {t("settings.thirdParty")}

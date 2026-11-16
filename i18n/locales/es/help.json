@@ -1,0 +1,11 @@
+{
+  "title": "Ayuda y sugerencias",
+  "intro": "Password365 se desarrolla de forma abierta. Cuéntanos qué no funciona, qué te gustaría tener, o ayuda a traducirlo.",
+  "bug": "Informar de un problema",
+  "idea": "Sugerir una mejora",
+  "translate": "Ayudar a traducir Password365",
+  "security": "Informar en privado de un fallo de seguridad",
+  "securityHint": "Nunca publiques fallos de seguridad abiertamente: este formulario solo llega a los responsables.",
+  "email": "Escríbenos",
+  "never": "Nunca te pediremos tu contraseña maestra ni tu Clave Secreta."
+}

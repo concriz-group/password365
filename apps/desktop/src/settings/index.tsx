@@ -25,6 +25,7 @@ export const DEFAULT_SETTINGS: Settings = {
   shortcut_lock: "",
   region: "",
   update_checks: "unasked",
+  skipped_update: "",
 };
 
 interface SettingsState {

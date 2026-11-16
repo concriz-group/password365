@@ -7,6 +7,7 @@ mod autostart;
 mod bridge;
 mod clipboard;
 mod commands;
+mod help;
 mod keychain;
 mod legacy;
 mod pairing_slots;
@@ -126,6 +127,7 @@ pub fn run() {
         .plugin(autostart::plugin())
         .setup(setup)
         .invoke_handler(tauri::generate_handler![
+            help::open_help,
             updates::update_check,
             updates::update_install,
             commands::status,

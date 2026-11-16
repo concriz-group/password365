@@ -1,13 +1,15 @@
 {
-  "ask": "¿Mantener Password365 al día? Puede preguntar a password365.app una vez al día si hay una versión nueva. No se envía nada sobre ti ni sobre tu caja fuerte.",
+  "ask": "¿Mantener Password365 al día? Puede comprobar una vez al día en GitHub, donde se publica Password365, si hay una versión nueva. No se envía nada sobre ti ni sobre tu caja fuerte.",
   "askYes": "Comprobar automáticamente",
   "askNo": "Ahora no",
   "available": "Password365 {version} está disponible.",
   "install": "Instalar y reiniciar",
   "installing": "Instalando…",
   "automatic": "Buscar actualizaciones automáticamente",
-  "automaticHint": "Una vez al día, Password365 pregunta a password365.app si hay una versión nueva. No se envía nada sobre ti ni sobre tu caja fuerte, y las actualizaciones solo se instalan cuando tú lo decides. Toda actualización está firmada, y Password365 rechaza cualquiera que no lo esté.",
+  "automaticHint": "Una vez al día, Password365 comprueba en GitHub, donde se publica, si hay una versión nueva. No se envía nada sobre ti ni sobre tu caja fuerte, y las actualizaciones solo se instalan cuando tú lo decides. Toda actualización está firmada, y Password365 rechaza cualquiera que no lo esté.",
   "check": "Buscar actualizaciones",
   "checking": "Buscando…",
-  "upToDate": "Password365 está al día."
+  "upToDate": "Password365 está al día.",
+  "whatsNew": "Novedades",
+  "skip": "Omitir esta versión"
 }

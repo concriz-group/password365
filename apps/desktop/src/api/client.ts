@@ -30,6 +30,7 @@ import type {
   Vault,
   Watchtower,
   UpdateInfo,
+  HelpTopic,
 } from "./types";
 
 /** Error returned by the backend: `{ code, message }`. */
@@ -121,7 +122,9 @@ export function createClient(invoke: Invoke) {
     exportCxf: (path: string, vaultId?: string) => call<number>("export_cxf", { path, vaultId: vaultId ?? null }),
     removePasskey: (id: string) => call<void>("remove_passkey", { id }),
     removeAttachment: (id: string, attachmentId: string) => call<void>("remove_attachment", { id, attachmentId }),
-    /** Asks password365.app for a newer version (null: up to date). */
+    /** Opens a help page (bug, idea, translate, security, email): fixed addresses in the backend. */
+    openHelp: (topic: HelpTopic) => call<void>("open_help", { topic }),
+    /** Asks for a newer version (null: up to date). */
     updateCheck: () => call<UpdateInfo | null>("update_check"),
     /** Installs the version found by the last check and restarts the app. */
     updateInstall: () => call<void>("update_install"),

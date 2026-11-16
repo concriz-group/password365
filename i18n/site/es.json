@@ -179,7 +179,7 @@
     "p1": "Tus datos se cifran en tu dispositivo antes de guardarse en ningún sitio.",
     "p2": "Solo tú tienes las llaves. Nunca vemos tu contraseña maestra, tu Clave Secreta ni tus elementos, y no podemos recuperarlos.",
     "p3": "Los dispositivos se sincronizan directamente entre sí. No existe un servidor de Password365.",
-    "p4": "La app funciona sin internet. La única función en línea, la comprobación de contraseñas filtradas, está desactivada hasta que la actives.",
+    "p4": "Las únicas funciones en línea, la comprobación de contraseñas filtradas y la búsqueda de actualizaciones, están desactivadas hasta que las actives.",
     "unlockTitle": "Abrir tu caja fuerte",
     "unlock1": "Tu contraseña maestra pasa por Argon2id (256 MB de memoria en ordenadores, 128 MB en móviles), lo que hace que cada intento sea lento y costoso.",
     "unlock2": "Tu Clave Secreta — 128 bits aleatorios creados en tu dispositivo — se combina con HKDF-SHA-256. Una copia de tu caja fuerte no puede atacarse solo con intentos de contraseña.",
@@ -212,7 +212,8 @@
     "siteTitle": "Este sitio web",
     "site1": "Este sitio no usa cookies ni analíticas. Lo sirve Cloudflare, que procesa datos técnicos como las direcciones IP para entregarlo y protegerlo.",
     "contactTitle": "Contacto",
-    "contact1": "Preguntas sobre privacidad: {email}."
+    "contact1": "Preguntas sobre privacidad: {email}.",
+    "apps5": "Si activas la búsqueda de actualizaciones (la app lo pregunta la primera vez que la abres), la app de ordenador pregunta a GitHub (github.com), donde se publica Password365, cuál es la versión más nueva, una vez al día. GitHub ve la petición, como en cualquier visita a un sitio web; no se envía nada sobre ti ni sobre tu caja fuerte."
   },
   "supportPage": {
     "title": "Soporte",

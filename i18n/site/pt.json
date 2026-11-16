@@ -179,7 +179,7 @@
     "p1": "Os seus dados são criptografados no seu aparelho antes de serem gravados em qualquer lugar.",
     "p2": "Só você tem as chaves. Nunca vemos a sua senha mestra, a sua Chave Secreta ou os seus itens, e não temos como recuperá-los.",
     "p3": "Os aparelhos sincronizam direto entre si. Não existe servidor do Password365.",
-    "p4": "O app funciona sem internet. O único recurso online, a verificação de senhas vazadas, fica desligado até você ligar.",
+    "p4": "Os únicos recursos online, a verificação de senhas vazadas e a de atualizações, ficam desligados até você ligar.",
     "unlockTitle": "Abrir o cofre",
     "unlock1": "A sua senha mestra passa pelo Argon2id (256 MB de memória no computador, 128 MB no celular), o que torna cada tentativa lenta e cara.",
     "unlock2": "A sua Chave Secreta — 128 bits aleatórios criados no seu aparelho — entra na conta com HKDF-SHA-256. Uma cópia do seu cofre não pode ser atacada só com tentativas de senha.",
@@ -212,7 +212,8 @@
     "siteTitle": "Este site",
     "site1": "Este site não usa cookies nem estatísticas de acesso. Ele é servido pela Cloudflare, que processa dados técnicos como endereços IP para entregá-lo e protegê-lo.",
     "contactTitle": "Contato",
-    "contact1": "Dúvidas sobre privacidade: {email}."
+    "contact1": "Dúvidas sobre privacidade: {email}.",
+    "apps5": "Se você ligar a verificação de atualizações (o app pergunta na primeira vez que você o abre), o app de computador pergunta ao GitHub (github.com), onde o Password365 é publicado, qual é a versão mais nova, uma vez por dia. O GitHub vê o pedido, como em qualquer visita a um site; nada sobre você ou o seu cofre é enviado."
   },
   "supportPage": {
     "title": "Suporte",
