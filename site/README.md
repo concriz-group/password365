@@ -28,3 +28,9 @@ npm run deploy               # build, upload dist/ and serve it on password365.a
 `wrangler.jsonc` describes it: Workers static assets (what Cloudflare Pages became), the 404 page
 for unknown paths, and both domains (the DNS records and certificates are created by the deploy).
 Free plan.
+
+## Email
+
+`hello@password365.app` (the contact on the Privacy and Support pages) is forwarded to the
+owner's mailbox by Cloudflare Email Routing (free; rule "hello to Gmail", set up with
+`wrangler email routing`). Other addresses at the domain are not delivered.
