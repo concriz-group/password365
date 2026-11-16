@@ -47,6 +47,16 @@ pub fn password_strength(password: SecretString) -> PasswordStrength {
     password_policy::password_strength(&password)
 }
 
+/// The user typed, clicked or scrolled in a window: postpones the idle lock.
+/// (Nothing else counts: the extension, the SSH agent and timers do not.)
+#[tauri::command]
+pub fn user_active(state: State<'_, SharedState>) -> Result<()> {
+    state.with(|s| {
+        s.user_active(password365_model::Timestamp::now());
+        Ok(())
+    })
+}
+
 #[tauri::command]
 pub fn lock(state: State<'_, SharedState>) -> Result<()> {
     state.with(|s| {

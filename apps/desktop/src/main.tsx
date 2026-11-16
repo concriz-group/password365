@@ -8,6 +8,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { App, type StatusSubscription, type Subscription } from "./App";
 import { QuickAccess } from "./screens/QuickAccess";
 import { createClient, type Invoke } from "./api/client";
+import { watchActivity } from "./lib/activity";
 import type { AutoTypeChoice, SshApproval, UpdateInfo } from "./api/types";
 import { ClientProvider } from "./api/context";
 import { I18nProvider } from "./i18n";
@@ -26,6 +27,8 @@ async function pickInvoke(): Promise<Invoke> {
 }
 
 const client = createClient(await pickInvoke());
+// Only real input in a window keeps the vault from locking when idle.
+watchActivity(window, () => void client.userActive().catch(() => {}));
 
 /** Subscribes to a backend event; `undefined` outside Tauri (demo backend). */
 function subscribeTo(event: string): StatusSubscription | undefined {

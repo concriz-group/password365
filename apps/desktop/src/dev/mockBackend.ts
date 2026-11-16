@@ -209,6 +209,8 @@ export function createMockBackend(): Invoke {
         return a.password === "demo" ? "P365-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO" : fail("wrong_credentials", "wrong master password (demo: demo)");
       case "change_master_password":
         return a.current === "demo" ? null : fail("wrong_credentials", "wrong master password (demo: demo)");
+      case "user_active":
+        return undefined;
       case "lock":
         unlocked = false;
         return null;

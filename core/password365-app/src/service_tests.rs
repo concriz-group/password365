@@ -163,6 +163,37 @@ fn auto_lock_after_idle() {
 }
 
 #[test]
+fn only_the_user_postpones_the_idle_lock() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut cfg = config(&dir);
+    cfg.auto_lock_ms = 1_000;
+    let mut app = AppService::new(cfg, Box::new(MemorySecretKeyStore::default()));
+    app.create_account(PW.into(), &PW.into()).unwrap();
+    let t0 = Timestamp::now().as_millis();
+    let at = Timestamp::from_millis;
+    // Calls without the user (extension, SSH agent, refreshing codes) do not count.
+    app.vaults().unwrap();
+    app.generate(&GenerateRequest::Pin { digits: 6 }).unwrap();
+    assert!(
+        app.check_auto_lock(at(t0 + 1_500)),
+        "locked despite the calls"
+    );
+    app.unlock(PW.into(), None).unwrap();
+    let t1 = Timestamp::now().as_millis();
+    app.user_active(at(t1 + 800));
+    assert!(
+        !app.check_auto_lock(at(t1 + 1_500)),
+        "the user typed: postponed"
+    );
+    assert!(app.check_auto_lock(at(t1 + 1_900)));
+    // Activity after the idle time is over locks instead of reviving.
+    app.unlock(PW.into(), None).unwrap();
+    let t2 = Timestamp::now().as_millis();
+    app.user_active(at(t2 + 5_000));
+    assert!(!app.status().unlocked);
+}
+
+#[test]
 fn change_master_password() {
     let mut fx = with_account();
     let new = "a completely new password";

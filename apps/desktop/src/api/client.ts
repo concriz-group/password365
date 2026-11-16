@@ -73,6 +73,7 @@ export function createClient(invoke: Invoke) {
     unlock: (password: string, secretKey?: string) =>
       call<void>("unlock", { password, secretKey: secretKey || null }),
     lock: () => call<void>("lock"),
+    userActive: () => call<void>("user_active"),
     passwordStrength: (password: string) => call<PasswordStrength>("password_strength", { password }),
     changeMasterPassword: (current: string, newPassword: string, confirmation: string) =>
       call<void>("change_master_password", { current, newPassword, confirmation }),

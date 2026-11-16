@@ -138,6 +138,7 @@ pub fn run() {
             commands::create_account,
             commands::unlock,
             commands::lock,
+            commands::user_active,
             commands::change_master_password,
             commands::password_strength,
             commands::vaults,

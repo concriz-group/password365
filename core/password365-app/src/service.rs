@@ -541,7 +541,6 @@ impl AppService {
 
     /// Generates a password, passphrase or PIN (works while locked).
     pub fn generate(&mut self, request: &GenerateRequest) -> Result<GeneratedDto> {
-        self.auto_lock.touch(Timestamp::now());
         let (secret, bits) = match request {
             GenerateRequest::Password(r) => (r.generate()?, r.entropy_bits()),
             GenerateRequest::Passphrase(r) => (r.generate()?, r.entropy_bits()),
@@ -596,12 +595,20 @@ impl AppService {
         self.session.as_ref()
     }
 
-    /// The unlocked session; enforces auto-lock and records activity.
+    /// The unlocked session; enforces auto-lock. Calls do not count as
+    /// activity: the browser extension, the SSH agent, timers and codes that
+    /// refresh call in without the user (see [`Self::user_active`]).
     pub(crate) fn session(&mut self) -> Result<&mut Session> {
-        let now = Timestamp::now();
-        self.check_auto_lock(now);
-        self.auto_lock.touch(now);
+        self.check_auto_lock(Timestamp::now());
         self.session.as_mut().ok_or(AppError::Locked)
+    }
+
+    /// The user typed, clicked or scrolled in the app's window: postpones the
+    /// idle lock (or locks now if the idle time is already over).
+    pub fn user_active(&mut self, now: Timestamp) {
+        if !self.check_auto_lock(now) {
+            self.auto_lock.touch(now);
+        }
     }
 
     pub(crate) fn load_item(&mut self, id: &str) -> Result<Item> {
