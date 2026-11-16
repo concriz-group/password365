@@ -18,6 +18,8 @@ serde.workspace = true
 serde_json.workspace = true
 thiserror.workspace = true
 directories.workspace = true
+hmac.workspace = true
+sha2.workspace = true
 
 [dev-dependencies]
 password365-crypto = { workspace = true, features = ["insecure-test-params"] }

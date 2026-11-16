@@ -13,11 +13,13 @@ pub struct BridgeClient {
 }
 
 impl BridgeClient {
-    /// Connects; fails if the app is not running.
+    /// Connects; fails if the app is not running, or if what answers cannot
+    /// prove it is this user's Password365 ([`crate::auth`]).
     pub fn connect(endpoint: &Endpoint) -> io::Result<Self> {
-        Ok(Self {
-            stream: Stream::connect(endpoint.name()?)?,
-        })
+        let key = crate::auth::read_key(&endpoint.key_path())?;
+        let mut stream = Stream::connect(endpoint.name()?)?;
+        crate::auth::prove_to_app(&mut stream, &key)?;
+        Ok(Self { stream })
     }
 
     /// Sends a raw JSON request and returns the raw JSON response.

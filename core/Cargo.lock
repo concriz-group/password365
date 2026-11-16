@@ -1880,6 +1880,7 @@ name = "password365-bridge"
 version = "0.1.0"
 dependencies = [
  "directories",
+ "hmac 0.13.0",
  "interprocess",
  "password365-app",
  "password365-crypto",
@@ -1887,6 +1888,7 @@ dependencies = [
  "password365-webauthn",
  "serde",
  "serde_json",
+ "sha2 0.11.1",
  "tempfile",
  "thiserror",
 ]

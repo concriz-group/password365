@@ -11,8 +11,10 @@
 //! - [`endpoint`]: where the per-user socket lives.
 //! - [`server`] / [`client`]: the two ends of the local socket.
 //!
-//! The host is a dumb relay: it holds no keys and makes no decisions.
+//! The host is a dumb relay: it holds no vault keys and makes no decisions;
+//! both ends prove they belong to this user first ([`auth`]).
 
+pub mod auth;
 pub mod client;
 pub mod dispatch;
 pub mod endpoint;

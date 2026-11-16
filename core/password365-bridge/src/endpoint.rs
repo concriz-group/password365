@@ -1,8 +1,9 @@
 //! Location of the per-user bridge socket.
 //!
 //! Unix: a socket file inside a directory only the user can enter (0700), in
-//! the user's runtime/cache directory. Windows: a named pipe (see the threat
-//! model — its access control still needs hardening before release).
+//! the user's runtime/cache directory. Windows: a named pipe, which any user
+//! can see: both ends prove they are this user's with the key in
+//! [`Endpoint::key_path`] (see [`crate::auth`]).
 
 use std::io;
 use std::path::PathBuf;
@@ -41,6 +42,12 @@ impl Endpoint {
     #[must_use]
     pub fn path(&self) -> &std::path::Path {
         &self.path
+    }
+
+    /// The shared key's file, beside the socket in the user's private folder.
+    #[must_use]
+    pub fn key_path(&self) -> PathBuf {
+        self.path.with_file_name("bridge.key")
     }
 
     /// Creates the private parent directory (Unix: mode 0700).

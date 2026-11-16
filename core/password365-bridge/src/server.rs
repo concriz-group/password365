@@ -15,9 +15,11 @@ pub type Handler = Arc<dyn Fn(&[u8]) -> Vec<u8> + Send + Sync>;
 /// Starts listening on `endpoint`; each connection is served on its own thread.
 ///
 /// On Unix only processes running as the same user are accepted (checked with
-/// the socket's peer credentials, on top of the 0700 directory).
+/// the socket's peer credentials, on top of the 0700 directory). Everywhere,
+/// a connection must first prove it knows this run's key ([`crate::auth`]).
 pub fn serve(endpoint: &Endpoint, handler: Handler) -> io::Result<JoinHandle<()>> {
     endpoint.prepare()?;
+    let key = crate::auth::create_key(&endpoint.key_path())?;
     let listener = ListenerOptions::new()
         .name(endpoint.name()?)
         .try_overwrite(true)
@@ -32,7 +34,10 @@ pub fn serve(endpoint: &Endpoint, handler: Handler) -> io::Result<JoinHandle<()>
             }
             let handler = Arc::clone(&handler);
             thread::spawn(move || {
-                let _ = serve_connection(connection, handler.as_ref());
+                let mut connection = connection;
+                if crate::auth::check_host(&mut connection, &key).is_ok() {
+                    let _ = serve_connection(connection, handler.as_ref());
+                }
             });
         }
     }))
@@ -111,6 +116,51 @@ mod tests {
         // A second, concurrent client is served too.
         let mut other = BridgeClient::connect(&endpoint).unwrap();
         assert_eq!(other.exchange(b"x").unwrap(), b"X");
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn a_client_without_the_key_is_refused_and_a_fake_app_is_not_trusted() {
+        let dir = tempfile::tempdir().unwrap();
+        let endpoint = Endpoint::at(dir.path().join("b.sock"));
+        serve(&endpoint, echo_upper()).unwrap();
+        // Another user's process: cannot read the key, guesses one.
+        std::fs::write(endpoint.key_path(), [7u8; 32]).unwrap();
+        assert!(BridgeClient::connect(&endpoint).is_err());
+
+        // A fake "app" listening where the host connects, without the key.
+        let other = tempfile::tempdir().unwrap();
+        let fake = Endpoint::at(other.path().join("b.sock"));
+        fake.prepare().unwrap();
+        crate::auth::create_key(&fake.key_path()).unwrap();
+        let listener = ListenerOptions::new()
+            .name(fake.name().unwrap())
+            .create_sync()
+            .unwrap();
+        thread::spawn(move || {
+            for mut c in listener.incoming().filter_map(Result::ok) {
+                let _ = read_frame(&mut c);
+                let _ = write_frame(&mut c, &[0u8; 64]); // cannot compute the proof
+            }
+        });
+        let err = BridgeClient::connect(&fake).err().unwrap();
+        assert_eq!(err.kind(), io::ErrorKind::PermissionDenied);
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn both_sides_prove_the_key_over_any_stream() {
+        use std::os::unix::net::UnixStream;
+        let (mut a, mut b) = UnixStream::pair().unwrap();
+        let key = [3u8; 32];
+        let app = thread::spawn(move || crate::auth::check_host(&mut b, &key));
+        crate::auth::prove_to_app(&mut a, &key).unwrap();
+        app.join().unwrap().unwrap();
+        let (mut a, mut b) = UnixStream::pair().unwrap();
+        let app = thread::spawn(move || crate::auth::check_host(&mut b, &[4u8; 32]));
+        assert!(crate::auth::prove_to_app(&mut a, &key).is_err());
+        drop(a); // the host hangs up: the app stops waiting
+        assert!(app.join().unwrap().is_err());
     }
 
     #[cfg(unix)]
