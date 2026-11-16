@@ -1,7 +1,11 @@
 // Firefox reads the same extension with a few manifest differences.
+import ids from "./extension-key.json" with { type: "json" };
 
-/** Fixed add-on id: native messaging names it in the host's allowed_extensions. */
-export const FIREFOX_ID = "extension@password365.app";
+/**
+ * Fixed add-on id: native messaging names it in the host's allowed_extensions. Kept in
+ * extension-key.json with the Chromium id, where the desktop app reads both too.
+ */
+export const FIREFOX_ID = ids.firefox_id;
 
 /** The Chromium manifest adapted for Firefox (MV3, 128+). */
 export function firefoxManifest(chromium) {

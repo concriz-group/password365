@@ -5,6 +5,7 @@ mod auto_lock;
 mod auto_typer;
 mod autostart;
 mod bridge;
+mod browser_host;
 mod clipboard;
 mod commands;
 mod help;
@@ -110,6 +111,8 @@ fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
     app.manage(pairing_slots::SharedSlots::default());
     app.manage(updates::Found::default());
     updates::start(app.handle());
+    // The extension's helper ships next to the app: tell the browsers where it is.
+    std::thread::spawn(browser_host::register);
     Ok(())
 }
 

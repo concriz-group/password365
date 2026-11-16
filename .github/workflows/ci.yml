@@ -83,8 +83,10 @@ jobs:
           components: clippy
       - name: Tauri system dependencies
         run: sudo apt-get update && sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
-      - name: Placeholder frontend bundle for generate_context!
-        run: mkdir -p ../dist && echo '<!doctype html>' > ../dist/index.html
+      - name: Placeholder frontend bundle for generate_context! and the browser helper (externalBin)
+        run: |
+          mkdir -p ../dist && echo '<!doctype html>' > ../dist/index.html
+          mkdir -p binaries && touch binaries/password365-host-x86_64-unknown-linux-gnu
       - run: cargo clippy --all-targets -- -D warnings
       - run: cargo test
 

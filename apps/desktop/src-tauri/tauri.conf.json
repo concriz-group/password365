@@ -4,9 +4,9 @@
   "version": "0.1.0",
   "identifier": "app.password365.desktop",
   "build": {
-    "beforeDevCommand": "npm run dev",
+    "beforeDevCommand": "node scripts/sidecar.mjs && npm run dev",
     "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "npm run build",
+    "beforeBuildCommand": "node scripts/sidecar.mjs && npm run build",
     "frontendDist": "../dist"
   },
   "app": {
@@ -29,6 +29,9 @@
   "bundle": {
     "active": true,
     "targets": "all",
+    "externalBin": [
+      "binaries/password365-host"
+    ],
     "category": "Utility",
     "shortDescription": "Offline-first password manager",
     "icon": [
