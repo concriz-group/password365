@@ -346,32 +346,58 @@ fn item_of(value: &Value) -> Option<ImportedItem> {
     (!item.title.is_empty() || item.password.is_some() || !item.fields.is_empty()).then_some(item)
 }
 
+/// Most bytes `export.data` may unpack to.
+const MAX_EXPORT_DATA: u64 = 256 * 1024 * 1024;
+/// Most bytes all attached files together may unpack to.
+const MAX_FILES_TOTAL: u64 = 2 * 1024 * 1024 * 1024;
+
+/// Reads at most `limit` bytes of `entry` into `out`; fails beyond (a zip
+/// can claim small sizes and unpack to far more: never trust its header).
+fn read_limited(entry: impl Read, limit: u64, out: &mut Vec<u8>, what: &str) -> Result<()> {
+    let start = out.len();
+    entry
+        .take(limit + 1)
+        .read_to_end(out)
+        .map_err(|_| ImportError::Format(format!("{what} cannot be read")))?;
+    if (out.len() - start) as u64 > limit {
+        return Err(ImportError::Format(format!("{what} is too large")));
+    }
+    Ok(())
+}
+
 /// Reads a `.1pux` file.
 pub fn read<R: Read + Seek>(reader: R) -> Result<OnePux> {
     let mut archive = zip::ZipArchive::new(reader)
         .map_err(|_| ImportError::Format("not a 1Password export (.1pux)".into()))?;
-    let mut json = String::new();
-    archive
-        .by_name("export.data")
-        .map_err(|_| ImportError::Format("export.data is missing".into()))?
-        .read_to_string(&mut json)
+    let mut data = Vec::new();
+    read_limited(
+        archive
+            .by_name("export.data")
+            .map_err(|_| ImportError::Format("export.data is missing".into()))?,
+        MAX_EXPORT_DATA,
+        &mut data,
+        "export.data",
+    )?;
+    let json = String::from_utf8(data)
         .map_err(|_| ImportError::Format("export.data cannot be read".into()))?;
     let mut export = parse(&json)?;
     let names: Vec<String> = archive
         .file_names()
         .filter_map(|n| n.ok().map(std::borrow::Cow::into_owned))
         .collect();
+    let mut total = 0;
     for file in &mut export.files {
         let prefix = format!("files/{}", file.document_id);
         let Some(entry) = names.iter().find(|n| n.starts_with(&prefix)) else {
             continue;
         };
-        let mut entry = archive
+        let entry = archive
             .by_name(entry)
             .map_err(|_| ImportError::Format(format!("{} cannot be read", file.name)))?;
-        entry
-            .read_to_end(&mut file.bytes)
-            .map_err(|_| ImportError::Format(format!("{} cannot be read", file.name)))?;
+        let limit = password365_model::attachment::MAX_ATTACHMENT_BYTES
+            .min(MAX_FILES_TOTAL.saturating_sub(total));
+        read_limited(entry, limit, &mut file.bytes, &file.name)?;
+        total += file.bytes.len() as u64;
     }
     // A file the zip does not have cannot be attached.
     export.files.retain(|f| !f.bytes.is_empty());
@@ -414,6 +440,16 @@ mod tests {
     use std::io::{Cursor, Write};
 
     use super::*;
+
+    #[test]
+    fn unpacked_parts_are_capped_whatever_the_zip_claims() {
+        let mut out = Vec::new();
+        assert!(read_limited(&[0u8; 10][..], 10, &mut out, "x").is_ok());
+        let mut out = Vec::new();
+        let err = read_limited(std::io::repeat(0), 1024, &mut out, "export.data").unwrap_err();
+        assert!(err.to_string().contains("too large"));
+        assert!(out.len() <= 1025, "stops reading right after the limit");
+    }
 
     const EXPORT: &str = r#"{"accounts":[{"vaults":[{"items":[
       {"item":{"categoryUuid":"001","favIndex":1,"state":"active",

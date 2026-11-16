@@ -4,11 +4,16 @@
 //! left out. Key files and hardware keys are not supported here.
 
 use keepass::db::{GroupRef, Value};
+use std::io::Read as _;
+
 use keepass::{Database, DatabaseKey};
 use password365_model::ItemKind;
 
 pub use crate::item::{ImportedField, ImportedItem};
 use crate::{ImportError, Result};
+
+/// Largest database file read.
+const MAX_FILE_BYTES: u64 = 512 * 1024 * 1024;
 
 /// The standard fields; anything else is an extra field.
 const STANDARD: [&str; 5] = ["Title", "UserName", "Password", "URL", "Notes"];
@@ -117,7 +122,18 @@ pub fn read(
             .with_keyfile(file)
             .map_err(|e| ImportError::Format(format!("cannot read the key file: {e}")))?;
     }
-    let db = Database::open(source, key)
+    let mut data = Vec::new();
+    source
+        .take(MAX_FILE_BYTES + 1)
+        .read_to_end(&mut data)
+        .map_err(|e| ImportError::Format(format!("cannot read the KeePass database: {e}")))?;
+    if data.len() as u64 > MAX_FILE_BYTES {
+        return Err(ImportError::Format(
+            "this KeePass database is too large".into(),
+        ));
+    }
+    crate::kdbx_limits::check(&data)?;
+    let db = Database::parse(&data, key)
         .map_err(|e| ImportError::Format(format!("cannot open the KeePass database: {e}")))?;
     let mut out = Kdbx::default();
     let recycle_bin = db.recycle_bin().map(|g| g.id());

@@ -18,6 +18,7 @@ mod error;
 mod imported;
 pub mod item;
 pub mod kdbx;
+pub mod kdbx_limits;
 pub mod onepux;
 pub mod url_key;
 
