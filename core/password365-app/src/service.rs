@@ -585,8 +585,24 @@ impl AppService {
         transfer::import_csv(self.session()?, file, vault, update, Timestamp::now())
     }
 
-    /// Exports logins to a new owner-only Chrome CSV file (PLAINTEXT).
-    pub fn export_csv(&mut self, path: &Path, vault_id: Option<&str>) -> Result<usize> {
+    /// Checks the master password again (like an unlock: wrong ones make
+    /// the next try wait) before something leaves the vault in clear.
+    pub(crate) fn confirm_master_password(&mut self, password: SecretString) -> Result<()> {
+        self.guarded(|s| {
+            s.session()?;
+            s.verify_master_password(password).map(|_| ())
+        })
+    }
+
+    /// Exports logins to a new owner-only Chrome CSV file (PLAINTEXT), once
+    /// the master password is typed again.
+    pub fn export_csv(
+        &mut self,
+        path: &Path,
+        vault_id: Option<&str>,
+        password: SecretString,
+    ) -> Result<usize> {
+        self.confirm_master_password(password)?;
         let vault = vault_id.map(parse_id::<VaultId>).transpose()?;
         let session = self.session()?;
         if let Some(v) = vault {

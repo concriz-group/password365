@@ -71,8 +71,8 @@ describe("createClient", () => {
       [() => client.generate({ type: "pin", digits: 4 }), "generate", { request: { type: "pin", digits: 4 } }],
       [() => client.importCsv("/f", true), "import_csv", { path: "/f", update: true, vaultId: null }],
       [() => client.importCsv("/f", false, "v"), "import_csv", { path: "/f", update: false, vaultId: "v" }],
-      [() => client.exportCsv("/o"), "export_csv", { path: "/o", vaultId: null }],
-      [() => client.exportCsv("/o", "v"), "export_csv", { path: "/o", vaultId: "v" }],
+      [() => client.exportCsv("/o", undefined, "pw"), "export_csv", { path: "/o", vaultId: null, password: "pw" }],
+      [() => client.exportCsv("/o", "v", "pw"), "export_csv", { path: "/o", vaultId: "v", password: "pw" }],
       [() => client.settings(), "settings", undefined],
       [() => client.printPage(), "print_page", undefined],
       [

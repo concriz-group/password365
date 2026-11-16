@@ -33,5 +33,6 @@
   "duplicatesCount_one": "{count} entrada repetida en el archivo se omitió.",
   "duplicatesCount_other": "{count} entradas repetidas en el archivo se omitieron.",
   "nothingToImport": "El archivo no tenía nada que importar.",
-  "deleteFile": "El archivo que importaste contiene tus contraseñas en texto simple: bórralo ahora."
+  "deleteFile": "El archivo que importaste contiene tus contraseñas en texto simple: bórralo ahora.",
+  "confirmPassword": "Contraseña maestra (para confirmar que eres tú)"
 }

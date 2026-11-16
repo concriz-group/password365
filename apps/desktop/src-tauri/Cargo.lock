@@ -4145,6 +4145,7 @@ dependencies = [
 name = "password365-vault"
 version = "0.1.0"
 dependencies = [
+ "hmac 0.13.0",
  "password365-crypto",
  "password365-model",
  "password365-sync",

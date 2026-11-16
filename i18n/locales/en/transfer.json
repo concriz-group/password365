@@ -33,5 +33,6 @@
   "duplicatesCount_one": "{count} repeated entry in the file was skipped.",
   "duplicatesCount_other": "{count} repeated entries in the file were skipped.",
   "nothingToImport": "The file had nothing to import.",
-  "deleteFile": "The file you imported contains your passwords in plain text — delete it now."
+  "deleteFile": "The file you imported contains your passwords in plain text — delete it now.",
+  "confirmPassword": "Master password (to confirm it is you)"
 }

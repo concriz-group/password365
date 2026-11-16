@@ -430,22 +430,35 @@ fn import_and_export_files() {
     );
 
     let out = dir.path().join("out.csv");
-    assert_eq!(fx.app.export_csv(&out, None).unwrap(), 1);
+    assert_eq!(fx.app.export_csv(&out, None, PW.into()).unwrap(), 1);
     assert_eq!(
-        fx.app.export_csv(&out, None).unwrap_err().code(),
+        fx.app.export_csv(&out, None, PW.into()).unwrap_err().code(),
         "io",
         "never overwrite"
     );
+    assert_eq!(
+        fx.app
+            .export_csv(&dir.path().join("w.csv"), None, "wrong".into())
+            .unwrap_err(),
+        AppError::WrongCredentials,
+        "plaintext needs the master password again"
+    );
+    assert!(!dir.path().join("w.csv").exists());
+    fx.app.attempts.skip_wait();
     let vault = fx.app.vaults().unwrap()[0].id.clone();
     assert_eq!(
         fx.app
-            .export_csv(&dir.path().join("v.csv"), Some(&vault))
+            .export_csv(&dir.path().join("v.csv"), Some(&vault), PW.into())
             .unwrap(),
         1
     );
     assert_eq!(
         fx.app
-            .export_csv(&dir.path().join("x.csv"), Some(&VaultId::new().to_string()))
+            .export_csv(
+                &dir.path().join("x.csv"),
+                Some(&VaultId::new().to_string()),
+                PW.into()
+            )
             .unwrap_err(),
         AppError::NotFound("vault")
     );

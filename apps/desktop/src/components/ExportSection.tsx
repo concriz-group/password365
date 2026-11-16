@@ -22,17 +22,21 @@ export function ExportSection({ vaults, files }: Props) {
   const t = useT();
   const [exportVault, setExportVault] = useState("");
   const [acknowledged, setAcknowledged] = useState(false);
+  const [password, setPassword] = useState("");
+  const ready = acknowledged && password !== "";
   const [exported, setExported] = useState<number | null>(null);
   const [exportedCxf, setExportedCxf] = useState<number | null>(null);
   const doExport = useAction(async () => {
     const path = await files.saveCsv("password365-export.csv");
     if (!path) return;
-    setExported(await client.exportCsv(path, exportVault || undefined));
+    setExported(await client.exportCsv(path, exportVault || undefined, password));
+    setPassword("");
   });
   const doExportCxf = useAction(async () => {
     const path = await files.saveFile("password365-export.cxf.json");
     if (!path) return;
-    setExportedCxf(await client.exportCxf(path, exportVault || undefined));
+    setExportedCxf(await client.exportCxf(path, exportVault || undefined, password));
+    setPassword("");
   });
 
   return (
@@ -54,10 +58,20 @@ export function ExportSection({ vaults, files }: Props) {
         <input type="checkbox" checked={acknowledged} onChange={(e) => setAcknowledged(e.target.checked)} />
         {t("transfer.acknowledge")}
       </label>
-      <button type="button" onClick={() => void doExport.run()} disabled={!acknowledged || doExport.busy}>
+      <div className="field">
+        <label htmlFor="export-password">{t("transfer.confirmPassword")}</label>
+        <input
+          id="export-password"
+          type="password"
+          autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+      </div>
+      <button type="button" onClick={() => void doExport.run()} disabled={!ready || doExport.busy}>
         {t("transfer.exportCsv")}
       </button>
-      <button type="button" className="ghost" onClick={() => void doExportCxf.run()} disabled={!acknowledged || doExportCxf.busy}>
+      <button type="button" className="ghost" onClick={() => void doExportCxf.run()} disabled={!ready || doExportCxf.busy}>
         {t("transfer.exportCxf")}
       </button>
       <p className="hint">{t("transfer.cxfHint")}</p>

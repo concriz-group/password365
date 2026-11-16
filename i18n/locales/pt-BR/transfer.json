@@ -33,5 +33,6 @@
   "duplicatesCount_one": "{count} entrada repetida no arquivo foi ignorada.",
   "duplicatesCount_other": "{count} entradas repetidas no arquivo foram ignoradas.",
   "nothingToImport": "O arquivo não tinha nada para importar.",
-  "deleteFile": "O arquivo que você importou contém suas senhas em texto simples — exclua-o agora."
+  "deleteFile": "O arquivo que você importou contém suas senhas em texto simples — exclua-o agora.",
+  "confirmPassword": "Senha mestra (para confirmar que é você)"
 }

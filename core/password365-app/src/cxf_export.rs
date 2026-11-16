@@ -216,8 +216,15 @@ pub fn export_json(
 
 impl AppService {
     /// Exports items (optionally of one vault) to a new owner-only CXF file
-    /// (PLAINTEXT). Returns how many items were written.
-    pub fn export_cxf(&mut self, path: &Path, vault_id: Option<&str>) -> Result<usize> {
+    /// (PLAINTEXT), once the master password is typed again. Returns how many
+    /// items were written.
+    pub fn export_cxf(
+        &mut self,
+        path: &Path,
+        vault_id: Option<&str>,
+        password: password365_crypto::secret::SecretString,
+    ) -> Result<usize> {
+        self.confirm_master_password(password)?;
         let vault = vault_id.map(parse_id::<VaultId>).transpose()?;
         let session = self.session()?;
         if let Some(v) = vault {
@@ -239,7 +246,7 @@ impl AppService {
 mod tests {
     use super::*;
     use crate::item_input::{FieldValue, ItemInput};
-    use crate::service::tests::{Fixture, with_account};
+    use crate::service::tests::{Fixture, PW, with_account};
 
     fn custom(label: &str, value: &str) -> FieldValue {
         FieldValue {
@@ -253,7 +260,7 @@ mod tests {
     fn export(fx: &mut Fixture) -> (tempfile::TempDir, std::path::PathBuf, Vec<Value>) {
         let dir = tempfile::tempdir().unwrap();
         let path = dir.path().join("export.cxf.json");
-        fx.app.export_cxf(&path, None).unwrap();
+        fx.app.export_cxf(&path, None, PW.into()).unwrap();
         let json: Value = serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
         assert_eq!(json["version"], json!({"major": 1, "minor": 0}));
         assert_eq!(json["exporterRpId"], "password365.app");
@@ -293,7 +300,7 @@ mod tests {
             "internal fields stay inside"
         );
         assert!(
-            fx.app.export_cxf(&path, None).is_err(),
+            fx.app.export_cxf(&path, None, PW.into()).is_err(),
             "never overwrites a file"
         );
     }
@@ -369,7 +376,7 @@ mod tests {
 
         assert!(
             fx.app
-                .export_cxf(&dir.path().join("x"), Some("not-a-vault"))
+                .export_cxf(&dir.path().join("x"), Some("not-a-vault"), PW.into())
                 .is_err()
         );
     }

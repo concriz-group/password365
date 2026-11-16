@@ -120,7 +120,8 @@ export function createClient(invoke: Invoke) {
     saveAttachment: (id: string, attachmentId: string, path: string) => call<void>("save_attachment", { id, attachmentId, path }),
     openAttachment: (id: string, attachmentId: string) => call<void>("open_attachment", { id, attachmentId }),
     importCxf: (path: string, vaultId?: string) => call<ImportSummary>("import_cxf", { path, vaultId: vaultId ?? null }),
-    exportCxf: (path: string, vaultId?: string) => call<number>("export_cxf", { path, vaultId: vaultId ?? null }),
+    exportCxf: (path: string, vaultId: string | undefined, password: string) =>
+      call<number>("export_cxf", { path, vaultId: vaultId ?? null, password }),
     removePasskey: (id: string) => call<void>("remove_passkey", { id }),
     removeAttachment: (id: string, attachmentId: string) => call<void>("remove_attachment", { id, attachmentId }),
     /** Opens a help page (bug, idea, translate, security, email): fixed addresses in the backend. */
@@ -144,8 +145,8 @@ export function createClient(invoke: Invoke) {
     generate: (request: GenerateRequest) => call<Generated>("generate", { request }),
     importCsv: (path: string, update: boolean, vaultId?: string) =>
       call<ImportSummary>("import_csv", { path, update, vaultId: vaultId ?? null }),
-    exportCsv: (path: string, vaultId?: string) =>
-      call<number>("export_csv", { path, vaultId: vaultId ?? null }),
+    exportCsv: (path: string, vaultId: string | undefined, password: string) =>
+      call<number>("export_csv", { path, vaultId: vaultId ?? null, password }),
 
     exportBackup: (path: string) => call<BackupInfo>("export_backup", { path }),
     backupInfo: () => call<BackupInfo>("backup_info"),

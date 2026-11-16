@@ -303,8 +303,9 @@ pub fn export_cxf(
     state: State<'_, SharedState>,
     path: PathBuf,
     vault_id: Option<String>,
+    password: SecretString,
 ) -> Result<usize> {
-    state.with(|s| s.export_cxf(&path, vault_id.as_deref()))
+    state.with(|s| s.export_cxf(&path, vault_id.as_deref(), password))
 }
 
 /// Removes the passkey from login `id`.
@@ -450,8 +451,9 @@ pub fn export_csv(
     state: State<'_, SharedState>,
     path: PathBuf,
     vault_id: Option<String>,
+    password: SecretString,
 ) -> Result<usize> {
-    state.with(|s| s.export_csv(&path, vault_id.as_deref()))
+    state.with(|s| s.export_csv(&path, vault_id.as_deref(), password))
 }
 
 #[tauri::command]
