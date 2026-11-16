@@ -395,3 +395,24 @@ Phase 8 audit & release — see `PLAN.md` §7.
     (fixed addresses in `help.rs`).
   - Public-repository files: README, CONTRIBUTING (translations), SECURITY, CHANGELOG, issue forms,
     pull-request template.
+- **Security review fixes** (2026-11-16; an outside review by five agents, every finding fixed
+  with a test; see `docs/threat-model.md` T4, T5, T14, T16–T20):
+  - High: CSV "update existing" limited to logins in the destination vault; attachments open
+    without a shell, programs never open, copies quarantined/Mark-of-the-Web and wiped on lock;
+    a paired device syncs only the vaults it was given; the extension's inline menu is bound to
+    the content script by a one-time token and fills only while really visible (no clickjacking),
+    never into hidden boxes.
+  - Medium: SQLite defensive mode + exact schema; record rollback detection; new storage key on
+    password change; wrong passwords never delete the Secret Key (CLI limited too); only real input
+    postpones the idle lock; extension oracles closed (menu height, untrusted submits); SSH agent
+    approvals per program and per unlock; auto-type asks in browsers and re-checks the window;
+    sync: concurrent incoming connections with a handshake deadline, future-dated changes refused,
+    large items in pieces; hostile 1PUX/KeePass files capped; phone editing keeps TOTP fields;
+    browser bridge authenticates both ends (Windows pipe squatting); Android Autofill trusts web
+    domains only from browsers; adding a device needs the new device's code typed.
+  - Low: CSV export formulas made inert; plaintext exports ask for the master password; security
+    settings sealed in the vault; CLI asks for notes; Argon2 ceiling; attachment padding; actions
+    pinned by SHA and releases run every check first.
+  - Still open: the site's Astro 7.4.4 → 7.4.6+ (waiting until 2026-11-19 so the fix is two
+    weeks old); code-signing the installers (needs a Developer ID Application certificate and a
+    Windows certificate, see QUESTIONS).
