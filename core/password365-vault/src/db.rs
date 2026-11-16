@@ -600,7 +600,11 @@ mod tests {
 
     #[test]
     fn create_in_missing_directory_fails() {
-        let path = Path::new("/nonexistent-dir-password365/x.qlvault");
-        assert!(Database::create(path).is_err());
+        // A folder inside a file: missing on every system (Windows can create
+        // a folder at the drive's root, so "/nonexistent" is not enough).
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("a-file");
+        std::fs::write(&file, b"x").unwrap();
+        assert!(Database::create(&file.join("x.qlvault")).is_err());
     }
 }
