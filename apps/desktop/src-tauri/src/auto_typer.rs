@@ -3,8 +3,13 @@
 //!
 //! The shortcut looks at the window in front: one matching item types at
 //! once; none or several bring Password365 forward to choose (the app then
-//! steps aside so the keystrokes reach that window again).
+//! steps aside so the keystrokes reach that window again). A web browser's
+//! window title is whatever the page says, so a browser always gets the
+//! choice (the user sees the title and picks). Right before typing, the
+//! window in front must still be the one the shortcut saw — same program and
+//! title — or nothing is typed.
 
+use std::sync::Mutex;
 use std::thread;
 use std::time::Duration;
 
@@ -92,10 +97,64 @@ fn typing_failed(e: enigo::InputError) -> AppError {
     AppError::Io(format!("typing failed: {e}"))
 }
 
-/// Types `steps` on a background thread once things have settled.
-fn type_later(steps: Vec<Step>) {
+/// The window the keystrokes are meant for.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Target {
+    /// Its program's process.
+    pub process_id: u64,
+    /// Its title (or program name, see [`front_target`]).
+    pub title: String,
+    /// Its program's name.
+    pub app_name: String,
+}
+
+/// The target the shortcut saw, while the user chooses an item.
+static CHOSEN_FOR: Mutex<Option<Target>> = Mutex::new(None);
+
+/// Programs whose window titles web pages set.
+const BROWSERS: &[&str] = &[
+    "arc",
+    "brave",
+    "chrome",
+    "chromium",
+    "duckduckgo",
+    "edge",
+    "firefox",
+    "librewolf",
+    "msedge",
+    "opera",
+    "orion",
+    "safari",
+    "vivaldi",
+    "waterfox",
+    "zen",
+];
+
+/// Whether `app_name` is a web browser (its title comes from the page).
+#[must_use]
+pub fn is_browser(app_name: &str) -> bool {
+    let name = app_name.to_lowercase();
+    BROWSERS
+        .iter()
+        .any(|b| name.split(|c: char| !c.is_alphanumeric()).any(|w| w == *b))
+}
+
+/// Types `steps` on a background thread once things have settled, if the
+/// window in front is then still `expected` (any other window but ours when
+/// `None`).
+fn type_later(steps: Vec<Step>, expected: Option<Target>) {
     thread::spawn(move || {
         thread::sleep(SETTLE);
+        let now = front_target();
+        let same = match (&expected, &now) {
+            (Some(want), Some(now)) => want == now,
+            (None, Some(_)) => true,
+            (_, None) => false,
+        };
+        if !same {
+            eprintln!("auto-type: the window in front changed; nothing typed");
+            return;
+        }
         let typed = SystemKeyboard::new().and_then(|mut keyboard| {
             perform(&steps, &mut keyboard, &mut |ms| {
                 thread::sleep(Duration::from_millis(ms.into()));
@@ -115,8 +174,10 @@ pub fn type_into_previous_window<R: Runtime>(
     id: &str,
 ) -> Result<()> {
     let steps = state.with(|s| s.auto_type_steps(id))?;
+    // Chosen after the shortcut: the window it saw; from an item: whatever is next.
+    let expected = CHOSEN_FOR.lock().ok().and_then(|mut t| t.take());
     step_aside(app);
-    type_later(steps);
+    type_later(steps, expected);
     Ok(())
 }
 
@@ -146,37 +207,48 @@ pub struct Choice {
     pub candidates: Vec<AutoTypeCandidate>,
 }
 
-/// The window title the shortcut matches against: the title, or the
+/// The window in front (`None` when it is Password365's own). Its title is
+/// what the shortcut matches against: the window title and program, or the
 /// program's name when the title is hidden (macOS without screen-recording
 /// permission).
-fn front_window() -> Option<String> {
+fn front_target() -> Option<Target> {
     let window = active_win_pos_rs::get_active_window().ok()?;
     if window.process_id == u64::from(std::process::id()) {
         return None; // Password365 itself is in front: nothing to type into.
     }
     let title = window.title.trim();
-    Some(if title.is_empty() {
-        window.app_name
+    let title = if title.is_empty() {
+        window.app_name.clone()
     } else {
         format!("{title} - {}", window.app_name)
+    };
+    Some(Target {
+        process_id: window.process_id,
+        title,
+        app_name: window.app_name,
     })
 }
 
 /// The global shortcut was pressed.
 pub fn on_shortcut<R: Runtime>(app: &AppHandle<R>) {
-    let Some(window) = front_window() else {
+    let Some(target) = front_target() else {
         return;
     };
+    let window = target.title.clone();
     let state = app.state::<SharedState>();
     let Ok(candidates) = state.with(|s| s.auto_type_candidates(&window)) else {
         bring_forward(app); // locked: unlock first
         return;
     };
     if let [only] = candidates.as_slice()
+        && !is_browser(&target.app_name)
         && let Ok(steps) = state.with(|s| s.auto_type_steps(&only.id))
     {
-        type_later(steps);
+        type_later(steps, Some(target));
         return;
+    }
+    if let Ok(mut chosen) = CHOSEN_FOR.lock() {
+        *chosen = Some(target);
     }
     bring_forward(app);
     let _ = app.emit(CHOOSE_EVENT, Choice { window, candidates });
@@ -185,6 +257,31 @@ pub fn on_shortcut<R: Runtime>(app: &AppHandle<R>) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn browsers_are_recognised_by_name() {
+        for name in [
+            "Google Chrome",
+            "Safari",
+            "Firefox",
+            "Microsoft Edge",
+            "Brave Browser",
+            "Arc",
+            "msedge.exe",
+            "firefox-esr",
+        ] {
+            assert!(is_browser(name), "{name}");
+        }
+        for name in [
+            "Terminal",
+            "Microsoft Remote Desktop",
+            "KeePass",
+            "Steam",
+            "Chromecast helper",
+        ] {
+            assert!(!is_browser(name), "{name}");
+        }
+    }
 
     #[derive(Default)]
     struct Recorder(Vec<String>);
