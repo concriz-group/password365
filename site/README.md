@@ -18,7 +18,13 @@ npm test          # the texts of every language
 - Contact address, privacy-policy date and download links: `src/config.ts` (a download link
   left `null` shows "Coming soon").
 
-## Publishing (Cloudflare Pages)
+## Publishing (Cloudflare)
 
-Build command `npm run build`, output directory `dist`, root directory `site`. The domain
-password365.app points at the Pages project.
+```sh
+npx wrangler@4.156.1 login   # once, in the browser
+npm run deploy               # build, upload dist/ and serve it on password365.app and www
+```
+
+`wrangler.jsonc` describes it: Workers static assets (what Cloudflare Pages became), the 404 page
+for unknown paths, and both domains (the DNS records and certificates are created by the deploy).
+Free plan.
