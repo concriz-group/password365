@@ -31,8 +31,8 @@ describe("createClient", () => {
     invoke.mockResolvedValue(undefined);
     await client.unlock("pw");
     expect(invoke).toHaveBeenCalledWith("unlock", { password: "pw", secretKey: null });
-    await client.unlock("pw", "Q1-ABC");
-    expect(invoke).toHaveBeenLastCalledWith("unlock", { password: "pw", secretKey: "Q1-ABC" });
+    await client.unlock("pw", "P365-ABC");
+    expect(invoke).toHaveBeenLastCalledWith("unlock", { password: "pw", secretKey: "P365-ABC" });
   });
 
   it("returns the backend result", async () => {

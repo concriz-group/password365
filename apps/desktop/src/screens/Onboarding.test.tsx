@@ -35,7 +35,7 @@ describe("Onboarding", () => {
   it("shows the Secret Key and requires confirmation before continuing", async () => {
     const user = userEvent.setup();
     const onDone = vi.fn();
-    const createAccount = vi.fn().mockResolvedValue("Q1-AAAA-BBBB");
+    const createAccount = vi.fn().mockResolvedValue("P365-AAAA-BBBB");
     renderWithClient(<Onboarding onDone={onDone} />, fakeClient({ createAccount }));
 
     await user.type(screen.getByLabelText("Master password"), PW);
@@ -43,7 +43,7 @@ describe("Onboarding", () => {
     await clickWhenEnabled(user, "Create account");
 
     expect(createAccount).toHaveBeenCalledWith(PW, PW);
-    expect(await screen.findByLabelText("Secret Key")).toHaveTextContent("Q1-AAAA-BBBB");
+    expect(await screen.findByLabelText("Secret Key")).toHaveTextContent("P365-AAAA-BBBB");
     const open = screen.getByRole("button", { name: "Open my vault" });
     expect(open).toBeDisabled();
     await user.click(screen.getByLabelText("I have saved my Secret Key"));
@@ -54,7 +54,7 @@ describe("Onboarding", () => {
   it("prints the Emergency Kit with the Secret Key but never the password", async () => {
     const user = userEvent.setup();
     const printPage = vi.fn().mockResolvedValue(undefined);
-    const createAccount = vi.fn().mockResolvedValue("Q1-KIT-KEY");
+    const createAccount = vi.fn().mockResolvedValue("P365-KIT-KEY");
     renderWithClient(<Onboarding onDone={vi.fn()} />, fakeClient({ createAccount, printPage }));
     await user.type(screen.getByLabelText("Master password"), PW);
     await user.type(screen.getByLabelText("Repeat master password"), PW);
@@ -62,7 +62,7 @@ describe("Onboarding", () => {
     await user.click(await screen.findByRole("button", { name: "Print Emergency Kit" }));
     expect(printPage).toHaveBeenCalled();
     const kit = screen.getByLabelText("Emergency Kit");
-    expect(kit).toHaveTextContent("Q1-KIT-KEY");
+    expect(kit).toHaveTextContent("P365-KIT-KEY");
     expect(kit).not.toHaveTextContent(PW);
   });
 
@@ -71,7 +71,7 @@ describe("Onboarding", () => {
     const printPage = vi.fn().mockRejectedValue({ code: "internal", message: "no printer" });
     renderWithClient(
       <Onboarding onDone={vi.fn()} />,
-      fakeClient({ createAccount: vi.fn().mockResolvedValue("Q1-X"), printPage }),
+      fakeClient({ createAccount: vi.fn().mockResolvedValue("P365-X"), printPage }),
     );
     await user.type(screen.getByLabelText("Master password"), PW);
     await user.type(screen.getByLabelText("Repeat master password"), PW);

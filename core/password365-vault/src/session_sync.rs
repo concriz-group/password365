@@ -312,7 +312,7 @@ mod tests {
     /// Two devices sharing the same vaults: B is A restored from a backup.
     fn pair() -> (tempfile::TempDir, Session, Session) {
         let (dir, a) = new_session();
-        let backup = dir.path().join("a.qlbackup");
+        let backup = dir.path().join("a.p365backup");
         a.backup_to(&backup).unwrap();
         let b = Store::restore_from(
             &backup,
@@ -360,7 +360,7 @@ mod tests {
             Timestamp::now(),
         ))
         .unwrap();
-        let backup = dir.path().join("again.qlbackup");
+        let backup = dir.path().join("again.p365backup");
         a.backup_to(&backup).unwrap();
         let c = Store::restore_from(
             &backup,

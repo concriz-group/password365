@@ -373,3 +373,8 @@ Phase 8 audit & release — see `PLAN.md` §7.
   404. Screenshots from the App Store set; logo and icons from `branding/` and `icons/`.
   Tests: every language has English's keys and placeholders, every key the pages use exists.
   To do: hosting on Cloudflare Pages, a real contact address (`site/src/config.ts`).
+- **Visible Quillock names renamed** (2026-11-16): the Secret Key now reads `P365-XXXX-…`
+  (`Q1-` keys are the same keys and still parse; prefix not in the checksum or the derivation,
+  published AUK vectors unchanged but for the display text); backups are `.p365backup` and sync
+  files `.p365sync` (the desktop still opens `.qlbackup` / `.qlsync`, saves only the new names).
+  Internal labels (`quillock/v1/…`, `.qlvault`, `QLSYNC1`) stay: format v1, never shown.

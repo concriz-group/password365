@@ -10,3 +10,7 @@ lcov.info
 *.qlbackup
 *.qlsync
 node_modules/
+*.p365backup
+*.p365sync
+*.p365backup
+*.p365sync

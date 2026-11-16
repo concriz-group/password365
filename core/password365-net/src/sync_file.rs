@@ -1,4 +1,4 @@
-//! `.qlsync` files: sync without a network (USB stick, nearby sharing, e-mail to
+//! `.p365sync` files: sync without a network (USB stick, nearby sharing, e-mail to
 //! yourself).
 //!
 //! A file is written for **one** paired device. It is encrypted to that
@@ -33,7 +33,7 @@ use crate::{Result, frame};
 /// File signature.
 pub const MAGIC: &[u8; 8] = b"QLSYNC1\n";
 /// File extension.
-pub const EXTENSION: &str = "qlsync";
+pub const EXTENSION: &str = "p365sync";
 
 /// Writes the changes `peer` is missing into a file only it can read.
 pub fn export(session: &Session, peer: DeviceId) -> Result<Vec<u8>> {

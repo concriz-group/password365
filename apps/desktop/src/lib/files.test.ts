@@ -23,23 +23,25 @@ describe("nativeFilePicker", () => {
   });
 
   it("opens and saves Password365 backups with their own filter", async () => {
-    vi.mocked(open).mockResolvedValue("/old.qlbackup");
-    await expect(nativeFilePicker.openBackup()).resolves.toBe("/old.qlbackup");
+    vi.mocked(open).mockResolvedValue("/old.p365backup");
+    await expect(nativeFilePicker.openBackup()).resolves.toBe("/old.p365backup");
     expect(open).toHaveBeenLastCalledWith(
-      expect.objectContaining({ filters: [{ name: "Password365 backup", extensions: ["qlbackup"] }] }),
+      expect.objectContaining({ filters: [{ name: "Password365 backup", extensions: ["p365backup", "qlbackup"] }] }),
     );
-    vi.mocked(save).mockResolvedValue("/new.qlbackup");
-    await expect(nativeFilePicker.saveBackup("q.qlbackup")).resolves.toBe("/new.qlbackup");
-    expect(save).toHaveBeenLastCalledWith(expect.objectContaining({ defaultPath: "q.qlbackup" }));
+    vi.mocked(save).mockResolvedValue("/new.p365backup");
+    await expect(nativeFilePicker.saveBackup("q.p365backup")).resolves.toBe("/new.p365backup");
+    expect(save).toHaveBeenLastCalledWith(
+      expect.objectContaining({ defaultPath: "q.p365backup", filters: [{ name: "Password365 backup", extensions: ["p365backup"] }] }),
+    );
   });
 
   it("opens and saves sync files with their own filter", async () => {
-    vi.mocked(open).mockResolvedValue("/in.qlsync");
-    await expect(nativeFilePicker.openSyncFile()).resolves.toBe("/in.qlsync");
+    vi.mocked(open).mockResolvedValue("/in.p365sync");
+    await expect(nativeFilePicker.openSyncFile()).resolves.toBe("/in.p365sync");
     expect(open).toHaveBeenLastCalledWith(
-      expect.objectContaining({ filters: [{ name: "Password365 sync file", extensions: ["qlsync"] }] }),
+      expect.objectContaining({ filters: [{ name: "Password365 sync file", extensions: ["p365sync", "qlsync"] }] }),
     );
-    vi.mocked(save).mockResolvedValue("/out.qlsync");
-    await expect(nativeFilePicker.saveSyncFile("x.qlsync")).resolves.toBe("/out.qlsync");
+    vi.mocked(save).mockResolvedValue("/out.p365sync");
+    await expect(nativeFilePicker.saveSyncFile("x.p365sync")).resolves.toBe("/out.p365sync");
   });
 });

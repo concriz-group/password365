@@ -31,7 +31,7 @@ impl App<'_> {
         if let Some(key) = self.key_store().load()? {
             return Ok(key);
         }
-        let typed = self.prompter.secret("Secret Key (Q1-…)")?;
+        let typed = self.prompter.secret("Secret Key (P365-…)")?;
         Ok(AccountSecretKey::parse(typed.expose())?)
     }
 

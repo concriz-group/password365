@@ -165,7 +165,7 @@ fn sync_files_carry_changes_without_a_network() {
     let (mut a, mut b) = paired();
     let b_id = a.app.devices().unwrap()[0].id.clone();
     let dir = tempfile::tempdir().unwrap();
-    let path = dir.path().join("for-phone.qlsync");
+    let path = dir.path().join("for-phone.p365sync");
     std::fs::write(&path, b"old file").unwrap();
     assert_eq!(
         a.app.export_sync_file(&b_id, &path).unwrap(),
@@ -186,7 +186,7 @@ fn sync_files_carry_changes_without_a_network() {
 
     assert_eq!(
         b.app
-            .import_sync_file(&dir.path().join("missing.qlsync"))
+            .import_sync_file(&dir.path().join("missing.p365sync"))
             .unwrap_err()
             .code(),
         "io"
@@ -196,7 +196,7 @@ fn sync_files_carry_changes_without_a_network() {
         b.app.import_sync_file(&path).unwrap_err().code(),
         "validation"
     );
-    let blocked = dir.path().join("no-such-dir").join("x").join("f.qlsync");
+    let blocked = dir.path().join("no-such-dir").join("x").join("f.p365sync");
     std::fs::write(dir.path().join("no-such-dir"), b"a file, not a dir").unwrap();
     assert_eq!(
         a.app.export_sync_file(&b_id, &blocked).unwrap_err().code(),

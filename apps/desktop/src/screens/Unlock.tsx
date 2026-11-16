@@ -62,7 +62,7 @@ export function Unlock({ onUnlocked }: { onUnlocked: () => void }) {
               id="secret-key"
               value={secretKey}
               onChange={(e) => setSecretKey(e.target.value)}
-              placeholder="Q1-XXXX-XXXX-…"
+              placeholder="P365-XXXX-XXXX-…"
               spellCheck={false}
               autoComplete="off"
             />

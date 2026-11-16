@@ -35,7 +35,7 @@ export function Restore({ onDone, onBack, files = nativeFilePicker }: Props) {
       <h1>{t("restore.title")}</h1>
       <p>
         {t("restore.intro").split("{file}")[0]}
-        <code>.qlbackup</code>
+        <code>.p365backup</code>
         {t("restore.intro").split("{file}")[1]}
       </p>
       <form onSubmit={submit}>
@@ -53,7 +53,7 @@ export function Restore({ onDone, onBack, files = nativeFilePicker }: Props) {
             id="restore-secret-key"
             value={secretKey}
             onChange={(e) => setSecretKey(e.target.value)}
-            placeholder="Q1-XXXXXX-XXXXX-…"
+            placeholder="P365-XXXXXX-XXXXX-…"
             autoComplete="off"
             spellCheck={false}
           />

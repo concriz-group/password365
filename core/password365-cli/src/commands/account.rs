@@ -73,7 +73,7 @@ mod tests {
         init(&mut fx.app()).unwrap();
         let out = fx.take_output();
         assert!(out.contains("Your Secret Key:"));
-        assert!(out.contains("Q1-"));
+        assert!(out.contains("P365-"));
         assert!(fx.dir.path().join("store.qlvault").is_file());
         assert!(fx.dir.path().join("secret-key").is_file());
     }

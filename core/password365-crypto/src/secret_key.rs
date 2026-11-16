@@ -5,9 +5,10 @@
 //! master password during key derivation, a stolen vault file or backup
 //! cannot be brute-forced even when the master password is weak.
 //!
-//! Text format: `Q1-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` — prefix `Q1`
-//! (format version 1) followed by 26 base32 symbols of key material and
-//! 2 symbols of checksum to catch typos.
+//! Text format: `P365-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX` — prefix `P365`
+//! (Password365; format version 1) followed by 26 base32 symbols of key
+//! material and 2 symbols of checksum to catch typos. Keys written with the
+//! prefix `Q1` (the app's former name) are the same keys and still parse.
 
 use std::fmt;
 
@@ -19,7 +20,9 @@ use crate::{CryptoError, Result, base32, random};
 
 /// Number of random bytes in a Secret Key.
 pub const SECRET_KEY_LEN: usize = 16;
-const PREFIX: &str = "Q1";
+const PREFIX: &str = "P365";
+/// Earlier spelling of the same format (Quillock); accepted, never written.
+const OLD_PREFIX: &str = "Q1";
 const BODY_SYMBOLS: usize = 26;
 const CHECK_SYMBOLS: usize = 2;
 const GROUP: usize = 4;
@@ -62,11 +65,15 @@ impl AccountSecretKey {
     /// Parses the human-readable form. Tolerates case, spaces and missing hyphens.
     pub fn parse(text: &str) -> Result<Self> {
         let trimmed = text.trim_start();
-        let rest = trimmed
-            .get(..PREFIX.len())
-            .filter(|p| p.eq_ignore_ascii_case(PREFIX))
-            .map(|_| &trimmed[PREFIX.len()..])
-            .ok_or(CryptoError::InvalidSecretKey("must start with Q1"))?;
+        let rest = [PREFIX, OLD_PREFIX]
+            .iter()
+            .find(|prefix| {
+                trimmed
+                    .get(..prefix.len())
+                    .is_some_and(|p| p.eq_ignore_ascii_case(prefix))
+            })
+            .map(|prefix| &trimmed[prefix.len()..])
+            .ok_or(CryptoError::InvalidSecretKey("must start with P365"))?;
         let symbols = base32::canonicalize(rest)
             .map_err(|_| CryptoError::InvalidSecretKey("invalid characters"))?;
         if symbols.len() != BODY_SYMBOLS + CHECK_SYMBOLS {
@@ -119,8 +126,8 @@ mod tests {
     fn display_format_shape() {
         let key = AccountSecretKey::from_bytes([0; SECRET_KEY_LEN]);
         let text = key.to_display_string();
-        assert!(text.starts_with("Q1-"));
-        // Q1 + 7 groups of 4
+        assert!(text.starts_with("P365-"));
+        // P365 + 7 groups of 4
         assert_eq!(text.split('-').count(), 8);
         assert!(text.split('-').skip(1).all(|g| g.len() == 4));
     }
@@ -161,24 +168,36 @@ mod tests {
         let text = AccountSecretKey::generate()
             .unwrap()
             .to_display_string()
-            .replacen("Q1", "Q2", 1);
+            .replacen("P365", "P366", 1);
         assert_eq!(
             AccountSecretKey::parse(&text),
-            Err(CryptoError::InvalidSecretKey("must start with Q1"))
+            Err(CryptoError::InvalidSecretKey("must start with P365"))
+        );
+    }
+
+    #[test]
+    fn keys_written_with_the_former_prefix_are_the_same_keys() {
+        let key = AccountSecretKey::generate().unwrap();
+        let old = key.to_display_string().replacen("P365", "Q1", 1);
+        assert_eq!(AccountSecretKey::parse(&old).unwrap(), key);
+        assert_eq!(AccountSecretKey::parse(&old.to_lowercase()).unwrap(), key);
+        assert!(
+            key.to_display_string().starts_with("P365-"),
+            "only the new prefix is written"
         );
     }
 
     #[test]
     fn rejects_wrong_length() {
         assert_eq!(
-            AccountSecretKey::parse("Q1-ABCD"),
+            AccountSecretKey::parse("P365-ABCD"),
             Err(CryptoError::InvalidSecretKey("wrong length"))
         );
     }
 
     #[test]
     fn rejects_invalid_body_characters() {
-        let bad = format!("Q1{}{}", "*".repeat(BODY_SYMBOLS), "00");
+        let bad = format!("P365{}{}", "*".repeat(BODY_SYMBOLS), "00");
         assert_eq!(
             AccountSecretKey::parse(&bad),
             Err(CryptoError::InvalidSecretKey("invalid characters"))

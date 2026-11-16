@@ -4,9 +4,11 @@ Status: implemented in `core/password365-crypto` and `core/password365-vault`. A
 are normative; any other implementation (Swift/Kotlin/TS) must match them bit for bit.
 
 > **Format labels.** The app was called Quillock before 2026-11-13. The domain-separation labels
-> (`quillock/v1/…`), the Secret Key prefix `Q1-`, the `.qlvault` / `.qlsync` files and the
-> `QLSYNC1` magic keep that name on purpose: they are part of format v1, and changing them would
-> make existing vaults, Secret Keys and Emergency Kits unusable. Users never see them.
+> (`quillock/v1/…`), the `.qlvault` store file and the `QLSYNC1` magic keep that name on purpose:
+> they are part of format v1 and users never see them; changing them would make existing vaults
+> and pairings unusable. What users see was renamed on 2026-11-16, reading the old forms still:
+> the Secret Key prefix (`P365-`, formerly `Q1-`) and the file extensions (`.p365sync` and
+> `.p365backup`, formerly `.qlsync` and `.qlbackup`).
 
 ## 1. Primitives
 
@@ -21,8 +23,9 @@ are normative; any other implementation (Swift/Kotlin/TS) must match them bit fo
 ## 2. Secret Key
 
 - 16 random bytes.
-- Text: `Q1-` + Crockford base32 of the 16 bytes (26 symbols) + 2 check symbols, grouped by 4:
-  `Q1-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX`.
+- Text: `P365-` + Crockford base32 of the 16 bytes (26 symbols) + 2 check symbols, grouped by 4:
+  `P365-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX`. The prefix is a label only (not in the check symbols,
+  not in key derivation); `Q1-`, its spelling before 2026-11-16, is accepted when parsing.
 - Check symbols = Crockford base32 of the first 10 bits of
   `SHA-256("quillock/v1/secret-key-check" ‖ key)`.
 - Parsing is case-insensitive, ignores `-` and whitespace, maps `I`/`L`→`1` and `O`→`0`.

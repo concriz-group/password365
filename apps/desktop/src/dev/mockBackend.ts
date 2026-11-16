@@ -187,7 +187,7 @@ export function createMockBackend(): Invoke {
     if (command === "create_account") {
       initialized = true;
       unlocked = true;
-      return "Q1-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO";
+      return "P365-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO";
     }
     if (command === "unlock") {
       if (a.password !== "demo") return fail("wrong_credentials", "wrong master password or Secret Key (demo password: demo)");
@@ -206,7 +206,7 @@ export function createMockBackend(): Invoke {
       case "adopt_master_password":
         return null;
       case "reveal_secret_key":
-        return a.password === "demo" ? "Q1-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO" : fail("wrong_credentials", "wrong master password (demo: demo)");
+        return a.password === "demo" ? "P365-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO" : fail("wrong_credentials", "wrong master password (demo: demo)");
       case "change_master_password":
         return a.current === "demo" ? null : fail("wrong_credentials", "wrong master password (demo: demo)");
       case "lock":

@@ -76,7 +76,7 @@ fn account_lifecycle() {
     );
 
     let secret_key = fx.app.create_account(PW.into(), &PW.into()).unwrap();
-    assert!(secret_key.starts_with("Q1-"));
+    assert!(secret_key.starts_with("P365-"));
     assert_eq!(
         fx.app.status(),
         AppStatus {
@@ -136,7 +136,7 @@ fn unlock_on_new_device_with_typed_secret_key_remembers_it() {
     fx.app.lock();
     assert_eq!(
         fx.app
-            .unlock(PW.into(), Some("Q1-garbage"))
+            .unlock(PW.into(), Some("P365-garbage"))
             .unwrap_err()
             .code(),
         "validation"

@@ -187,7 +187,7 @@ signed with the account Ed25519 key.
 
 **Revocation** ✅ (`session_revoked.rs`): "Remove device" adds the device to a
 grow-only list (`Revoked` record, never shrinks). Every sync sends it right
-after `Hello` (`Message::Revoked`), and so does every `.qlsync` file. A device
+after `Hello` (`Message::Revoked`), and so does every `.p365sync` file. A device
 that receives it forgets those peers, so after one sync **every** paired device
 refuses the removed one, not only the device where it was removed. A revoked
 id can never be pinned again, and a peer that appears in the list cannot
@@ -201,7 +201,7 @@ own storage key, so a change made on one device must be applied on each of
 the others. The changing device records `PasswordChange { stamp (HLC),
 verifier }`, where the verifier is a header wrapping a throwaway key with the
 new credentials. Every sync sends the newest one after `Revoked`
-(`Message::Password`), and so do `.qlsync` files and join bundles. A device
+(`Message::Password`), and so do `.p365sync` files and join bundles. A device
 receiving a newer change marks it pending and shows "your master password was
 changed on X". The typed password is checked against the verifier, and then
 the local store is re-wrapped. Until then, that device still opens with the
@@ -224,7 +224,7 @@ the passwords of the important logins themselves, and the Remove screen says so.
 | LAN TCP (`password365-net`) | 2-byte length-prefixed frames carrying Noise `XX_25519_ChaChaPoly_BLAKE2s`, prologue `quillock/v1/sync`. Both static keys are exchanged, and the remote key must be a **pinned peer key**, otherwise `UnknownDevice` | ✅ `tcp::sync_to` / `tcp::accept_sync`, 20 s timeouts |
 | Fixed sync port **47480** on each desktop. Peers' addresses are remembered at pairing and refreshed on every incoming sync | | ✅ |
 | LAN discovery: mDNS `_password365._tcp` (`password365-net::discovery`) | Advertised only while the sync listener runs (unlocked **and** paired). The instance name is random each time and there are no TXT records, so no device name, account or key appears. **Sync now** tries the remembered address first, then browses for 3 s; a found address is used only if the handshake shows the pinned key of that device, and the new address is then remembered | ✅ |
-| `.qlsync` file (`password365-net::sync_file`) | `QLSYNC1\n` followed by frames carrying one Noise `X_25519_ChaChaPoly_BLAKE2s` message (prologue `quillock/v1/file`): **encrypted to one paired device's pinned key and authenticated by the sender's key**. Then `Hello`, `Items`…, `Done`. The import applies only a complete, authentic file from a paired sender, is idempotent, and records what the sender had (`have_from_you` → acked) | ✅ |
+| `.p365sync` file (`password365-net::sync_file`) | `QLSYNC1\n` followed by frames carrying one Noise `X_25519_ChaChaPoly_BLAKE2s` message (prologue `quillock/v1/file`): **encrypted to one paired device's pinned key and authenticated by the sender's key**. Then `Hello`, `Items`…, `Done`. The import applies only a complete, authentic file from a paired sender, is idempotent, and records what the sender had (`have_from_you` → acked) | ✅ |
 
 The pairing handshake (`XXpsk3`) and the sync handshake (`XX`) use different
 patterns and prologues, so one can never be used for the other.
@@ -267,7 +267,7 @@ NoFile(attachment id)               "I don't have that file either"
    An unrequested `FilePart`, or one larger than 50 MB plus overhead, ends
    the sync.
 
-`.qlsync` files carry the sender's attachment bytes as `FilePart`s after
+`.p365sync` files carry the sender's attachment bytes as `FilePart`s after
 `Done`, for the items in the file.
 
 After a sync, `changes_pending_for(peer)` is 0 on both sides. An idle sync is

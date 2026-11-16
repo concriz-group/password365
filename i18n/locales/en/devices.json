@@ -26,6 +26,6 @@
   "importLink": "import a sync file",
   "added": "{name} was added. It syncs whenever both devices are on the same network.",
   "add": "Add a device…",
-  "fileName": "Password365 sync for {name}.qlsync",
+  "fileName": "Password365 sync for {name}.p365sync",
   "fallbackName": "device"
 }

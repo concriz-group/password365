@@ -26,6 +26,6 @@
   "importLink": "importe um arquivo de sincronização",
   "added": "{name} foi adicionado. Ele sincroniza sempre que os dois dispositivos estiverem na mesma rede.",
   "add": "Adicionar um dispositivo…",
-  "fileName": "Sincronização Password365 para {name}.qlsync",
+  "fileName": "Sincronização Password365 para {name}.p365sync",
   "fallbackName": "dispositivo"
 }

@@ -182,7 +182,7 @@ impl AppService {
         })
     }
 
-    /// Writes a `.qlsync` file with the changes a paired device is missing;
+    /// Writes a `.p365sync` file with the changes a paired device is missing;
     /// only that device can read it. Returns how many items it carries.
     pub fn export_sync_file(&mut self, id: &str, path: &std::path::Path) -> Result<usize> {
         let id = parse_id::<DeviceId>(id)?;
@@ -194,7 +194,7 @@ impl AppService {
         Ok(carried)
     }
 
-    /// Reads a `.qlsync` file from a paired device and merges it.
+    /// Reads a `.p365sync` file from a paired device and merges it.
     pub fn import_sync_file(&mut self, path: &std::path::Path) -> Result<SyncResultDto> {
         let bytes = std::fs::read(path)
             .map_err(|e| AppError::Io(format!("cannot read {}: {e}", path.display())))?;

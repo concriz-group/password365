@@ -44,7 +44,7 @@ fn init_add_show_and_reject_wrong_password() {
         "{}",
         String::from_utf8_lossy(&init.stderr)
     );
-    assert!(stdout(&init).contains("Q1-"));
+    assert!(stdout(&init).contains("P365-"));
 
     let add = password365(
         dir.path(),

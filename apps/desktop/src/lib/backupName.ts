@@ -1,5 +1,5 @@
-/** Default backup file name, e.g. `password365-backup-2026-11-09.qlbackup` (local date). */
+/** Default backup file name, e.g. `password365-backup-2026-11-09.p365backup` (local date). */
 export function backupFileName(now = new Date()): string {
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `password365-backup-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.qlbackup`;
+  return `password365-backup-${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}.p365backup`;
 }

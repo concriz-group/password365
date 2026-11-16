@@ -19,7 +19,7 @@ use crate::{AppError, Result};
 /// Remind the user after this long without a backup.
 pub const BACKUP_DUE_AFTER_MS: i64 = 30 * 24 * 60 * 60 * 1000;
 /// Suggested file extension.
-pub const BACKUP_EXTENSION: &str = "qlbackup";
+pub const BACKUP_EXTENSION: &str = "p365backup";
 const LOG_FILE: &str = "backup-log.json";
 
 /// When the last backup was made (not secret, not a user setting).
@@ -133,7 +133,7 @@ mod tests {
             ..ItemInput::default()
         })
         .unwrap();
-        let file = old.path().join("backup.qlbackup");
+        let file = old.path().join("backup.p365backup");
         let info = app.export_backup(&file).unwrap();
         assert!(!info.due);
         assert!(info.last_backup_ms.is_some());
@@ -160,7 +160,7 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let mut app = service(dir.path(), false);
         let key = app.create_account(PW.into(), &PW.into()).unwrap();
-        let file = dir.path().join("b.qlbackup");
+        let file = dir.path().join("b.p365backup");
         app.export_backup(&file).unwrap();
         assert_eq!(
             app.restore_backup(&file, PW.into(), &key).unwrap_err(),
@@ -176,7 +176,7 @@ mod tests {
                 .code(),
             "validation"
         );
-        let junk = other.path().join("junk.qlbackup");
+        let junk = other.path().join("junk.p365backup");
         std::fs::write(&junk, b"junk").unwrap();
         let err = fresh.restore_backup(&junk, PW.into(), &key).unwrap_err();
         assert_eq!(err.code(), "validation");

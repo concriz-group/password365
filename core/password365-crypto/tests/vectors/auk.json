@@ -20,7 +20,7 @@
       "note": "ASCII password, minimum parameters",
       "password_utf8": "correct horse battery staple",
       "salt_hex": "2222222222222222222222222222222222222222222222222222222222222222",
-      "secret_key_display": "Q1-248H-248H-248H-248H-248H-248H-24AP",
+      "secret_key_display": "P365-248H-248H-248H-248H-248H-248H-24AP",
       "secret_key_hex": "11111111111111111111111111111111"
     },
     {
@@ -38,7 +38,7 @@
       "note": "password with a precomposed é: it is NFKD-normalised before Argon2id",
       "password_utf8": "café pass①",
       "salt_hex": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
-      "secret_key_display": "Q1-60RK-4CSM-6MV3-EE1S-C5H6-6S35-CRR8",
+      "secret_key_display": "P365-60RK-4CSM-6MV3-EE1S-C5H6-6S35-CRR8",
       "secret_key_hex": "30313233343536373839616263646566"
     },
     {
@@ -56,7 +56,7 @@
       "note": "desktop parameters (256 MiB, 3 passes, 4 lanes)",
       "password_utf8": "another long master password",
       "salt_hex": "0101010101010101010101010101010101010101010101010101010101010101",
-      "secret_key_display": "Q1-ZVZF-XZQY-ZVZF-XZQY-ZVZF-XZQY-ZRAZ",
+      "secret_key_display": "P365-ZVZF-XZQY-ZVZF-XZQY-ZVZF-XZQY-ZRAZ",
       "secret_key_hex": "fefefefefefefefefefefefefefefefe"
     }
   ],

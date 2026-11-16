@@ -8,10 +8,10 @@ export function fakeFiles(overrides: Partial<FilePicker> = {}): FilePicker {
     openAnyFile: vi.fn().mockResolvedValue("/tmp/passport.pdf"),
     saveFile: vi.fn().mockResolvedValue("/tmp/copy.pdf"),
     saveCsv: vi.fn().mockResolvedValue("/tmp/out.csv"),
-    openBackup: vi.fn().mockResolvedValue("/tmp/old.qlbackup"),
-    saveBackup: vi.fn().mockResolvedValue("/tmp/new.qlbackup"),
-    openSyncFile: vi.fn().mockResolvedValue("/tmp/in.qlsync"),
-    saveSyncFile: vi.fn().mockResolvedValue("/tmp/out.qlsync"),
+    openBackup: vi.fn().mockResolvedValue("/tmp/old.p365backup"),
+    saveBackup: vi.fn().mockResolvedValue("/tmp/new.p365backup"),
+    openSyncFile: vi.fn().mockResolvedValue("/tmp/in.p365sync"),
+    saveSyncFile: vi.fn().mockResolvedValue("/tmp/out.p365sync"),
     ...overrides,
   };
 }

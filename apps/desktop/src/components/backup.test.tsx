@@ -11,7 +11,7 @@ const DAY = 24 * 60 * 60 * 1000;
 
 describe("backups", () => {
   it("names backups by date", () => {
-    expect(backupFileName(new Date(2026, 0, 5))).toBe("password365-backup-2026-01-05.qlbackup");
+    expect(backupFileName(new Date(2026, 0, 5))).toBe("password365-backup-2026-01-05.p365backup");
   });
 
   it("settings show the last backup and export a new one", async () => {
@@ -22,8 +22,8 @@ describe("backups", () => {
     renderWithClient(<BackupSection files={files} />, client);
     expect(await screen.findByText("never")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Back up now…" }));
-    expect(files.saveBackup).toHaveBeenCalledWith(expect.stringMatching(/^password365-backup-.*\.qlbackup$/));
-    expect(exportBackup).toHaveBeenCalledWith("/tmp/new.qlbackup");
+    expect(files.saveBackup).toHaveBeenCalledWith(expect.stringMatching(/^password365-backup-.*\.p365backup$/));
+    expect(exportBackup).toHaveBeenCalledWith("/tmp/new.p365backup");
     expect(await screen.findByRole("status")).toHaveTextContent("Backup saved.");
     expect(screen.queryByText("never")).toBeNull();
   });

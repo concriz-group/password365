@@ -109,7 +109,7 @@ describe("devices and transfer in Portuguese", () => {
       "Sincronizado com Celular: 1 alteração recebida. 2 itens tinham duas senhas diferentes",
     );
     expect(screen.getByRole("button", { name: "importe um arquivo de sincronização" })).toBeInTheDocument();
-    expect(syncFileName("??")).toBe("Password365 sync for device.qlsync");
+    expect(syncFileName("??")).toBe("Password365 sync for device.p365sync");
   });
 
   it("translates the first-sync banner", async () => {

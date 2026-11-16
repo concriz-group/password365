@@ -42,10 +42,10 @@ describe("Unlock", () => {
 
     await user.type(screen.getByLabelText("Master password"), "pw");
     await user.click(screen.getByRole("button", { name: "Unlock" }));
-    await user.type(await screen.findByLabelText("Secret Key"), "Q1-KEY");
+    await user.type(await screen.findByLabelText("Secret Key"), "P365-KEY");
     await user.click(screen.getByRole("button", { name: "Unlock" }));
 
-    expect(unlock).toHaveBeenLastCalledWith("pw", "Q1-KEY");
+    expect(unlock).toHaveBeenLastCalledWith("pw", "P365-KEY");
     expect(onUnlocked).toHaveBeenCalledTimes(1);
   });
 
@@ -81,9 +81,9 @@ describe("Unlock — wrong passwords", () => {
     expect(screen.getByRole("button", { name: "Unlock" })).toBeEnabled();
     await user.click(screen.getByRole("button", { name: "Unlock" }));
     expect(await screen.findByText(/forgets the Secret Key/)).toBeInTheDocument();
-    await user.type(screen.getByLabelText("Secret Key"), "Q1-ABC");
+    await user.type(screen.getByLabelText("Secret Key"), "P365-ABC");
     await user.click(screen.getByRole("button", { name: "Unlock" }));
-    expect(unlock).toHaveBeenLastCalledWith("guess", "Q1-ABC");
+    expect(unlock).toHaveBeenLastCalledWith("guess", "P365-ABC");
     vi.useRealTimers();
   });
 });

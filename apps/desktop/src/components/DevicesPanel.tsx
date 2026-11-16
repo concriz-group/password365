@@ -23,7 +23,7 @@ interface Props {
   copy?: (text: string) => Promise<void>;
 }
 
-/** "Password365 sync for Alice's phone.qlsync" style default names, safe for any OS. */
+/** "Password365 sync for Alice's phone.p365sync" style default names, safe for any OS. */
 export function syncFileName(deviceName: string, t: Translate = englishT): string {
   const safe = deviceName.replace(/[^\p{L}\p{N} _-]/gu, "").trim() || t("devices.fallbackName");
   return t("devices.fileName", { name: safe });

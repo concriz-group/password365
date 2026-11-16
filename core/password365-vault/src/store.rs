@@ -302,7 +302,7 @@ mod tests {
     fn backup_restores_on_a_new_device() {
         let dir = tempfile::tempdir().unwrap();
         let (session, id) = store_with_item(&dir);
-        let backup = dir.path().join("out/b.qlbackup");
+        let backup = dir.path().join("out/b.p365backup");
         session.backup_to(&backup).unwrap();
         session.backup_to(&backup).unwrap(); // replacing an older backup is fine
         #[cfg(unix)]
@@ -311,7 +311,7 @@ mod tests {
             let mode = std::fs::metadata(&backup).unwrap().permissions().mode();
             assert_eq!(mode & 0o777, 0o600);
         }
-        assert!(!dir.path().join("out/b.qlbackup.tmp").exists());
+        assert!(!dir.path().join("out/b.p365backup.tmp").exists());
 
         let new_device = tempfile::tempdir().unwrap();
         let dest = new_device.path().join("data/restored.qlvault");
@@ -333,7 +333,7 @@ mod tests {
     fn restore_checks_credentials_before_writing() {
         let dir = tempfile::tempdir().unwrap();
         let (session, _) = store_with_item(&dir);
-        let backup = dir.path().join("b.qlbackup");
+        let backup = dir.path().join("b.p365backup");
         session.backup_to(&backup).unwrap();
         let dest = dir.path().join("restored.qlvault");
 

@@ -95,8 +95,8 @@ describe("DevicesPanel", () => {
   it("saves a sync file for a device", async () => {
     const { client, files, user } = setup({ exportSyncFile: vi.fn().mockResolvedValue(4) });
     await user.click(await screen.findByRole("button", { name: "Save a sync file for Phone" }));
-    expect(files.saveSyncFile).toHaveBeenCalledWith("Password365 sync for Phone.qlsync");
-    expect(client.exportSyncFile).toHaveBeenCalledWith("d1", "/tmp/out.qlsync");
+    expect(files.saveSyncFile).toHaveBeenCalledWith("Password365 sync for Phone.p365sync");
+    expect(client.exportSyncFile).toHaveBeenCalledWith("d1", "/tmp/out.p365sync");
     expect(await screen.findByRole("status")).toHaveTextContent("Saved 4 changes for Phone.");
   });
 
@@ -105,7 +105,7 @@ describe("DevicesPanel", () => {
       importSyncFile: vi.fn().mockResolvedValue({ device: phone, changed: 2, conflicts: [] }),
     });
     await user.click(await screen.findByRole("button", { name: "import a sync file" }));
-    expect(client.importSyncFile).toHaveBeenCalledWith("/tmp/in.qlsync");
+    expect(client.importSyncFile).toHaveBeenCalledWith("/tmp/in.p365sync");
     expect(await screen.findByRole("status")).toHaveTextContent("Imported from Phone: 2 changes received.");
     expect(onSynced).toHaveBeenCalled();
   });
@@ -250,8 +250,8 @@ describe("AddDevice", () => {
 
 describe("syncFileName", () => {
   it("keeps names readable and file-system safe", () => {
-    expect(syncFileName("Alice's phone")).toBe("Password365 sync for Alices phone.qlsync");
-    expect(syncFileName("Café ☕/../x")).toBe("Password365 sync for Café x.qlsync");
-    expect(syncFileName("///")).toBe("Password365 sync for device.qlsync");
+    expect(syncFileName("Alice's phone")).toBe("Password365 sync for Alices phone.p365sync");
+    expect(syncFileName("Café ☕/../x")).toBe("Password365 sync for Café x.p365sync");
+    expect(syncFileName("///")).toBe("Password365 sync for device.p365sync");
   });
 });

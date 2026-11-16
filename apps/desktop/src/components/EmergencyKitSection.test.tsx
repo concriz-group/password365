@@ -8,7 +8,7 @@ describe("EmergencyKitSection", () => {
   it("asks for the master password, prints the kit and forgets the Secret Key", async () => {
     let shownWhilePrinting = "";
     const client = fakeClient({
-      revealSecretKey: vi.fn().mockResolvedValue("Q1-ABC"),
+      revealSecretKey: vi.fn().mockResolvedValue("P365-ABC"),
       printPage: vi.fn(async () => {
         shownWhilePrinting = screen.getByLabelText("Emergency Kit").textContent ?? "";
       }),
@@ -20,7 +20,7 @@ describe("EmergencyKitSection", () => {
     await user.click(screen.getByRole("button", { name: "Print Emergency Kit" }));
     await waitFor(() => expect(client.printPage).toHaveBeenCalled());
     expect(client.revealSecretKey).toHaveBeenCalledWith("pw");
-    expect(shownWhilePrinting).toContain("Q1-ABC");
+    expect(shownWhilePrinting).toContain("P365-ABC");
     await waitFor(() => expect(screen.queryByLabelText("Emergency Kit")).not.toBeInTheDocument());
     expect(screen.getByLabelText("Master password")).toHaveValue("");
   });

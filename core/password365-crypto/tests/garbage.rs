@@ -12,7 +12,7 @@ proptest! {
     }
 
     #[test]
-    fn secret_key_like_text_never_panics(text in "Q1-[A-Z0-9 -]{0,60}") {
+    fn secret_key_like_text_never_panics(text in "(P365|Q1)-[A-Z0-9 -]{0,60}") {
         let _ = AccountSecretKey::parse(&text);
     }
 

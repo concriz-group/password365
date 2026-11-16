@@ -1,4 +1,4 @@
-//! `.qlsync` files between two paired stores.
+//! `.p365sync` files between two paired stores.
 
 use password365_net::NetError;
 use password365_net::sync_file::{MAGIC, export, import};
