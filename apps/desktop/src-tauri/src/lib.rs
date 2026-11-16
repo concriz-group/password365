@@ -93,6 +93,7 @@ fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         let _ = emitter.emit(state::STATUS_EVENT, ());
     };
     auto_lock::spawn(Arc::clone(&state), notify.clone());
+    attachment_files::spawn_cleaner(app.handle().clone(), Arc::clone(&state));
     bridge::start(Arc::clone(&state), notify);
     let synced = app.handle().clone();
     sync_service::start(Arc::clone(&state), move || {
