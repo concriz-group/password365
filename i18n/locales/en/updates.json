@@ -1,0 +1,13 @@
+{
+  "ask": "Keep Password365 up to date? It can ask password365.app once a day whether there is a new version. Nothing about you or your vault is sent.",
+  "askYes": "Check automatically",
+  "askNo": "Not now",
+  "available": "Password365 {version} is available.",
+  "install": "Install and restart",
+  "installing": "Installing…",
+  "automatic": "Check for updates automatically",
+  "automaticHint": "Once a day, Password365 asks password365.app whether there is a new version. Nothing about you or your vault is sent, and updates are installed only when you choose. Every update is signed, and Password365 refuses any that is not.",
+  "check": "Check for updates",
+  "checking": "Checking…",
+  "upToDate": "Password365 is up to date."
+}

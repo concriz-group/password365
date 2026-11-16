@@ -15,7 +15,7 @@ export function fakeClient(overrides: Partial<Record<keyof Client, unknown>> = {
     "generate", "importCsv", "exportCsv", "settings", "updateSettings", "printPage", "revealSecretKey", "pendingPasswordChange", "adoptMasterPassword",
     "exportBackup", "backupInfo", "restoreBackup",
     "thisDevice", "renameThisDevice", "devices", "removeDevice", "syncDevice",
-    "exportSyncFile", "importSyncFile",
+    "exportSyncFile", "importSyncFile", "updateCheck", "updateInstall",
     "inviteDevice", "waitForNewDevice", "approveNewDevice", "cancelPairing",
     "joinWithCode", "joinWait", "joinComplete",
   ] as const;

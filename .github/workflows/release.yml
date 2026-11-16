@@ -1,0 +1,142 @@
+name: Release
+
+# Builds the desktop installers for macOS, Windows and Linux and, for a tag,
+# publishes them as a GitHub release with the signed update bundles and
+# `latest.json`, which the app's updater reads from the newest release:
+#   https://github.com/remofurlanetto/password365/releases/latest/download/latest.json
+# File names stay the same from one release to the next (Password365-macOS.dmg…),
+# so the website links to releases/latest/download/<name>.
+#
+# Release: add the version's section to CHANGELOG.md, set the same version in
+# apps/desktop/src-tauri/tauri.conf.json, then  git tag v0.2.0 && git push origin v0.2.0.
+# Run from the Actions tab (no tag): builds the installers only, as workflow artifacts.
+#
+# Secrets (repository settings › Secrets and variables › Actions), see scripts/release/README.md:
+#   TAURI_SIGNING_PRIVATE_KEY, TAURI_SIGNING_PRIVATE_KEY_PASSWORD   the update signing key
+# Without them the installers are built but carry no update bundle.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.read.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: read
+        name: The app's version (and the tag, when there is one, must match it)
+        run: |
+          version=$(python3 -c "import json;print(json.load(open('apps/desktop/src-tauri/tauri.conf.json'))['version'])")
+          if [ "${GITHUB_REF_TYPE}" = tag ] && [ "${GITHUB_REF_NAME#v}" != "$version" ]; then
+            echo "tag ${GITHUB_REF_NAME} does not match the app's version $version" >&2; exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: version
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            target: universal-apple-darwin
+            rust_targets: aarch64-apple-darwin,x86_64-apple-darwin
+            bundles: app,dmg
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            rust_targets: x86_64-pc-windows-msvc
+            bundles: nsis,msi
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            rust_targets: x86_64-unknown-linux-gnu
+            bundles: appimage,deb
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+        working-directory: apps/desktop
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+      - name: Linux system libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
+            libxdo-dev libdbus-1-dev patchelf
+      - run: npm ci
+      - name: Build (and sign the update bundle when the key is set)
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        run: |
+          extra=()
+          if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ]; then
+            echo "::warning::no update signing key: building installers without update bundles"
+            extra=(--config '{"bundle":{"createUpdaterArtifacts":false}}')
+          fi
+          npx tauri build --target ${{ matrix.target }} --bundles ${{ matrix.bundles }} "${extra[@]}"
+      - name: Collect the installers and update bundles under stable names
+        run: |
+          out="$GITHUB_WORKSPACE/out"
+          mkdir -p "$out"
+          root="src-tauri/target/${{ matrix.target }}/release/bundle"
+          take() { for f in $(find "$root" -maxdepth 2 -type f -name "$1"); do cp "$f" "$out/$2"; done; }
+          take '*.dmg' Password365-macOS.dmg
+          take '*.app.tar.gz' Password365-macOS.app.tar.gz
+          take '*.app.tar.gz.sig' Password365-macOS.app.tar.gz.sig
+          take '*-setup.exe' Password365-Windows-setup.exe
+          take '*-setup.exe.sig' Password365-Windows-setup.exe.sig
+          take '*.msi' Password365-Windows.msi
+          take '*.AppImage' Password365-Linux.AppImage
+          take '*.AppImage.sig' Password365-Linux.AppImage.sig
+          take '*.deb' Password365-Linux.deb
+          ls -la "$out"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundles-${{ matrix.os }}
+          path: out/*
+          if-no-files-found: error
+
+  publish:
+    if: github.ref_type == 'tag'
+    needs: [version, build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      VERSION: ${{ needs.version.outputs.version }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: bundles
+          merge-multiple: true
+      - name: What changed (CHANGELOG.md) and the update manifest
+        run: |
+          python3 scripts/release/latest_json.py notes "$VERSION" CHANGELOG.md > notes.md
+          [ -s notes.md ] || { echo "CHANGELOG.md has no section for $VERSION" >&2; exit 1; }
+          if ls bundles/*.sig >/dev/null 2>&1; then
+            python3 scripts/release/latest_json.py manifest "$VERSION" bundles \
+              "https://github.com/${GITHUB_REPOSITORY}/releases/download/v$VERSION" CHANGELOG.md > bundles/latest.json
+            cat bundles/latest.json
+          else
+            echo "::warning::no signed update bundles: this release will not reach installed apps"
+          fi
+      - name: GitHub release
+        run: gh release create "v$VERSION" bundles/* --title "Password365 $VERSION" --notes-file notes.md --verify-tag

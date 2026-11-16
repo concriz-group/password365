@@ -279,13 +279,21 @@ pub fn open_attachment(
 
 /// Imports a CXF (credential exchange) file, passkeys included.
 #[tauri::command]
-pub fn import_cxf(state: State<'_, SharedState>, path: PathBuf, vault_id: Option<String>) -> Result<ImportSummary> {
+pub fn import_cxf(
+    state: State<'_, SharedState>,
+    path: PathBuf,
+    vault_id: Option<String>,
+) -> Result<ImportSummary> {
     state.with(|s| s.import_cxf(&path, vault_id.as_deref()))
 }
 
 /// Exports items to a CXF (credential exchange) file, plaintext.
 #[tauri::command]
-pub fn export_cxf(state: State<'_, SharedState>, path: PathBuf, vault_id: Option<String>) -> Result<usize> {
+pub fn export_cxf(
+    state: State<'_, SharedState>,
+    path: PathBuf,
+    vault_id: Option<String>,
+) -> Result<usize> {
     state.with(|s| s.export_cxf(&path, vault_id.as_deref()))
 }
 

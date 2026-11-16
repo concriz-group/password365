@@ -429,6 +429,13 @@ export function createMockBackend(): Invoke {
       case "hide_quick_access":
       case "open_in_app":
         return null;
+      // A pretend newer version, so the update screens can be looked at (?update=0.2.0).
+      case "update_check": {
+        const version = new URLSearchParams(location.search).get("update");
+        return version ? { version, notes: null } : null;
+      }
+      case "update_install":
+        return null;
       case "breached_passwords":
         return items.filter((i) => i.password === "another demo").map((i) => ({ item: { id: i.id, title: i.title, kind: i.kind }, count: 3 }));
       case "export_backup":

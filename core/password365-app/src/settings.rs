@@ -55,6 +55,20 @@ pub enum OpenTo {
     Watchtower,
 }
 
+/// Whether the app looks for a new version on password365.app (a network
+/// feature: off until the user answers the first-run question).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum UpdateChecks {
+    /// Not asked yet: no checks until the user chooses.
+    #[default]
+    Unasked,
+    /// Once at start and then daily.
+    Automatic,
+    /// Only when the user asks (Settings › About).
+    Manual,
+}
+
 /// User preferences (this device only).
 // Independent on/off choices, as the Settings screen shows them: not a state machine.
 #[allow(clippy::struct_excessive_bools)]
@@ -101,6 +115,8 @@ pub struct Settings {
     /// Country whose fields new identities use (`BR`), independent of the
     /// language; empty: the system's region; `ZZ`: the international fields.
     pub region: String,
+    /// Looking for new versions (Settings › About).
+    pub update_checks: UpdateChecks,
 }
 
 /// Quick Access's default shortcut: Shift+Cmd+Space on a Mac, like 1Password.
@@ -134,6 +150,7 @@ impl Default for Settings {
             shortcut_auto_type: DEFAULT_AUTO_TYPE.to_owned(),
             shortcut_lock: String::new(),
             region: String::new(),
+            update_checks: UpdateChecks::Unasked,
         }
     }
 }
@@ -234,6 +251,16 @@ mod tests {
         assert_eq!(s.auto_lock_minutes, DEFAULT_AUTO_LOCK_MINUTES);
         assert_eq!(s.auto_lock_ms(), 600_000);
         s.validate().unwrap();
+    }
+
+    #[test]
+    fn update_checks_are_off_until_the_user_answers() {
+        assert_eq!(Settings::default().update_checks, UpdateChecks::Unasked);
+        // Settings saved before the option existed load with it unasked.
+        let old: Settings = serde_json::from_str(r#"{"auto_lock_minutes": 5}"#).unwrap();
+        assert_eq!(old.update_checks, UpdateChecks::Unasked);
+        let on: Settings = serde_json::from_str(r#"{"update_checks": "automatic"}"#).unwrap();
+        assert_eq!(on.update_checks, UpdateChecks::Automatic);
     }
 
     #[test]

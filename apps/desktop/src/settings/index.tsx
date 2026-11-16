@@ -24,6 +24,7 @@ export const DEFAULT_SETTINGS: Settings = {
   shortcut_auto_type: "Ctrl+Alt+A",
   shortcut_lock: "",
   region: "",
+  update_checks: "unasked",
 };
 
 interface SettingsState {

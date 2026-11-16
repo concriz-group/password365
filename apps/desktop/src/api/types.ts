@@ -230,6 +230,8 @@ export interface Settings {
   shortcut_lock: string;
   /** Country for new identities ("BR"); "" = the system's region; "ZZ" = international fields. */
   region: string;
+  /** Looking for new versions (off until the first-run question is answered). */
+  update_checks: "unasked" | "automatic" | "manual";
 }
 
 /** A login whose password appeared in data breaches. */
@@ -343,3 +345,9 @@ export interface Profile {
 }
 
 export type ProfileKind = "identity" | "card";
+
+/** A newer version of Password365 (Settings › About, the update banner). */
+export interface UpdateInfo {
+  version: string;
+  notes: string | null;
+}

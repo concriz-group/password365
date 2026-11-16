@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { PaneResizer, useListWidth } from "../components/PaneResizer";
 import { BrandLockup } from "../components/BrandMark";
 import type { Subscription } from "../App";
-import type { AutoTypeChoice, Item, SshApproval } from "../api/types";
+import type { AutoTypeChoice, Item, SshApproval, UpdateInfo } from "../api/types";
 import { AutoTypeChooser } from "../components/AutoTypeChooser";
 import { useClient } from "../api/context";
 import { BackupReminder } from "../components/BackupReminder";
@@ -22,6 +22,7 @@ import { SettingsPanel } from "../components/SettingsPanel";
 import { Sidebar } from "../components/Sidebar";
 import { PasswordUpdateBanner } from "../components/PasswordUpdateBanner";
 import { SyncReminder } from "../components/SyncReminder";
+import { UpdateBanner } from "../components/UpdateBanner";
 import { Transfer } from "../components/Transfer";
 import { useVaultData } from "../hooks/useVaultData";
 import { useSettings } from "../settings";
@@ -56,10 +57,12 @@ interface Props {
   subscribeOpenItem?: Subscription<{ id: string | null }>;
   /** A program wants to sign with an SSH key. */
   subscribeSshApprove?: Subscription<SshApproval>;
+  /** An automatic check found a new version. */
+  subscribeUpdate?: Subscription<UpdateInfo>;
 }
 
 /** Unlocked vault: sidebar · item list · detail/editor/generator. */
-export function Main({ onLocked, subscribeSync, subscribeAutoType, subscribeOpenItem, subscribeSshApprove, copy: injectedCopy, files = nativeFilePicker }: Props) {
+export function Main({ onLocked, subscribeSync, subscribeAutoType, subscribeOpenItem, subscribeSshApprove, subscribeUpdate, copy: injectedCopy, files = nativeFilePicker }: Props) {
   const [listWidth, setListWidth] = useListWidth();
   const client = useClient();
   const t = useT();
@@ -169,6 +172,7 @@ export function Main({ onLocked, subscribeSync, subscribeAutoType, subscribeOpen
           </button>
         </span>
       </header>
+      <UpdateBanner subscribeUpdate={subscribeUpdate} />
       <BackupReminder files={files} hasItems={data.vaults.some((v) => v.item_count > 0)} />
       <PasswordUpdateBanner refreshKey={syncs} />
       <SyncReminder onOpenDevices={() => setPane({ kind: "devices" })} refreshKey={syncs} />

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
-import type { AppStatus, AutoTypeChoice, SshApproval } from "./api/types";
+import type { AppStatus, AutoTypeChoice, SshApproval, UpdateInfo } from "./api/types";
 import { useClient } from "./api/context";
 import { useT } from "./i18n";
 import { ErrorMessage } from "./components/ErrorMessage";
@@ -21,12 +21,14 @@ export function App({
   subscribeAutoType,
   subscribeOpenItem,
   subscribeSshApprove,
+  subscribeUpdate,
 }: {
   subscribeStatus?: StatusSubscription;
   subscribeSync?: StatusSubscription;
   subscribeAutoType?: Subscription<AutoTypeChoice>;
   subscribeOpenItem?: Subscription<{ id: string | null }>;
   subscribeSshApprove?: Subscription<SshApproval>;
+  subscribeUpdate?: Subscription<UpdateInfo>;
 }) {
   const client = useClient();
   const t = useT();
@@ -51,6 +53,7 @@ export function App({
       subscribeAutoType={subscribeAutoType}
       subscribeOpenItem={subscribeOpenItem}
       subscribeSshApprove={subscribeSshApprove}
+      subscribeUpdate={subscribeUpdate}
     />
   );
 }

@@ -39,6 +39,7 @@ interprocess = "2.4.8"
 arboard = { version = "3.7.0", default-features = false }
 password365-ssh = { path = "../../../core/password365-ssh" }
 tauri-plugin-window-state = "2.4.1"
+tauri-plugin-updater = "2.14.1"
 
 [dev-dependencies]
 password365-crypto = { path = "../../../core/password365-crypto", features = ["insecure-test-params"] }

@@ -19,6 +19,7 @@ mod state;
 mod state_registration_tests;
 mod sync_commands;
 mod sync_service;
+mod updates;
 
 use std::path::Path;
 use std::sync::Arc;
@@ -106,6 +107,8 @@ fn setup(app: &mut tauri::App) -> Result<(), Box<dyn std::error::Error>> {
         .unwrap_or_default();
     shortcuts::apply(app.handle(), &settings);
     app.manage(pairing_slots::SharedSlots::default());
+    app.manage(updates::Found::default());
+    updates::start(app.handle());
     Ok(())
 }
 
@@ -118,10 +121,13 @@ pub fn run() {
         // Reopens the window at the size and place it was closed with.
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(shortcuts::plugin())
         .plugin(autostart::plugin())
         .setup(setup)
         .invoke_handler(tauri::generate_handler![
+            updates::update_check,
+            updates::update_install,
             commands::status,
             commands::create_account,
             commands::unlock,

@@ -8,7 +8,7 @@ import { getCurrentWindow } from "@tauri-apps/api/window";
 import { App, type StatusSubscription, type Subscription } from "./App";
 import { QuickAccess } from "./screens/QuickAccess";
 import { createClient, type Invoke } from "./api/client";
-import type { AutoTypeChoice, SshApproval } from "./api/types";
+import type { AutoTypeChoice, SshApproval, UpdateInfo } from "./api/types";
 import { ClientProvider } from "./api/context";
 import { I18nProvider } from "./i18n";
 import { SettingsProvider } from "./settings";
@@ -61,6 +61,8 @@ const subscribeSync = subscribeTo("sync-completed");
 const subscribeOpenItem = subscribeWithPayload<{ id: string | null }>("open-item");
 /** Backend emits `ssh-approve` when a program wants to sign with an SSH key. */
 const subscribeSshApprove = subscribeWithPayload<SshApproval>("ssh-approve");
+/** Backend emits `update-available` when an automatic check found a new version. */
+const subscribeUpdate = subscribeWithPayload<UpdateInfo>("update-available");
 /** Backend emits `quick-access-shown` each time the Quick Access window appears. */
 const subscribeShown = subscribeTo("quick-access-shown");
 
@@ -83,6 +85,7 @@ if (root) {
                 subscribeAutoType={subscribeAutoType}
                 subscribeOpenItem={subscribeOpenItem}
                 subscribeSshApprove={subscribeSshApprove}
+                subscribeUpdate={subscribeUpdate}
               />
             )}
           </I18nProvider>

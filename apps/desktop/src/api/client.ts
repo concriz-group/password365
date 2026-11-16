@@ -29,6 +29,7 @@ import type {
   TotpCode,
   Vault,
   Watchtower,
+  UpdateInfo,
 } from "./types";
 
 /** Error returned by the backend: `{ code, message }`. */
@@ -120,6 +121,10 @@ export function createClient(invoke: Invoke) {
     exportCxf: (path: string, vaultId?: string) => call<number>("export_cxf", { path, vaultId: vaultId ?? null }),
     removePasskey: (id: string) => call<void>("remove_passkey", { id }),
     removeAttachment: (id: string, attachmentId: string) => call<void>("remove_attachment", { id, attachmentId }),
+    /** Asks password365.app for a newer version (null: up to date). */
+    updateCheck: () => call<UpdateInfo | null>("update_check"),
+    /** Installs the version found by the last check and restarts the app. */
+    updateInstall: () => call<void>("update_install"),
     breachedPasswords: () => call<Breached[]>("breached_passwords"),
     sshKeys: () => call<SshKeys>("ssh_keys"),
     /** The user's answer to an SSH key approval prompt. */
