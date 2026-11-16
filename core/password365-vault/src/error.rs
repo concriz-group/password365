@@ -47,6 +47,10 @@ pub enum VaultError {
     /// A paired device sent something the sync protocol does not allow.
     #[error("sync failed: {0}")]
     SyncProtocol(&'static str),
+    /// The other device's changes are dated in the future (its clock is
+    /// ahead): taking them would let them win every conflict until then.
+    #[error("the other device's clock is ahead of this one's: check the date and time on both")]
+    ClockAhead,
     /// A file chosen for import is not a Password365 sync file.
     #[error("this file is not a Password365 sync file, or it is damaged")]
     NotASyncFile,

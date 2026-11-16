@@ -95,6 +95,7 @@ impl From<VaultError> for AppError {
             | VaultError::NotABackup
             | VaultError::NotABundle
             | VaultError::NotASyncFile
+            | VaultError::ClockAhead
             | VaultError::RevokedDevice => Self::Validation(e.to_string()),
             VaultError::Io(io) => Self::Io(io.to_string()),
             other => Self::Internal(other.to_string()),

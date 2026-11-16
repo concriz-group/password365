@@ -38,6 +38,7 @@ pub struct PeerSync {
     max_message: usize,
     hello_received: bool,
     inbox: Vec<ItemState>,
+    pieces: crate::wire::ItemPieces,
     last_sent_done: Option<u64>,
     acked_by_peer: Option<u64>,
     done_handled: bool,
@@ -74,6 +75,7 @@ impl PeerSync {
             max_message,
             hello_received: false,
             inbox: Vec::new(),
+            pieces: crate::wire::ItemPieces::default(),
             last_sent_done: None,
             acked_by_peer: None,
             done_handled: false,
@@ -114,6 +116,11 @@ impl PeerSync {
                 self.inbox.extend(items.into_states().unwrap_or_default());
                 Ok(Vec::new())
             }
+            Message::ItemPart { last, bytes } => {
+                self.require_hello()?;
+                self.inbox.extend(self.pieces.add(last, &bytes)?);
+                Ok(Vec::new())
+            }
             Message::Hello {
                 device_id,
                 have_from_you,
@@ -144,6 +151,9 @@ impl PeerSync {
             }
             Message::Done { seq } => {
                 self.require_hello()?;
+                if self.pieces.waiting() {
+                    return Err(VaultError::SyncProtocol("an item was cut short"));
+                }
                 let received = std::mem::take(&mut self.inbox);
                 let peer = session.peer(self.peer)?.clone();
                 let report = session.apply_changes_from(&peer, &received)?;
@@ -441,6 +451,33 @@ mod tests {
             .unlock(&credentials("master"))
             .unwrap();
         assert_eq!(a.peer(b.device_id()).unwrap().vaults, Some(vec![personal]));
+    }
+
+    #[test]
+    fn an_item_larger_than_a_message_still_syncs() {
+        let (_dir, mut a, mut b) = paired();
+        let id = add(&mut a, "Big note");
+        let mut item = a.item(id).unwrap();
+        item.details.notes = Some("x".repeat(20 * LIMIT).into());
+        item.touch(Timestamp::now());
+        a.save_item(&item).unwrap();
+        add(&mut a, "Small");
+        converse(&mut a, &mut b);
+        let notes = b.item(id).unwrap().details.notes.unwrap();
+        assert_eq!(notes.expose().len(), 20 * LIMIT);
+        assert_eq!(titles(&b).len(), 2);
+    }
+
+    #[test]
+    fn pieces_of_an_item_must_be_complete_and_not_too_large() {
+        let mut pieces = crate::wire::ItemPieces::default();
+        assert!(pieces.add(false, &[1, 2, 3]).unwrap().is_none());
+        assert!(pieces.waiting());
+        assert!(pieces.add(true, &[4]).is_err(), "garbage is not an item");
+        let mut pieces = crate::wire::ItemPieces::default();
+        let big = vec![0; crate::wire::MAX_ITEM_BYTES];
+        assert!(pieces.add(false, &big).unwrap().is_none());
+        assert!(pieces.add(false, &[0]).is_err());
     }
 
     #[test]

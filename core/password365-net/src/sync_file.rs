@@ -116,6 +116,7 @@ pub fn import(session: &mut Session, bytes: &[u8]) -> Result<SyncOutcome> {
         return Err(VaultError::SyncProtocol("sync file sender mismatch").into());
     }
     let mut states = Vec::new();
+    let mut pieces = password365_vault::wire::ItemPieces::default();
     let mut revoked = Vec::new();
     let mut password = None;
     let done = loop {
@@ -123,6 +124,7 @@ pub fn import(session: &mut Session, bytes: &[u8]) -> Result<SyncOutcome> {
             items @ (Message::Items(_) | Message::ItemsV2(_) | Message::ItemsV1(_)) => {
                 states.extend(items.into_states().unwrap_or_default());
             }
+            Message::ItemPart { last, bytes } => states.extend(pieces.add(last, &bytes)?),
             Message::Revoked(ids) if ids.contains(&sender) => {
                 return Err(VaultError::RevokedDevice.into());
             }

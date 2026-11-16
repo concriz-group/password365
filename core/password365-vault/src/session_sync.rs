@@ -15,6 +15,9 @@ use crate::session_peers::DEVICE_KEYS_RECORD_ID;
 use crate::sync_meta::{self, DEVICE_RECORD_ID, item_sync_record_id};
 use crate::{Result, VaultError};
 
+/// How far ahead of this device's clock a received change may be dated.
+pub const MAX_FUTURE_MS: i64 = 60 * 60 * 1000;
+
 /// What applying a peer's changes did.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct ApplyReport {
@@ -116,9 +119,18 @@ impl Session {
         Ok(report)
     }
 
-    /// Merges states received from a peer, atomically.
+    /// Merges states received from a peer, atomically. Refuses all of them
+    /// if any is dated more than [`MAX_FUTURE_MS`] ahead of this device's
+    /// clock (nothing is merged or acknowledged, so nothing is lost: the sync
+    /// works again once the clocks agree).
     pub fn apply_changes(&mut self, incoming: &[ItemState]) -> Result<ApplyReport> {
         let now = Timestamp::now().as_millis();
+        if incoming
+            .iter()
+            .any(|s| s.latest().wall_ms > now.saturating_add(MAX_FUTURE_MS))
+        {
+            return Err(VaultError::ClockAhead);
+        }
         let mut report = ApplyReport::default();
         let mut pending = Vec::new();
         for remote in incoming {
@@ -387,6 +399,28 @@ mod tests {
 
     fn titles(s: &Session) -> Vec<String> {
         s.items().iter().map(|i| i.overview.title.clone()).collect()
+    }
+
+    #[test]
+    fn changes_dated_in_the_future_are_refused_whole() {
+        let (_dir, mut a, mut b) = pair();
+        add(&mut a, "Mail");
+        add(&mut a, "Bank");
+        let mut changes = a.changes_since(None).unwrap();
+        if let ItemState::Live(item) = &mut changes[0] {
+            item.fields.vault_id.stamp.wall_ms = Timestamp::now().as_millis() + 2 * MAX_FUTURE_MS;
+        }
+        assert!(matches!(
+            b.apply_changes(&changes),
+            Err(VaultError::ClockAhead)
+        ));
+        assert!(titles(&b).is_empty(), "nothing merged");
+        // A few minutes of difference is fine.
+        let mut changes = a.changes_since(None).unwrap();
+        if let ItemState::Live(item) = &mut changes[0] {
+            item.fields.vault_id.stamp.wall_ms = Timestamp::now().as_millis() + 5 * 60 * 1000;
+        }
+        assert_eq!(b.apply_changes(&changes).unwrap().changed.len(), 2);
     }
 
     #[test]

@@ -57,6 +57,45 @@ pub enum Message {
     },
     /// "I do not have this attachment's bytes either."
     NoFile(password365_model::AttachmentId),
+    /// A piece of one item state too large for an `Items` message (its
+    /// encoding, in order; `last` ends it). Older devices stop the sync.
+    ItemPart {
+        /// `true` on the final piece.
+        last: bool,
+        /// The bytes.
+        bytes: Vec<u8>,
+    },
+}
+
+/// Largest item state accepted in pieces (encoded).
+pub const MAX_ITEM_BYTES: usize = 8 * 1024 * 1024;
+
+/// Puts an item state sent as `ItemPart`s back together.
+#[derive(Debug, Default)]
+pub struct ItemPieces(Vec<u8>);
+
+impl ItemPieces {
+    /// Adds a piece; returns the item state once the last piece arrived.
+    pub fn add(&mut self, last: bool, bytes: &[u8]) -> Result<Option<ItemState>> {
+        if self.0.len() + bytes.len() > MAX_ITEM_BYTES {
+            self.0.clear();
+            return Err(VaultError::SyncProtocol("item too large"));
+        }
+        self.0.extend_from_slice(bytes);
+        if !last {
+            return Ok(None);
+        }
+        let whole = Zeroizing::new(std::mem::take(&mut self.0));
+        codec::decode(&whole)
+            .map(Some)
+            .map_err(|_| VaultError::SyncProtocol("unreadable item"))
+    }
+
+    /// `true` while a piece is missing.
+    #[must_use]
+    pub fn waiting(&self) -> bool {
+        !self.0.is_empty()
+    }
 }
 
 /// Room left for the rest of a `FilePart` message (tag, id, flag, length).
@@ -147,9 +186,29 @@ pub fn chunk(states: Vec<ItemState>, limit: usize) -> Result<Vec<Message>> {
     let mut batch = Vec::new();
     let mut size = 0;
     for state in states {
-        let len = codec::encode(&state)?.len();
+        let encoded = codec::encode(&state)?;
+        let len = encoded.len();
         if len > budget {
-            return Err(VaultError::SyncProtocol("item too large to send"));
+            // Too large for one message (long notes, big keys): in pieces.
+            if !batch.is_empty() {
+                out.push(Message::Items(std::mem::take(&mut batch)));
+                size = 0;
+            }
+            if len > MAX_ITEM_BYTES {
+                return Err(VaultError::SyncProtocol("item too large to send"));
+            }
+            let piece = limit.saturating_sub(FILE_PART_OVERHEAD).max(1);
+            let count = encoded.len().div_ceil(piece);
+            out.extend(
+                encoded
+                    .chunks(piece)
+                    .enumerate()
+                    .map(|(i, bytes)| Message::ItemPart {
+                        last: i + 1 == count,
+                        bytes: bytes.to_vec(),
+                    }),
+            );
+            continue;
         }
         if size + len > budget {
             out.push(Message::Items(std::mem::take(&mut batch)));
@@ -273,10 +332,20 @@ mod tests {
     }
 
     #[test]
-    fn an_item_bigger_than_a_message_is_an_error() {
-        assert!(matches!(
-            chunk(vec![state("x")], 20),
-            Err(VaultError::SyncProtocol(_))
-        ));
+    fn an_item_bigger_than_a_message_goes_in_pieces() {
+        let messages = chunk(vec![state("a"), state("x"), state("b")], 120).unwrap();
+        let mut pieces = ItemPieces::default();
+        let mut states = Vec::new();
+        for m in messages {
+            match m {
+                Message::Items(s) => states.extend(s),
+                Message::ItemPart { last, bytes } => {
+                    states.extend(pieces.add(last, &bytes).unwrap());
+                }
+                other => panic!("{other:?}"),
+            }
+        }
+        assert_eq!(states.len(), 3);
+        assert!(!pieces.waiting());
     }
 }

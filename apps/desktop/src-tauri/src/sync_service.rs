@@ -123,6 +123,7 @@ fn run(state: &Arc<AppState>, port: u16, notify: &dyn Fn()) {
     let mut listener: Option<TcpListener> = None;
     let mut _advertiser: Option<Advertiser> = None;
     let rounds = Rounds::default();
+    let incoming = Incoming::default();
     let mut last_auto = Instant::now();
     let mut pushes = PushTracker::default();
     loop {
@@ -151,17 +152,54 @@ fn run(state: &Arc<AppState>, port: u16, notify: &dyn Fn()) {
             rounds.start(state);
             pushes.synced(seq);
         }
+        if incoming.take_changed() {
+            notify();
+        }
         if let Some(l) = &listener
             && let Ok((stream, from)) = l.accept()
-            && serve(state, stream, from).is_ok_and(|r| r.changed > 0)
         {
-            notify();
+            incoming.serve(state, stream, from);
         }
         if last_auto.elapsed() >= AUTO_SYNC_INTERVAL {
             rounds.start(state);
             last_auto = Instant::now();
         }
         thread::sleep(POLL);
+    }
+}
+
+/// Most incoming connections served at once (more are closed at once).
+const MAX_INCOMING: usize = 4;
+
+/// Incoming syncs, each on its own thread, so one slow or silent connection
+/// never stops the others (or this loop).
+#[derive(Default)]
+struct Incoming {
+    running: Arc<std::sync::atomic::AtomicUsize>,
+    changed: Arc<AtomicBool>,
+}
+
+impl Incoming {
+    fn serve(&self, state: &Arc<AppState>, stream: TcpStream, from: SocketAddr) {
+        if self.running.fetch_add(1, Ordering::AcqRel) >= MAX_INCOMING {
+            self.running.fetch_sub(1, Ordering::AcqRel);
+            return; // dropped: closes the connection
+        }
+        let (state, running, changed) = (
+            Arc::clone(state),
+            Arc::clone(&self.running),
+            Arc::clone(&self.changed),
+        );
+        thread::spawn(move || {
+            if serve(&state, stream, from).is_ok_and(|r| r.changed > 0) {
+                changed.store(true, Ordering::Release);
+            }
+            running.fetch_sub(1, Ordering::AcqRel);
+        });
+    }
+
+    fn take_changed(&self) -> bool {
+        self.changed.swap(false, Ordering::AcqRel)
     }
 }
 
