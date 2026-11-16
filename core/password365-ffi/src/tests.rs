@@ -426,6 +426,70 @@ mod joining {
         phone.join_cancel();
         assert!(!phone.status().initialized);
     }
+    /// A Mac and a phone that joined its account (the phone's id on the Mac).
+    fn paired(dir: &tempfile::TempDir) -> (AppService, Arc<Password365>, String) {
+        let mut mac = mac(dir);
+        let personal = mac.vaults().unwrap()[0].id.clone();
+        let host = mac.start_pairing(LOCALHOST).unwrap();
+        let code = host.invite_code();
+        let inviter = thread::spawn(move || {
+            let mut pairing = host.accept().unwrap();
+            mac.send_pairing_bundle(&mut pairing, &[personal]).unwrap();
+            let peer = pairing.wait_joined(tcp::SYNC_PORT).unwrap();
+            let phone = mac.pin_device(peer).unwrap();
+            (mac, phone)
+        });
+        let phone = vault(dir, Arc::new(MemoryKeeper::default()));
+        phone.join_connect(code).unwrap();
+        phone.join_wait().unwrap();
+        phone.join_wait().unwrap();
+        phone.join_finish(PASSWORD.into(), "iPhone".into()).unwrap();
+        let (mac, phone_on_mac) = inviter.join().unwrap();
+        (mac, phone, phone_on_mac.id)
+    }
+
+    #[test]
+    fn sync_files_carry_changes_both_ways() {
+        let dir = tempfile::tempdir().unwrap();
+        let (mut mac, phone, phone_id) = paired(&dir);
+        let to_phone = dir.path().join("for the phone.p365sync");
+        mac.export_sync_file(&phone_id, &to_phone).unwrap();
+        let got = phone
+            .import_sync_file(to_phone.display().to_string())
+            .unwrap();
+        assert_eq!((got.device.as_str(), got.changed), ("Mac", 1));
+        assert_eq!(phone.items(String::new()).unwrap()[0].title, "From the Mac");
+
+        phone
+            .create_login(
+                "From the phone".into(),
+                String::new(),
+                "x".into(),
+                String::new(),
+            )
+            .unwrap();
+        let mac_id = phone.devices().unwrap()[0].id.clone();
+        let to_mac = dir.path().join("for the Mac.p365sync");
+        let carried = phone
+            .export_sync_file(mac_id, to_mac.display().to_string())
+            .unwrap();
+        assert!(carried >= 1);
+        mac.import_sync_file(&to_mac).unwrap();
+        assert_eq!(mac.items("From the phone", None).unwrap().len(), 1);
+
+        let junk = dir.path().join("junk.p365sync");
+        std::fs::write(&junk, b"not a sync file").unwrap();
+        assert!(phone.import_sync_file(junk.display().to_string()).is_err());
+        assert!(
+            phone
+                .export_sync_file(
+                    "not a device".into(),
+                    dir.path().join("x").display().to_string()
+                )
+                .is_err()
+        );
+    }
+
     /// The Mac listens on a free port and answers one sync.
     fn serve_once(mut mac: AppService) -> (std::net::SocketAddr, thread::JoinHandle<AppService>) {
         let listener = TcpListener::bind((LOCALHOST, 0)).unwrap();

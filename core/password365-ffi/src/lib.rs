@@ -26,6 +26,7 @@ mod editing;
 pub use autofill::{FillValues, LoginIdentity, PasskeyCreated, PasskeyIdentity, PasskeySignIn};
 mod pairing;
 mod security;
+mod sync_files;
 pub use editing::{Category, FieldDraft, Generated, ItemDraft, Recipe, TemplateField};
 pub use pairing::{Device, SyncSummary};
 pub use security::MobileSettings;
