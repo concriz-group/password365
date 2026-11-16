@@ -35,3 +35,10 @@ where the language has them):
 ```json
 { "items_one": "{count} item", "items_other": "{count} items" }
 ```
+
+## The website
+
+The texts of password365.app live apart from the apps' catalogs, in `site/<tag>.json` (one file per
+language, nested keys), so the apps do not carry them. A new language is a new file there plus
+one line in `site/src/i18n.ts` (`languages`, with its URL prefix). `site/tests` checks that every
+file has English's keys and placeholders.

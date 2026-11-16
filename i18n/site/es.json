@@ -1,0 +1,243 @@
+{
+  "meta": {
+    "lang": "es",
+    "name": "Español",
+    "title": "Password365 — No es tu servidor, no son tus contraseñas.",
+    "description": "Contraseñas, llaves de acceso y códigos de verificación en una caja fuerte cifrada que se queda en tus dispositivos. Sin cuenta, sin nube: tu ordenador y tu móvil se sincronizan directamente."
+  },
+  "nav": {
+    "features": "Funciones",
+    "security": "Seguridad",
+    "download": "Descargar",
+    "support": "Soporte",
+    "language": "Idioma",
+    "menu": "Menú",
+    "skip": "Ir al contenido"
+  },
+  "hero": {
+    "eyebrow": "Sincronizado entre tus dispositivos. Guardado en el servidor de nadie.",
+    "title": "No es tu servidor, no son tus contraseñas.",
+    "lead": "Password365 mantiene tus contraseñas, llaves de acceso y códigos de verificación sincronizados entre tu ordenador, tu móvil y tu tableta — sin ponerlos nunca en un servidor que no controlas. Sin cuenta, sin nube.",
+    "primary": "Descargar para Mac",
+    "secondary": "Mira cómo funciona",
+    "note": "Gratis en tu ordenador. iPhone y iPad muy pronto."
+  },
+  "pillars": {
+    "noAccount": "Sin servidores en la nube",
+    "noCloud": "Sincroniza entre tus dispositivos",
+    "noTracking": "Sin rastreo",
+    "encrypted": "Cifrado de extremo a extremo"
+  },
+  "why": {
+    "title": "¿Por qué no en la nube?",
+    "lead": "Los gestores de contraseñas en la nube también cifran tu caja fuerte. Pero la guardan — junto con la de millones de personas — en sus servidores.",
+    "target": {
+      "title": "Un objetivo, millones de cajas fuertes",
+      "text": "Un servidor con las cajas fuertes cifradas de todo el mundo merece ser atacado. Cuando uno es vulnerado, los atacantes se llevan las cajas fuertes y pueden seguir intentando adivinar las contraseñas todo el tiempo que quieran."
+    },
+    "control": {
+      "title": "Tu copia, tus reglas",
+      "text": "Con Password365 tu caja fuerte vive solo en tus dispositivos, sincronizada entre ellos. No hay copia en el servidor de nadie que pueda ser robada, filtrada o bloqueada."
+    },
+    "offline": {
+      "title": "Funciona sin internet",
+      "text": "Ninguna caída del servicio, cuenta perdida o cambio de condiciones puede dejarte sin acceso a tus propias contraseñas."
+    },
+    "quote": "En el mundo cripto se dice: si no son tus llaves, no son tus monedas. Con las contraseñas pasa lo mismo: si viven en el servidor de otra empresa, solo están tan seguras como ese servidor."
+  },
+  "features": {
+    "title": "Todo lo que debe hacer un gestor de contraseñas",
+    "lead": "Las funciones que esperas, en tus propios dispositivos.",
+    "autofill": {
+      "title": "Rellena por ti",
+      "text": "Usuarios, contraseñas y códigos de verificación rellenados en sitios web y apps, desde la extensión del navegador y con el Autorrelleno en iPhone y iPad."
+    },
+    "passkeys": {
+      "title": "Llaves de acceso (passkeys)",
+      "text": "Crea y usa llaves de acceso en cualquier sitio que las admita, y guárdalas con el resto de tus inicios de sesión."
+    },
+    "totp": {
+      "title": "Códigos de dos factores integrados",
+      "text": "Añade la clave de configuración una vez y Password365 muestra el código y lo rellena junto con tu contraseña."
+    },
+    "watchtower": {
+      "title": "Watchtower",
+      "text": "Encuentra contraseñas débiles, repetidas y antiguas, e inicios de sesión que podrían usar verificación en dos pasos. Todo comprobado en tu dispositivo."
+    },
+    "categories": {
+      "title": "Más que contraseñas",
+      "text": "Tarjetas de crédito, identidades, notas seguras, cuentas bancarias, pasaportes, Wi-Fi, claves SSH, documentos y más de 20 categorías, con los campos adecuados para tu país."
+    },
+    "generator": {
+      "title": "Contraseñas seguras al instante",
+      "text": "Contraseñas aleatorias, frases de contraseña fáciles de escribir y PIN, generados al momento."
+    },
+    "quickAccess": {
+      "title": "Acceso rápido",
+      "text": "Un atajo de teclado abre tu caja fuerte encima de cualquier app de tu ordenador: busca, copia y listo."
+    },
+    "attachments": {
+      "title": "Archivos y documentos",
+      "text": "Adjunta escaneos y archivos a cualquier elemento, cifrados como todo lo demás."
+    },
+    "ssh": {
+      "title": "Para desarrolladores",
+      "text": "Un agente SSH para las claves de tu caja fuerte, y escritura automática para apps que no admiten el relleno."
+    }
+  },
+  "sync": {
+    "title": "Todos tus dispositivos sincronizados. Sin nube en medio.",
+    "lead": "No es una caja fuerte offline que tengas que copiar de un lado a otro: añade todos los ordenadores, móviles y tabletas que quieras y se mantienen al día solos. Se comunican directamente, en tu propia red — tu caja fuerte nunca pasa por un servidor, ni nuestro ni de nadie.",
+    "step1": {
+      "title": "Conecta una vez",
+      "text": "Escanea con tu iPhone el código QR que aparece en tu ordenador. Esa es toda la configuración."
+    },
+    "step2": {
+      "title": "Cambia en cualquier dispositivo",
+      "text": "Añade o edita elementos en cualquier dispositivo. Cada cambio se cifra antes de salir de él."
+    },
+    "step3": {
+      "title": "Siempre al día",
+      "text": "La próxima vez que ambos dispositivos estén en la misma red, intercambian lo que cambió. Sin cuenta, sin suscripción a una nube."
+    },
+    "computer": "Tu ordenador",
+    "phone": "Tu iPhone",
+    "network": "Tu Wi-Fi",
+    "noServer": "Ningún servidor en medio"
+  },
+  "security": {
+    "title": "Cifrado antes que nada",
+    "lead": "Tu caja fuerte se abre con dos secretos: la contraseña maestra que recuerdas y una Clave Secreta creada en tu dispositivo, que nunca sale de tus manos.",
+    "keys": {
+      "title": "Dos llaves, no una",
+      "text": "Incluso alguien con una copia del archivo de tu caja fuerte que acierte tu contraseña por suerte no puede abrirla sin tu Clave Secreta."
+    },
+    "crypto": {
+      "title": "Criptografía moderna y probada",
+      "text": "Argon2id hace que cada intento de adivinar tu contraseña sea lento y caro. XChaCha20-Poly1305 cifra y autentica cada elemento."
+    },
+    "local": {
+      "title": "Nada que vulnerar",
+      "text": "No hay un servidor central con las cajas fuertes de todos, así que no hay un servidor central que atacar."
+    },
+    "more": "Cómo protege Password365 tus datos"
+  },
+  "migrate": {
+    "title": "Trae tus contraseñas contigo",
+    "lead": "Importa desde tu navegador o tu gestor de contraseñas actual en unos pocos clics. Inicios de sesión, tarjetas, notas, llaves de acceso y adjuntos vienen incluidos cuando la exportación los contiene.",
+    "others": "y archivos CSV o CXF de otras apps"
+  },
+  "platforms": {
+    "title": "En los dispositivos que usas",
+    "mac": "Mac",
+    "macNote": "Gratis",
+    "windowsLinux": "Windows y Linux",
+    "windowsLinuxNote": "Muy pronto",
+    "browsers": "Chrome, Edge y Firefox",
+    "browsersNote": "Extensión gratuita",
+    "iphone": "iPhone y iPad",
+    "iphoneNote": "Muy pronto en la App Store"
+  },
+  "faq": {
+    "title": "Preguntas",
+    "q0": "¿Es un gestor de contraseñas offline en el que yo mismo copio el archivo de la caja fuerte?",
+    "a0": "No. Password365 se sincroniza solo entre todos tus dispositivos, como un gestor en la nube — la diferencia es que los dispositivos se comunican directamente en lugar de pasar por el servidor de otra empresa. No hay archivos que mover a mano.",
+    "q1": "¿Qué pasa si pierdo mi móvil?",
+    "a1": "Tu caja fuerte está cifrada y protegida con Face ID o Touch ID y tu contraseña maestra. Tus elementos siguen en tu ordenador, y desde él puedes configurar un móvil nuevo.",
+    "q2": "¿Y si olvido mi contraseña maestra?",
+    "a2": "Nadie puede restablecerla por ti — eso es lo que mantiene privada tu caja fuerte. Guarda tu Kit de emergencia (tiene tu Clave Secreta y un espacio para escribir tu contraseña) en un lugar seguro, y haz copias de seguridad desde la app.",
+    "q3": "¿Necesito estar en la misma red para sincronizar?",
+    "a3": "Sí. Los dispositivos se sincronizan cuando pueden encontrarse en la misma red. Mientras tanto, cada dispositivo sigue funcionando por su cuenta con todo lo que tiene.",
+    "q4": "¿Password365 usa internet?",
+    "a4": "Solo si activas la comprobación de contraseñas filtradas (desactivada por defecto). Envía los 5 primeros caracteres de un hash de cada contraseña, nunca la contraseña.",
+    "q5": "¿Puedo llevarme mis datos más adelante?",
+    "a5": "Sí. Exporta todo a CSV o al formato de intercambio de credenciales (CXF), que otros gestores de contraseñas pueden importar, llaves de acceso incluidas."
+  },
+  "cta": {
+    "title": "Recupera el control de tus contraseñas.",
+    "text": "Gratis en tu ordenador. Sin necesidad de cuenta.",
+    "button": "Descargar Password365"
+  },
+  "download": {
+    "title": "Descargar Password365",
+    "lead": "Empieza en tu ordenador y luego añade tu móvil y tu navegador.",
+    "mac": "Password365 para Mac",
+    "macText": "Para macOS.",
+    "windows": "Password365 para Windows",
+    "linux": "Password365 para Linux",
+    "extension": "Extensión del navegador",
+    "extensionText": "Para Chrome, Edge y Firefox. Funciona junto con la app de tu ordenador.",
+    "ios": "Password365 para iPhone y iPad",
+    "iosText": "Autorrelleno, llaves de acceso y Face ID, sincronizados con tu ordenador.",
+    "soon": "Muy pronto",
+    "notYet": "Aún no disponible"
+  },
+  "securityPage": {
+    "title": "Seguridad",
+    "lead": "Cómo protege Password365 tus datos, en palabras sencillas y en detalle.",
+    "principlesTitle": "Principios",
+    "p1": "Tus datos se cifran en tu dispositivo antes de guardarse en ningún sitio.",
+    "p2": "Solo tú tienes las llaves. Nunca vemos tu contraseña maestra, tu Clave Secreta ni tus elementos, y no podemos recuperarlos.",
+    "p3": "Los dispositivos se sincronizan directamente entre sí. No existe un servidor de Password365.",
+    "p4": "La app funciona sin internet. La única función en línea, la comprobación de contraseñas filtradas, está desactivada hasta que la actives.",
+    "unlockTitle": "Abrir tu caja fuerte",
+    "unlock1": "Tu contraseña maestra pasa por Argon2id (256 MB de memoria en ordenadores, 128 MB en móviles), lo que hace que cada intento sea lento y costoso.",
+    "unlock2": "Tu Clave Secreta — 128 bits aleatorios creados en tu dispositivo — se combina con HKDF-SHA-256. Una copia de tu caja fuerte no puede atacarse solo con intentos de contraseña.",
+    "unlock3": "Después de varias contraseñas incorrectas seguidas, cada nuevo intento tiene que esperar más.",
+    "encryptionTitle": "Cifrar tus elementos",
+    "enc1": "Cada elemento se cifra con XChaCha20-Poly1305, con un nonce aleatorio cada vez. Cualquier cambio en los datos cifrados se detecta y se rechaza.",
+    "enc2": "Cada registro cifrado queda ligado a su caja fuerte, su elemento y su versión, así que los registros no pueden intercambiarse ni repetirse.",
+    "enc3": "En iPhone, el archivo de la caja fuerte también recibe la protección de archivos del sistema, y el desbloqueo con Face ID guarda su clave en el llavero protegido por el Secure Enclave, durante 14 días como máximo antes de volver a pedir la contraseña maestra.",
+    "syncTitle": "Sincronizar entre dispositivos",
+    "sync1": "La conexión usa un código QR que muestra tu ordenador: el móvil y el ordenador se autentican con él antes de intercambiar nada.",
+    "sync2": "Cada sincronización pasa por un canal cifrado de extremo a extremo (el protocolo Noise con X25519), en tu red local.",
+    "sync3": "Puedes quitar un dispositivo de tu cuenta en cualquier momento.",
+    "dataTitle": "Qué sale de tu dispositivo",
+    "data1": "Nada, por defecto.",
+    "data2": "Si activas la comprobación de contraseñas filtradas, los 5 primeros caracteres del hash SHA-1 de cada contraseña se envían a Have I Been Pwned, que responde con todos los hashes coincidentes (k-anonimato). La contraseña nunca sale de tu dispositivo.",
+    "openTitle": "Comprobado con transparencia",
+    "open1": "La criptografía está descrita en una especificación detallada, con vectores de prueba, y se comprueba con pruebas automáticas en cada cambio."
+  },
+  "privacyPage": {
+    "title": "Política de privacidad",
+    "updated": "Última actualización: {date}",
+    "intro": "Password365 está hecho para que nosotros no tengamos tus datos. Esta política explica lo que eso significa en la práctica.",
+    "appsTitle": "Las apps",
+    "apps1": "Password365 no recopila ningún dato. No hay cuenta ni registro. Tu caja fuerte se crea, se cifra y se guarda en tus dispositivos.",
+    "apps2": "Los dispositivos se sincronizan directamente entre sí en tu red local. Tus datos no pasan por ningún servidor nuestro.",
+    "apps3": "Las apps no contienen analíticas, publicidad ni rastreo de ningún tipo.",
+    "apps4": "Si activas la comprobación de contraseñas filtradas (desactivada por defecto), la app envía los 5 primeros caracteres de un hash de cada contraseña a Have I Been Pwned (haveibeenpwned.com). Con ellos no se pueden conocer tus contraseñas.",
+    "storeTitle": "Compras y tiendas de apps",
+    "store1": "Las apps descargadas de la App Store las distribuye Apple, y cualquier compra la procesa Apple según su propia política de privacidad. No recibimos tus datos de pago.",
+    "siteTitle": "Este sitio web",
+    "site1": "Este sitio no usa cookies ni analíticas. Lo sirve Cloudflare, que procesa datos técnicos como las direcciones IP para entregarlo y protegerlo.",
+    "contactTitle": "Contacto",
+    "contact1": "Preguntas sobre privacidad: {email}."
+  },
+  "supportPage": {
+    "title": "Soporte",
+    "lead": "Ayuda con Password365.",
+    "contactTitle": "Contáctanos",
+    "contact": "Escribe a {email}. Nunca nos envíes tu contraseña maestra ni tu Clave Secreta — nunca te las pediremos.",
+    "startTitle": "Primeros pasos",
+    "start1": "Instala Password365 en tu ordenador y crea tu caja fuerte. Guarda el Kit de emergencia que te ofrece: contiene tu Clave Secreta.",
+    "start2": "Importa tus contraseñas desde tu navegador o tu gestor de contraseñas actual (Importar, en la barra de herramientas).",
+    "start3": "Instala la extensión del navegador para rellenar y guardar inicios de sesión.",
+    "start4": "En tu iPhone, elige “Configurar con otro dispositivo” y escanea el código QR que muestra tu ordenador, en Dispositivos.",
+    "recoverTitle": "Si te quedaste sin acceso",
+    "recover1": "Necesitas tu contraseña maestra y tu Clave Secreta. La Clave Secreta está en tu Kit de emergencia, y en Ajustes en cualquier dispositivo que siga conectado.",
+    "recover2": "Nadie, ni siquiera nosotros, puede restablecer tu contraseña maestra."
+  },
+  "footer": {
+    "tagline": "El gestor de contraseñas sin nube.",
+    "product": "Producto",
+    "company": "Password365",
+    "privacy": "Privacidad",
+    "rights": "© {year} Password365"
+  },
+  "notFound": {
+    "title": "Página no encontrada",
+    "text": "Esta página no existe.",
+    "home": "Ir a la página de inicio"
+  }
+}

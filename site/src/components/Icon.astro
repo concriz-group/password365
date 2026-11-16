@@ -1,0 +1,8 @@
+---
+// One of the app's own icons (icons/svg), inline so it takes the text colour.
+const icons = import.meta.glob("../../../icons/svg/*.svg", { eager: true, query: "?raw", import: "default" }) as Record<string, string>;
+const { name } = Astro.props as { name: string };
+const svg = Object.entries(icons).find(([file]) => file.endsWith(`/${name}.svg`))?.[1];
+if (!svg) throw new Error(`no icon ${name}`);
+---
+<Fragment set:html={svg.replace("<svg ", '<svg aria-hidden="true" focusable="false" ')} />

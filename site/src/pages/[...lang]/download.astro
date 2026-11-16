@@ -1,0 +1,38 @@
+---
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import { languagePaths, translator } from "../../i18n";
+import { site } from "../../config";
+export const getStaticPaths = languagePaths;
+const { tag } = Astro.props;
+const t = translator(tag);
+const d = site.downloads;
+const rows = [
+  { icon: "work", name: t("download.mac"), text: t("download.macText"), link: d.mac },
+  { icon: "globe", name: t("download.extension"), text: t("download.extensionText"), link: d.chrome },
+  { icon: "phone", name: t("download.ios"), text: t("download.iosText"), link: d.appStore },
+  { icon: "code", name: t("download.windows"), text: "", link: d.windows },
+  { icon: "code", name: t("download.linux"), text: "", link: d.linux },
+];
+---
+<Base tag={tag} page="download" title={t("download.title")}>
+  <section class="page">
+    <div class="wrap">
+      <h1>{t("download.title")}</h1>
+      <p class="lead">{t("download.lead")}</p>
+      <div class="downloads">
+        {rows.map((r) => (
+          <div class="card download">
+            <div style="display:flex;gap:20px;align-items:center">
+              <div class="icon" style="margin:0"><Icon name={r.icon} /></div>
+              <div><h3 style="margin:0">{r.name}</h3>{r.text && <p style="margin:4px 0 0">{r.text}</p>}</div>
+            </div>
+            {r.link
+              ? <a class="button primary" href={r.link}>{t("nav.download")}</a>
+              : <span class="button disabled">{t("download.soon")}</span>}
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>

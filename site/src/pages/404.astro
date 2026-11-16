@@ -1,0 +1,14 @@
+---
+import Base from "../layouts/Base.astro";
+import { href, translator } from "../i18n";
+const t = translator("en");
+---
+<Base tag="en" title={t("notFound.title")}>
+  <section class="page center">
+    <div class="wrap">
+      <h1>{t("notFound.title")}</h1>
+      <p class="lead">{t("notFound.text")}</p>
+      <a class="button primary" href={href("en")}>{t("notFound.home")}</a>
+    </div>
+  </section>
+</Base>

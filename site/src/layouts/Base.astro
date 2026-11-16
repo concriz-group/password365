@@ -1,0 +1,103 @@
+---
+import "@fontsource/nunito/900.css";
+import "../styles/site.css";
+import { href, languages, translator } from "../i18n";
+
+interface Props { tag: string; page?: string; title?: string; description?: string }
+const { tag, page = "", title, description } = Astro.props;
+const t = translator(tag);
+const pageTitle = title ? `${title} — Password365` : t("meta.title");
+const canonical = new URL(href(tag, page), Astro.site).toString();
+const nav = [
+  { page: "", hash: "#features", label: t("nav.features") },
+  { page: "security", label: t("nav.security") },
+  { page: "support", label: t("nav.support") },
+];
+const year = new Date().getFullYear();
+---
+<!doctype html>
+<html lang={tag}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description ?? t("meta.description")} />
+    <link rel="canonical" href={canonical} />
+    {languages.map((l) => <link rel="alternate" hreflang={l.tag} href={new URL(href(l.tag, page), Astro.site).toString()} />)}
+    <link rel="alternate" hreflang="x-default" href={new URL(href("en", page), Astro.site).toString()} />
+    <link rel="icon" href="/brand/app-icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/brand/app-icon-1024.png" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description ?? t("meta.description")} />
+    <meta property="og:image" content={new URL("/brand/app-icon-1024.png", Astro.site).toString()} />
+    <meta name="theme-color" content="#ff7900" />
+  </head>
+  <body>
+    <a class="skip" href="#main">{t("nav.skip")}</a>
+    <header class="site-header" id="top">
+      <div class="wrap">
+        <a class="brand" href={href(tag)} aria-label="Password365">
+          <span class="brand-word">password</span>
+          <picture>
+            <source srcset="/brand/password365-logo-dark.svg" media="(prefers-color-scheme: dark)" />
+            <img src="/brand/password365-logo.svg" alt="" width="40" height="36" />
+          </picture>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">{t("nav.menu")}</button>
+        <nav id="site-nav" aria-label={t("nav.menu")}>
+          {nav.map((n) => (
+            <a href={href(tag, n.page) + (n.hash ?? "")} aria-current={!n.hash && n.page === page ? "page" : undefined}>{n.label}</a>
+          ))}
+          <a class="button primary" href={href(tag, "download")}>{t("nav.download")}</a>
+        </nav>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="about">
+          <a class="brand" href={href(tag)} aria-label="Password365">
+            <span class="brand-word">password</span>
+            <picture>
+              <source srcset="/brand/password365-logo-dark.svg" media="(prefers-color-scheme: dark)" />
+              <img src="/brand/password365-logo.svg" alt="" width="40" height="36" />
+            </picture>
+          </a>
+          <p>{t("footer.tagline")}</p>
+        </div>
+        <div>
+          <h4>{t("footer.product")}</h4>
+          <ul>
+            <li><a href={href(tag) + "#features"}>{t("nav.features")}</a></li>
+            <li><a href={href(tag, "security")}>{t("nav.security")}</a></li>
+            <li><a href={href(tag, "download")}>{t("nav.download")}</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>{t("footer.company")}</h4>
+          <ul>
+            <li><a href={href(tag, "support")}>{t("nav.support")}</a></li>
+            <li><a href={href(tag, "privacy")}>{t("footer.privacy")}</a></li>
+          </ul>
+        </div>
+        <div class="rights">
+          <span>{t("footer.rights", { year })}</span>
+          <span class="languages" aria-label={t("nav.language")}>
+            {languages.map((l) => (
+              <a href={href(l.tag, page)} hreflang={l.tag} lang={l.tag} aria-current={l.tag === tag ? "true" : undefined}>{translator(l.tag)("meta.name")}</a>
+            ))}
+          </span>
+        </div>
+      </div>
+    </footer>
+    <script>
+      const header = document.querySelector(".site-header");
+      const toggle = header?.querySelector(".menu-toggle");
+      toggle?.addEventListener("click", () => {
+        const open = header!.classList.toggle("open");
+        toggle.setAttribute("aria-expanded", String(open));
+      });
+      header?.querySelectorAll("nav a").forEach((a) => a.addEventListener("click", () => header.classList.remove("open")));
+    </script>
+  </body>
+</html>

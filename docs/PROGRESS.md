@@ -366,3 +366,10 @@ Phase 8 audit & release — see `PLAN.md` §7.
   (`i18n/locales/*/mobile.json` stays here, global by config). The `apps/ios/` paths above now
   live at the root of that repository. Before this repository is made public its history must be
   rewritten without `apps/ios/`, since every earlier commit still contains it.
+- **Website** (`site/`, Astro 7.4.4, static): password365.app in English, Portuguese and Spanish
+  (texts in `i18n/site/`), slogan "Not your server, not your passwords." — home (why not the
+  cloud, sync without a server across many devices, features, security, imports, platforms,
+  FAQ), Security, Privacy policy, Support, Download (links "coming soon" until builds exist),
+  404. Screenshots from the App Store set; logo and icons from `branding/` and `icons/`.
+  Tests: every language has English's keys and placeholders, every key the pages use exists.
+  To do: hosting on Cloudflare Pages, a real contact address (`site/src/config.ts`).

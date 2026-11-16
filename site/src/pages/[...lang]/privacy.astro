@@ -1,0 +1,32 @@
+---
+import Base from "../../layouts/Base.astro";
+import { languagePaths, translator } from "../../i18n";
+import { site } from "../../config";
+export const getStaticPaths = languagePaths;
+const { tag } = Astro.props;
+const t = translator(tag);
+const date = new Intl.DateTimeFormat(tag, { dateStyle: "long" }).format(new Date(site.privacyUpdated + "T12:00:00Z"));
+const email = `<a href="mailto:${site.email}">${site.email}</a>`;
+const sections = [
+  ["appsTitle", ["apps1", "apps2", "apps3", "apps4"]],
+  ["storeTitle", ["store1"]],
+  ["siteTitle", ["site1"]],
+] as const;
+---
+<Base tag={tag} page="privacy" title={t("privacyPage.title")}>
+  <section class="page">
+    <div class="wrap prose">
+      <h1>{t("privacyPage.title")}</h1>
+      <p>{t("privacyPage.updated", { date })}</p>
+      <p class="lead">{t("privacyPage.intro")}</p>
+      {sections.map(([title, items]) => (
+        <>
+          <h2>{t(`privacyPage.${title}`)}</h2>
+          {items.map((i) => <p>{t(`privacyPage.${i}`)}</p>)}
+        </>
+      ))}
+      <h2>{t("privacyPage.contactTitle")}</h2>
+      <p set:html={t("privacyPage.contact1", { email })} />
+    </div>
+  </section>
+</Base>

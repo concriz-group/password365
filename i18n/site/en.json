@@ -1,0 +1,243 @@
+{
+  "meta": {
+    "lang": "en",
+    "name": "English",
+    "title": "Password365 — Not your server, not your passwords.",
+    "description": "Passwords, passkeys and one-time codes in an encrypted vault that stays on your devices. No account, no cloud: your computer and your phone sync directly."
+  },
+  "nav": {
+    "features": "Features",
+    "security": "Security",
+    "download": "Download",
+    "support": "Support",
+    "language": "Language",
+    "menu": "Menu",
+    "skip": "Skip to content"
+  },
+  "hero": {
+    "eyebrow": "Synced across your devices. Stored on no one else's.",
+    "title": "Not your server, not your passwords.",
+    "lead": "Password365 keeps your passwords, passkeys and one-time codes in sync across your computer, phone and tablet — without ever putting them on a server you don't control. No account, no cloud.",
+    "primary": "Download for Mac",
+    "secondary": "See how it works",
+    "note": "Free on your computer. iPhone and iPad coming soon."
+  },
+  "pillars": {
+    "noAccount": "No cloud servers",
+    "noCloud": "Syncs across your devices",
+    "noTracking": "No tracking",
+    "encrypted": "End-to-end encrypted"
+  },
+  "why": {
+    "title": "Why not the cloud?",
+    "lead": "Cloud password managers encrypt your vault too. But they keep it — and millions of others — on their servers.",
+    "target": {
+      "title": "One target, millions of vaults",
+      "text": "A server holding everyone's encrypted vaults is worth attacking. When one is breached, attackers take the vaults with them and can keep guessing at the passwords for as long as they like."
+    },
+    "control": {
+      "title": "Your copy, your rules",
+      "text": "With Password365 your vault lives only on your devices, kept in sync between them. There is no copy on anyone else's server to steal, leak or lose access to."
+    },
+    "offline": {
+      "title": "Works without the internet",
+      "text": "No outage, no lost account and no change of terms can lock you out of your own passwords."
+    },
+    "quote": "Crypto holders say: not your keys, not your coins. The same is true of passwords: if they live on someone else's server, they are only as safe as that server."
+  },
+  "features": {
+    "title": "Everything a password manager should do",
+    "lead": "The features you expect, on your own devices.",
+    "autofill": {
+      "title": "Fills in for you",
+      "text": "Usernames, passwords and one-time codes filled in on websites and apps, from the browser extension and from AutoFill on iPhone and iPad."
+    },
+    "passkeys": {
+      "title": "Passkeys",
+      "text": "Create and use passkeys on any site that supports them, and keep them with the rest of your logins."
+    },
+    "totp": {
+      "title": "Two-factor codes built in",
+      "text": "Add the setup key once and Password365 shows the code, and fills it in together with your password."
+    },
+    "watchtower": {
+      "title": "Watchtower",
+      "text": "Finds weak, reused and old passwords, and logins that could use two-factor authentication. Checked on your device."
+    },
+    "categories": {
+      "title": "More than passwords",
+      "text": "Credit cards, identities, secure notes, bank accounts, passports, Wi-Fi, SSH keys, documents and more than 20 categories, with the right fields for your country."
+    },
+    "generator": {
+      "title": "Strong passwords on demand",
+      "text": "Random passwords, easy-to-type passphrases and PINs, generated on the spot."
+    },
+    "quickAccess": {
+      "title": "Quick Access",
+      "text": "A keyboard shortcut opens your vault over any app on your computer: search, copy, done."
+    },
+    "attachments": {
+      "title": "Files and documents",
+      "text": "Attach scans and files to any item, encrypted like everything else."
+    },
+    "ssh": {
+      "title": "For developers",
+      "text": "An SSH agent for the keys in your vault, and auto-type for apps that do not accept filling."
+    }
+  },
+  "sync": {
+    "title": "All your devices in sync. No cloud in between.",
+    "lead": "Not an offline vault you have to copy around: add as many computers, phones and tablets as you like and they keep each other up to date automatically. They talk directly, on your own network — your vault never goes through a server, ours or anyone else's.",
+    "step1": {
+      "title": "Pair once",
+      "text": "Scan a QR code shown on your computer with your iPhone. That is the whole setup."
+    },
+    "step2": {
+      "title": "Change anywhere",
+      "text": "Add or edit items on any device. Each change is encrypted before it leaves the device."
+    },
+    "step3": {
+      "title": "Stay in sync",
+      "text": "The next time both devices are on the same network, they exchange what changed. No account, no subscription to a cloud."
+    },
+    "computer": "Your computer",
+    "phone": "Your iPhone",
+    "network": "Your Wi-Fi",
+    "noServer": "No server in between"
+  },
+  "security": {
+    "title": "Encrypted before anything else happens",
+    "lead": "Your vault is unlocked by two secrets: the master password you remember and a Secret Key that is created on your device and never leaves your hands.",
+    "keys": {
+      "title": "Two keys, not one",
+      "text": "Even someone with a copy of your vault file and a lucky guess at your password cannot open it without your Secret Key."
+    },
+    "crypto": {
+      "title": "Modern, proven cryptography",
+      "text": "Argon2id makes guessing your password slow and expensive. XChaCha20-Poly1305 encrypts and authenticates every item."
+    },
+    "local": {
+      "title": "Nothing to breach",
+      "text": "There is no central server holding everyone's vaults, so there is no central server to break into."
+    },
+    "more": "How Password365 protects your data"
+  },
+  "migrate": {
+    "title": "Bring your passwords with you",
+    "lead": "Import from your browser or your current password manager in a few clicks. Logins, cards, notes, passkeys and attachments come along where the export includes them.",
+    "others": "and CSV or CXF files from other apps"
+  },
+  "platforms": {
+    "title": "On the devices you use",
+    "mac": "Mac",
+    "macNote": "Free",
+    "windowsLinux": "Windows and Linux",
+    "windowsLinuxNote": "Coming soon",
+    "browsers": "Chrome, Edge and Firefox",
+    "browsersNote": "Free extension",
+    "iphone": "iPhone and iPad",
+    "iphoneNote": "Coming soon to the App Store"
+  },
+  "faq": {
+    "title": "Questions",
+    "q0": "Is this an offline password manager where I copy the vault file myself?",
+    "a0": "No. Password365 syncs automatically between all your devices, like a cloud password manager does — the difference is that the devices talk to each other directly instead of through someone else's server. There are no files to move by hand.",
+    "q1": "What happens if I lose my phone?",
+    "a1": "Your vault is encrypted and locked with Face ID or Touch ID and your master password. Your items are still on your computer, and you can set up a new phone from it.",
+    "q2": "What if I forget my master password?",
+    "a2": "Nobody can reset it for you — that is what keeps your vault private. Keep your Emergency Kit (it has your Secret Key and room to write your password) somewhere safe, and back up your vault from the app.",
+    "q3": "Do I need to be on the same network to sync?",
+    "a3": "Yes. Devices sync when they can reach each other on the same network. In between, each device keeps working on its own with everything it has.",
+    "q4": "Does Password365 use the internet at all?",
+    "a4": "Only if you turn on the check for passwords found in data breaches (off by default). It sends the first 5 characters of a hash of each password, never the password itself.",
+    "q5": "Can I move my data out later?",
+    "a5": "Yes. Export everything to CSV or to the Credential Exchange Format (CXF), which other password managers can import, passkeys included."
+  },
+  "cta": {
+    "title": "Take your passwords back.",
+    "text": "Free on your computer. No account needed.",
+    "button": "Download Password365"
+  },
+  "download": {
+    "title": "Download Password365",
+    "lead": "Start on your computer, then add your phone and your browser.",
+    "mac": "Password365 for Mac",
+    "macText": "For macOS.",
+    "windows": "Password365 for Windows",
+    "linux": "Password365 for Linux",
+    "extension": "Browser extension",
+    "extensionText": "For Chrome, Edge and Firefox. It works together with the app on your computer.",
+    "ios": "Password365 for iPhone and iPad",
+    "iosText": "AutoFill, passkeys and Face ID, synced with your computer.",
+    "soon": "Coming soon",
+    "notYet": "Not available yet"
+  },
+  "securityPage": {
+    "title": "Security",
+    "lead": "How Password365 protects your data, in plain words and in detail.",
+    "principlesTitle": "Principles",
+    "p1": "Your data is encrypted on your device before it is written anywhere.",
+    "p2": "Only you hold the keys. We never see your master password, your Secret Key or your items, and we cannot recover them.",
+    "p3": "Devices sync directly with each other. There is no Password365 server.",
+    "p4": "The app works without the internet. The only online feature, the breached-password check, is off until you turn it on.",
+    "unlockTitle": "Unlocking your vault",
+    "unlock1": "Your master password is stretched with Argon2id (256 MB of memory on computers, 128 MB on phones), which makes every guess slow and costly.",
+    "unlock2": "Your Secret Key — 128 random bits created on your device — is mixed in with HKDF-SHA-256. A copy of your vault cannot be attacked with password guesses alone.",
+    "unlock3": "After a few wrong passwords in a row, each new try has to wait longer.",
+    "encryptionTitle": "Encrypting your items",
+    "enc1": "Every item is encrypted with XChaCha20-Poly1305, with a random nonce each time. Any change to the encrypted data is detected and refused.",
+    "enc2": "Each encrypted record is bound to its vault, its item and its version, so records cannot be swapped or replayed.",
+    "enc3": "On iPhone, the vault file also gets the system's file protection, and Face ID unlock keeps its key in the Secure Enclave–protected Keychain, for 14 days at most before your master password is needed again.",
+    "syncTitle": "Syncing between devices",
+    "sync1": "Pairing uses a QR code shown on your computer: the phone and the computer authenticate each other with it before anything is exchanged.",
+    "sync2": "Every sync runs over an end-to-end encrypted channel (the Noise protocol with X25519), on your local network.",
+    "sync3": "A device can be removed from your account at any time.",
+    "dataTitle": "What leaves your device",
+    "data1": "Nothing, by default.",
+    "data2": "If you turn on the breached-password check, the first 5 characters of the SHA-1 hash of each password are sent to Have I Been Pwned, which answers with every matching hash (k-anonymity). The password never leaves your device.",
+    "openTitle": "Checked in the open",
+    "open1": "The cryptography is written down in a detailed specification, with test vectors, and checked by automated tests on every change."
+  },
+  "privacyPage": {
+    "title": "Privacy policy",
+    "updated": "Last updated: {date}",
+    "intro": "Password365 is built so that we do not have your data. This policy explains what that means in practice.",
+    "appsTitle": "The apps",
+    "apps1": "Password365 does not collect any data. There is no account and no sign-up. Your vault is created, encrypted and kept on your devices.",
+    "apps2": "Devices sync directly with each other on your local network. Your data does not pass through any server of ours.",
+    "apps3": "The apps contain no analytics, no advertising and no tracking of any kind.",
+    "apps4": "If you turn on the breached-password check (off by default), the app sends the first 5 characters of a hash of each password to Have I Been Pwned (haveibeenpwned.com). It cannot learn your passwords from them.",
+    "storeTitle": "Purchases and app stores",
+    "store1": "Apps downloaded from the App Store are delivered by Apple, and any purchase is processed by Apple under its own privacy policy. We do not receive your payment details.",
+    "siteTitle": "This website",
+    "site1": "This website uses no cookies and no analytics. It is served by Cloudflare, which processes technical data such as IP addresses to deliver and protect it.",
+    "contactTitle": "Contact",
+    "contact1": "Questions about privacy: {email}."
+  },
+  "supportPage": {
+    "title": "Support",
+    "lead": "Help with Password365.",
+    "contactTitle": "Contact us",
+    "contact": "Write to {email}. Never send us your master password or your Secret Key — we will never ask for them.",
+    "startTitle": "Getting started",
+    "start1": "Install Password365 on your computer and create your vault. Save the Emergency Kit it offers: it holds your Secret Key.",
+    "start2": "Import your passwords from your browser or your current password manager (Import, in the toolbar).",
+    "start3": "Install the browser extension to fill in and save logins.",
+    "start4": "On your iPhone, choose “Set up with another device” and scan the QR code shown on your computer, in Devices.",
+    "recoverTitle": "If you are locked out",
+    "recover1": "You need your master password and your Secret Key. The Secret Key is on your Emergency Kit, and in Settings on any device that is still signed in.",
+    "recover2": "Nobody, including us, can reset your master password."
+  },
+  "footer": {
+    "tagline": "The password manager without a cloud.",
+    "product": "Product",
+    "company": "Password365",
+    "privacy": "Privacy",
+    "rights": "© {year} Password365"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "text": "This page does not exist.",
+    "home": "Go to the home page"
+  }
+}

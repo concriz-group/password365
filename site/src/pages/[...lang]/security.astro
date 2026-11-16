@@ -1,0 +1,29 @@
+---
+import Base from "../../layouts/Base.astro";
+import { languagePaths, translator } from "../../i18n";
+export const getStaticPaths = languagePaths;
+const { tag } = Astro.props;
+const t = translator(tag);
+const sections = [
+  ["principlesTitle", ["p1", "p2", "p3", "p4"]],
+  ["unlockTitle", ["unlock1", "unlock2", "unlock3"]],
+  ["encryptionTitle", ["enc1", "enc2", "enc3"]],
+  ["syncTitle", ["sync1", "sync2", "sync3"]],
+  ["dataTitle", ["data1", "data2"]],
+  ["openTitle", ["open1"]],
+] as const;
+---
+<Base tag={tag} page="security" title={t("securityPage.title")} description={t("securityPage.lead")}>
+  <section class="page">
+    <div class="wrap prose">
+      <h1>{t("securityPage.title")}</h1>
+      <p class="lead">{t("securityPage.lead")}</p>
+      {sections.map(([title, items]) => (
+        <>
+          <h2>{t(`securityPage.${title}`)}</h2>
+          <ul>{items.map((i) => <li>{t(`securityPage.${i}`)}</li>)}</ul>
+        </>
+      ))}
+    </div>
+  </section>
+</Base>

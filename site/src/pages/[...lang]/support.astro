@@ -1,0 +1,23 @@
+---
+import Base from "../../layouts/Base.astro";
+import { languagePaths, translator } from "../../i18n";
+import { site } from "../../config";
+export const getStaticPaths = languagePaths;
+const { tag } = Astro.props;
+const t = translator(tag);
+const email = `<a href="mailto:${site.email}">${site.email}</a>`;
+---
+<Base tag={tag} page="support" title={t("supportPage.title")}>
+  <section class="page">
+    <div class="wrap prose">
+      <h1>{t("supportPage.title")}</h1>
+      <p class="lead">{t("supportPage.lead")}</p>
+      <h2>{t("supportPage.startTitle")}</h2>
+      <ol>{["start1", "start2", "start3", "start4"].map((i) => <li>{t(`supportPage.${i}`)}</li>)}</ol>
+      <h2>{t("supportPage.recoverTitle")}</h2>
+      <ul>{["recover1", "recover2"].map((i) => <li>{t(`supportPage.${i}`)}</li>)}</ul>
+      <h2>{t("supportPage.contactTitle")}</h2>
+      <p set:html={t("supportPage.contact", { email })} />
+    </div>
+  </section>
+</Base>

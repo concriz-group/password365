@@ -1,0 +1,243 @@
+{
+  "meta": {
+    "lang": "pt-BR",
+    "name": "Português (Brasil)",
+    "title": "Password365 — Não é seu servidor, não são suas senhas.",
+    "description": "Senhas, chaves de acesso e códigos de verificação num cofre criptografado que fica nos seus aparelhos. Sem conta, sem nuvem: o computador e o celular sincronizam direto."
+  },
+  "nav": {
+    "features": "Recursos",
+    "security": "Segurança",
+    "download": "Baixar",
+    "support": "Suporte",
+    "language": "Idioma",
+    "menu": "Menu",
+    "skip": "Ir para o conteúdo"
+  },
+  "hero": {
+    "eyebrow": "Sincronizado entre seus aparelhos. Guardado no servidor de ninguém.",
+    "title": "Não é seu servidor, não são suas senhas.",
+    "lead": "O Password365 mantém suas senhas, chaves de acesso e códigos de verificação sincronizados entre o computador, o celular e o tablet — sem nunca colocá-los num servidor que você não controla. Sem conta, sem nuvem.",
+    "primary": "Baixar para Mac",
+    "secondary": "Veja como funciona",
+    "note": "Grátis no computador. iPhone e iPad em breve."
+  },
+  "pillars": {
+    "noAccount": "Sem servidores na nuvem",
+    "noCloud": "Sincroniza entre seus aparelhos",
+    "noTracking": "Sem rastreamento",
+    "encrypted": "Criptografia de ponta a ponta"
+  },
+  "why": {
+    "title": "Por que não na nuvem?",
+    "lead": "Os gerenciadores de senhas na nuvem também criptografam o seu cofre. Mas guardam ele — e o de milhões de outras pessoas — nos servidores deles.",
+    "target": {
+      "title": "Um alvo, milhões de cofres",
+      "text": "Um servidor com os cofres criptografados de todo mundo vale a pena ser atacado. Quando um é invadido, os atacantes levam os cofres e podem continuar tentando adivinhar as senhas pelo tempo que quiserem."
+    },
+    "control": {
+      "title": "Sua cópia, suas regras",
+      "text": "Com o Password365, o seu cofre vive só nos seus aparelhos, sincronizado entre eles. Não há cópia no servidor de ninguém para ser roubada, vazada ou bloqueada."
+    },
+    "offline": {
+      "title": "Funciona sem internet",
+      "text": "Nenhuma queda de serviço, conta perdida ou mudança de regras pode impedir você de acessar as suas próprias senhas."
+    },
+    "quote": "No mundo cripto se diz: não são suas chaves, não são suas moedas. Com senhas é igual: se elas moram no servidor de outra empresa, só estão tão seguras quanto esse servidor."
+  },
+  "features": {
+    "title": "Tudo o que um gerenciador de senhas deve fazer",
+    "lead": "Os recursos que você espera, nos seus próprios aparelhos.",
+    "autofill": {
+      "title": "Preenche para você",
+      "text": "Usuários, senhas e códigos de verificação preenchidos em sites e apps, pela extensão do navegador e pelo Preenchimento Automático no iPhone e no iPad."
+    },
+    "passkeys": {
+      "title": "Chaves de acesso (passkeys)",
+      "text": "Crie e use chaves de acesso em qualquer site que as aceite, e guarde-as junto com os seus logins."
+    },
+    "totp": {
+      "title": "Códigos de dois fatores integrados",
+      "text": "Adicione a chave de configuração uma vez e o Password365 mostra o código e o preenche junto com a senha."
+    },
+    "watchtower": {
+      "title": "Watchtower",
+      "text": "Encontra senhas fracas, repetidas e antigas, e logins que poderiam usar verificação em dois fatores. Tudo verificado no seu aparelho."
+    },
+    "categories": {
+      "title": "Mais do que senhas",
+      "text": "Cartões de crédito, identidades, notas seguras, contas bancárias, passaportes, Wi-Fi, chaves SSH, documentos e mais de 20 categorias, com os campos certos para o seu país."
+    },
+    "generator": {
+      "title": "Senhas fortes na hora",
+      "text": "Senhas aleatórias, frases-senha fáceis de digitar e PINs, gerados na hora."
+    },
+    "quickAccess": {
+      "title": "Acesso Rápido",
+      "text": "Um atalho de teclado abre o seu cofre por cima de qualquer app no computador: busque, copie, pronto."
+    },
+    "attachments": {
+      "title": "Arquivos e documentos",
+      "text": "Anexe digitalizações e arquivos a qualquer item, criptografados como todo o resto."
+    },
+    "ssh": {
+      "title": "Para desenvolvedores",
+      "text": "Um agente SSH para as chaves do seu cofre, e digitação automática para apps que não aceitam preenchimento."
+    }
+  },
+  "sync": {
+    "title": "Todos os seus aparelhos sincronizados. Sem nuvem no meio.",
+    "lead": "Não é um cofre offline que você precisa copiar de um lado para o outro: adicione quantos computadores, celulares e tablets quiser e eles se mantêm atualizados sozinhos. Eles conversam direto, na sua própria rede — o seu cofre nunca passa por um servidor, nem nosso, nem de ninguém.",
+    "step1": {
+      "title": "Conecte uma vez",
+      "text": "Leia com o iPhone o QR code que aparece no computador. Essa é toda a configuração."
+    },
+    "step2": {
+      "title": "Altere em qualquer aparelho",
+      "text": "Adicione ou edite itens em qualquer aparelho. Cada alteração é criptografada antes de sair dele."
+    },
+    "step3": {
+      "title": "Tudo em dia",
+      "text": "Na próxima vez que os dois aparelhos estiverem na mesma rede, eles trocam o que mudou. Sem conta, sem assinatura de nuvem."
+    },
+    "computer": "Seu computador",
+    "phone": "Seu iPhone",
+    "network": "Seu Wi-Fi",
+    "noServer": "Nenhum servidor no meio"
+  },
+  "security": {
+    "title": "Criptografado antes de qualquer coisa",
+    "lead": "O seu cofre é aberto por dois segredos: a senha mestra que você lembra e uma Chave Secreta criada no seu aparelho, que nunca sai das suas mãos.",
+    "keys": {
+      "title": "Duas chaves, não uma",
+      "text": "Mesmo quem tiver uma cópia do arquivo do seu cofre e acertar a sua senha por sorte não consegue abri-lo sem a sua Chave Secreta."
+    },
+    "crypto": {
+      "title": "Criptografia moderna e comprovada",
+      "text": "O Argon2id torna cada tentativa de adivinhar a sua senha lenta e cara. O XChaCha20-Poly1305 criptografa e autentica cada item."
+    },
+    "local": {
+      "title": "Nada para invadir",
+      "text": "Não existe um servidor central com os cofres de todo mundo, então não existe um servidor central para ser invadido."
+    },
+    "more": "Como o Password365 protege os seus dados"
+  },
+  "migrate": {
+    "title": "Traga as suas senhas",
+    "lead": "Importe do seu navegador ou do seu gerenciador de senhas atual em poucos cliques. Logins, cartões, notas, chaves de acesso e anexos vêm junto, quando a exportação os inclui.",
+    "others": "e arquivos CSV ou CXF de outros apps"
+  },
+  "platforms": {
+    "title": "Nos aparelhos que você usa",
+    "mac": "Mac",
+    "macNote": "Grátis",
+    "windowsLinux": "Windows e Linux",
+    "windowsLinuxNote": "Em breve",
+    "browsers": "Chrome, Edge e Firefox",
+    "browsersNote": "Extensão grátis",
+    "iphone": "iPhone e iPad",
+    "iphoneNote": "Em breve na App Store"
+  },
+  "faq": {
+    "title": "Perguntas",
+    "q0": "É um gerenciador de senhas offline em que eu mesmo copio o arquivo do cofre?",
+    "a0": "Não. O Password365 sincroniza sozinho entre todos os seus aparelhos, como um gerenciador na nuvem — a diferença é que os aparelhos conversam direto entre si, em vez de passar pelo servidor de outra empresa. Não há arquivos para mover à mão.",
+    "q1": "E se eu perder o celular?",
+    "a1": "O seu cofre é criptografado e protegido por Face ID ou Touch ID e pela sua senha mestra. Os seus itens continuam no computador, e você configura um celular novo a partir dele.",
+    "q2": "E se eu esquecer a senha mestra?",
+    "a2": "Ninguém consegue redefini-la para você — é isso que mantém o seu cofre privado. Guarde o seu Kit de Emergência (ele tem a sua Chave Secreta e um espaço para escrever a senha) num lugar seguro, e faça backup do cofre pelo app.",
+    "q3": "Preciso estar na mesma rede para sincronizar?",
+    "a3": "Sim. Os aparelhos sincronizam quando conseguem se encontrar na mesma rede. No meio tempo, cada aparelho continua funcionando sozinho com tudo o que tem.",
+    "q4": "O Password365 usa a internet?",
+    "a4": "Só se você ligar a verificação de senhas vazadas (desligada por padrão). Ela envia os 5 primeiros caracteres de um hash de cada senha, nunca a senha.",
+    "q5": "Posso levar os meus dados embora depois?",
+    "a5": "Sim. Exporte tudo para CSV ou para o formato de troca de credenciais (CXF), que outros gerenciadores de senhas importam, com chaves de acesso e tudo."
+  },
+  "cta": {
+    "title": "Retome o controle das suas senhas.",
+    "text": "Grátis no computador. Sem precisar de conta.",
+    "button": "Baixar o Password365"
+  },
+  "download": {
+    "title": "Baixar o Password365",
+    "lead": "Comece pelo computador, depois adicione o celular e o navegador.",
+    "mac": "Password365 para Mac",
+    "macText": "Para macOS.",
+    "windows": "Password365 para Windows",
+    "linux": "Password365 para Linux",
+    "extension": "Extensão do navegador",
+    "extensionText": "Para Chrome, Edge e Firefox. Funciona junto com o app no computador.",
+    "ios": "Password365 para iPhone e iPad",
+    "iosText": "Preenchimento Automático, chaves de acesso e Face ID, sincronizados com o computador.",
+    "soon": "Em breve",
+    "notYet": "Ainda não disponível"
+  },
+  "securityPage": {
+    "title": "Segurança",
+    "lead": "Como o Password365 protege os seus dados, em palavras simples e em detalhe.",
+    "principlesTitle": "Princípios",
+    "p1": "Os seus dados são criptografados no seu aparelho antes de serem gravados em qualquer lugar.",
+    "p2": "Só você tem as chaves. Nunca vemos a sua senha mestra, a sua Chave Secreta ou os seus itens, e não temos como recuperá-los.",
+    "p3": "Os aparelhos sincronizam direto entre si. Não existe servidor do Password365.",
+    "p4": "O app funciona sem internet. O único recurso online, a verificação de senhas vazadas, fica desligado até você ligar.",
+    "unlockTitle": "Abrir o cofre",
+    "unlock1": "A sua senha mestra passa pelo Argon2id (256 MB de memória no computador, 128 MB no celular), o que torna cada tentativa lenta e cara.",
+    "unlock2": "A sua Chave Secreta — 128 bits aleatórios criados no seu aparelho — entra na conta com HKDF-SHA-256. Uma cópia do seu cofre não pode ser atacada só com tentativas de senha.",
+    "unlock3": "Depois de algumas senhas erradas seguidas, cada nova tentativa precisa esperar mais.",
+    "encryptionTitle": "Criptografar os itens",
+    "enc1": "Cada item é criptografado com XChaCha20-Poly1305, com um nonce aleatório a cada vez. Qualquer alteração nos dados criptografados é detectada e recusada.",
+    "enc2": "Cada registro criptografado fica amarrado ao seu cofre, ao seu item e à sua versão, então registros não podem ser trocados nem repetidos.",
+    "enc3": "No iPhone, o arquivo do cofre também recebe a proteção de arquivos do sistema, e o desbloqueio com Face ID guarda a sua chave no Keychain protegido pelo Secure Enclave, por no máximo 14 dias antes de pedir a senha mestra de novo.",
+    "syncTitle": "Sincronizar entre aparelhos",
+    "sync1": "A conexão usa um QR code mostrado no computador: o celular e o computador se autenticam com ele antes de trocar qualquer coisa.",
+    "sync2": "Cada sincronização passa por um canal criptografado de ponta a ponta (o protocolo Noise com X25519), na sua rede local.",
+    "sync3": "Um aparelho pode ser removido da sua conta a qualquer momento.",
+    "dataTitle": "O que sai do seu aparelho",
+    "data1": "Nada, por padrão.",
+    "data2": "Se você ligar a verificação de senhas vazadas, os 5 primeiros caracteres do hash SHA-1 de cada senha vão para o Have I Been Pwned, que responde com todos os hashes parecidos (k-anonimato). A senha nunca sai do seu aparelho.",
+    "openTitle": "Verificado com transparência",
+    "open1": "A criptografia está descrita numa especificação detalhada, com vetores de teste, e é conferida por testes automáticos a cada mudança."
+  },
+  "privacyPage": {
+    "title": "Política de privacidade",
+    "updated": "Última atualização: {date}",
+    "intro": "O Password365 foi feito para que nós não tenhamos os seus dados. Esta política explica o que isso significa na prática.",
+    "appsTitle": "Os apps",
+    "apps1": "O Password365 não coleta nenhum dado. Não há conta nem cadastro. O seu cofre é criado, criptografado e guardado nos seus aparelhos.",
+    "apps2": "Os aparelhos sincronizam direto entre si na sua rede local. Os seus dados não passam por nenhum servidor nosso.",
+    "apps3": "Os apps não têm estatísticas de uso, publicidade nem rastreamento de nenhum tipo.",
+    "apps4": "Se você ligar a verificação de senhas vazadas (desligada por padrão), o app envia os 5 primeiros caracteres de um hash de cada senha ao Have I Been Pwned (haveibeenpwned.com). Com isso não é possível descobrir as suas senhas.",
+    "storeTitle": "Compras e lojas de apps",
+    "store1": "Os apps baixados da App Store são entregues pela Apple, e qualquer compra é processada pela Apple, segundo a política de privacidade dela. Nós não recebemos os seus dados de pagamento.",
+    "siteTitle": "Este site",
+    "site1": "Este site não usa cookies nem estatísticas de acesso. Ele é servido pela Cloudflare, que processa dados técnicos como endereços IP para entregá-lo e protegê-lo.",
+    "contactTitle": "Contato",
+    "contact1": "Dúvidas sobre privacidade: {email}."
+  },
+  "supportPage": {
+    "title": "Suporte",
+    "lead": "Ajuda com o Password365.",
+    "contactTitle": "Fale conosco",
+    "contact": "Escreva para {email}. Nunca nos envie a sua senha mestra nem a sua Chave Secreta — nós nunca vamos pedi-las.",
+    "startTitle": "Primeiros passos",
+    "start1": "Instale o Password365 no computador e crie o seu cofre. Guarde o Kit de Emergência que ele oferece: nele está a sua Chave Secreta.",
+    "start2": "Importe as suas senhas do navegador ou do seu gerenciador de senhas atual (Importar, na barra de ferramentas).",
+    "start3": "Instale a extensão do navegador para preencher e salvar logins.",
+    "start4": "No iPhone, escolha “Configurar com outro aparelho” e leia o QR code que aparece no computador, em Dispositivos.",
+    "recoverTitle": "Se você ficou sem acesso",
+    "recover1": "Você precisa da senha mestra e da Chave Secreta. A Chave Secreta está no seu Kit de Emergência, e em Ajustes em qualquer aparelho que ainda esteja conectado.",
+    "recover2": "Ninguém, nem nós, consegue redefinir a sua senha mestra."
+  },
+  "footer": {
+    "tagline": "O gerenciador de senhas sem nuvem.",
+    "product": "Produto",
+    "company": "Password365",
+    "privacy": "Privacidade",
+    "rights": "© {year} Password365"
+  },
+  "notFound": {
+    "title": "Página não encontrada",
+    "text": "Esta página não existe.",
+    "home": "Ir para a página inicial"
+  }
+}

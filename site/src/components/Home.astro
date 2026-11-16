@@ -1,0 +1,194 @@
+---
+import Icon from "./Icon.astro";
+import { href, translator } from "../i18n";
+import { site } from "../config";
+
+const { tag } = Astro.props as { tag: string };
+const t = translator(tag);
+const shot = (name: string) => `/screens/${tag}/${name}.jpg`;
+
+const pillars = [
+  ["phone", "pillars.noCloud"],
+  ["cloud", "pillars.noAccount"],
+  ["shield", "pillars.noTracking"],
+  ["lock", "pillars.encrypted"],
+];
+const features = [
+  ["login", "autofill"],
+  ["lock", "passkeys"],
+  ["password", "totp"],
+  ["shield", "watchtower"],
+  ["card", "categories"],
+  ["star", "generator"],
+  ["globe", "quickAccess"],
+  ["document", "attachments"],
+  ["code", "ssh"],
+];
+const sources = [
+  "1Password", "Bitwarden", "KeePass", "KeePassXC", "LastPass", "Dashlane", "Proton Pass",
+  "Chrome", "Safari", "Firefox", "Edge",
+];
+const faq = [0, 1, 2, 3, 4, 5];
+const mac = site.downloads.mac;
+---
+<section class="hero">
+  <div class="wrap">
+    <p class="eyebrow">{t("hero.eyebrow")}</p>
+    <h1>{t("hero.title")}</h1>
+    <p class="lead">{t("hero.lead")}</p>
+    <div class="buttons">
+      <a class="button primary" href={mac ?? href(tag, "download")}>{t("hero.primary")}</a>
+      <a class="button secondary" href="#sync">{t("hero.secondary")}</a>
+    </div>
+    <p class="note">{t("hero.note")}</p>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="device tablet"><img src={shot("tablet-01-vault")} alt="" width="1600" height="2133" /></div>
+      <div class="device phone"><img src={shot("phone-02-login")} alt="" width="1100" height="2390" /></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <ul class="pillars">
+    {pillars.map(([icon, key]) => <li><Icon name={icon} />{t(key)}</li>)}
+  </ul>
+</div>
+
+<section id="why">
+  <div class="wrap">
+    <h2>{t("why.title")}</h2>
+    <p class="lead">{t("why.lead")}</p>
+    <div class="grid">
+      {[["server", "target"], ["home", "control"], ["globe", "offline"]].map(([icon, key]) => (
+        <div class="card">
+          <div class="icon"><Icon name={icon} /></div>
+          <h3>{t(`why.${key}.title`)}</h3>
+          <p>{t(`why.${key}.text`)}</p>
+        </div>
+      ))}
+    </div>
+    <p class="quote">{t("why.quote")}</p>
+  </div>
+</section>
+
+<section id="sync" class="soft">
+  <div class="wrap center">
+    <h2>{t("sync.title")}</h2>
+    <p class="lead">{t("sync.lead")}</p>
+    <div class="diagram" role="img" aria-label={`${t("sync.computer")} ⇄ ${t("sync.phone")} · ${t("sync.network")} · ${t("sync.noServer")}`}>
+      <svg viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg" font-family="Nunito, ui-rounded, system-ui, sans-serif">
+        <g fill="none" stroke="var(--line)" stroke-width="3">
+          <path d="M440 40c-40 0-62 22-66 46-30 2-48 22-48 44s20 44 50 44h128c30 0 50-20 50-44s-18-42-48-44c-4-24-26-46-66-46z" stroke-dasharray="8 8" />
+        </g>
+        <path d="M384 70l112 112M496 70L384 182" stroke="var(--muted)" stroke-width="4" stroke-linecap="round" />
+        <text x="440" y="222" text-anchor="middle" fill="var(--muted)" font-size="17" font-weight="800">{t("sync.noServer")}</text>
+        <g>
+          <rect x="40" y="100" width="190" height="120" rx="12" fill="var(--bg-card)" stroke="var(--ink)" stroke-width="4" />
+          <path d="M20 232h230" stroke="var(--ink)" stroke-width="6" stroke-linecap="round" />
+          <text x="135" y="275" text-anchor="middle" fill="var(--ink)" font-size="19" font-weight="900">{t("sync.computer")}</text>
+        </g>
+        <g>
+          <rect x="690" y="88" width="84" height="150" rx="16" fill="var(--bg-card)" stroke="var(--ink)" stroke-width="4" />
+          <path d="M718 102h28" stroke="var(--ink)" stroke-width="4" stroke-linecap="round" />
+          <text x="732" y="275" text-anchor="middle" fill="var(--ink)" font-size="19" font-weight="900">{t("sync.phone")}</text>
+        </g>
+        <path d="M200 292 Q440 352 680 292" fill="none" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" />
+        <path d="M200 292l18 0M200 292l12 13M680 292l-18 0M680 292l-12 13" stroke="var(--accent)" stroke-width="5" stroke-linecap="round" />
+        <text x="440" y="306" text-anchor="middle" fill="var(--accent-ink)" font-size="17" font-weight="800">{t("sync.network")}</text>
+      </svg>
+    </div>
+    <div class="grid steps" style="text-align:left">
+      {["step1", "step2", "step3"].map((s) => (
+        <div class="card"><h3>{t(`sync.${s}.title`)}</h3><p>{t(`sync.${s}.text`)}</p></div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <div class="split">
+      <div>
+        <h2>{t("features.title")}</h2>
+        <p class="lead">{t("features.lead")}</p>
+        <ul>
+          {features.slice(0, 4).map(([icon, key]) => (
+            <li><Icon name={icon} /><div><strong>{t(`features.${key}.title`)}</strong><span>{t(`features.${key}.text`)}</span></div></li>
+          ))}
+        </ul>
+      </div>
+      <div class="shot"><img src={shot("phone-01-vault")} alt="" width="1100" height="2390" loading="lazy" /></div>
+    </div>
+    <div class="split flip">
+      <div>
+        <ul>
+          {features.slice(4).map(([icon, key]) => (
+            <li><Icon name={icon} /><div><strong>{t(`features.${key}.title`)}</strong><span>{t(`features.${key}.text`)}</span></div></li>
+          ))}
+        </ul>
+      </div>
+      <div class="shot"><img src={shot("phone-03-categories")} alt="" width="1100" height="2390" loading="lazy" /></div>
+    </div>
+  </div>
+</section>
+
+<section class="dark" id="security">
+  <div class="wrap">
+    <p class="eyebrow">{t("nav.security")}</p>
+    <h2>{t("security.title")}</h2>
+    <p class="lead">{t("security.lead")}</p>
+    <div class="grid">
+      {[["password", "keys"], ["lock", "crypto"], ["shield", "local"]].map(([icon, key]) => (
+        <div class="card">
+          <div class="icon"><Icon name={icon} /></div>
+          <h3>{t(`security.${key}.title`)}</h3>
+          <p>{t(`security.${key}.text`)}</p>
+        </div>
+      ))}
+    </div>
+    <p style="margin-top:32px"><a class="button secondary" style="color:inherit;border-color:#3a3a40" href={href(tag, "security")}>{t("security.more")} →</a></p>
+  </div>
+</section>
+
+<section class="center">
+  <div class="wrap">
+    <h2>{t("migrate.title")}</h2>
+    <p class="lead">{t("migrate.lead")}</p>
+    <ul class="logos">{sources.map((s) => <li>{s}</li>)}</ul>
+    <p class="logos-note">{t("migrate.others")}</p>
+  </div>
+</section>
+
+<section class="soft">
+  <div class="wrap center">
+    <h2>{t("platforms.title")}</h2>
+    <div class="platforms">
+      {[["work", "mac", "macNote"], ["code", "windowsLinux", "windowsLinuxNote"], ["globe", "browsers", "browsersNote"], ["phone", "iphone", "iphoneNote"]].map(([icon, name, note]) => (
+        <div class="card platform">
+          <div class="icon"><Icon name={icon} /></div>
+          <h3>{t(`platforms.${name}`)}</h3>
+          <p>{t(`platforms.${note}`)}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2 class="center">{t("faq.title")}</h2>
+    <div class="faq">
+      {faq.map((n) => (
+        <details><summary>{t(`faq.q${n}`)}</summary><p>{t(`faq.a${n}`)}</p></details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="dark cta">
+  <div class="wrap">
+    <h2>{t("cta.title")}</h2>
+    <p class="lead" style="margin:0 auto">{t("cta.text")}</p>
+    <div class="buttons"><a class="button primary" href={href(tag, "download")}>{t("cta.button")}</a></div>
+  </div>
+</section>
