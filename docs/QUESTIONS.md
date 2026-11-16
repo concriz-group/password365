@@ -7,7 +7,10 @@ Decisions taken autonomously with a default are marked **(default applied)** —
    `remofurlanetto/password365` (Settings › Rename; old links keep redirecting).
 2. **Trademark** — "365" means every day of the year; a quick search found no password manager with
    this name. Optional: a trademark check before public launch.
-3. **License** — GPL-3.0-or-later for everything **(default applied)**.
+3. ~~**License**~~ — **Resolved (you, 2026-11-16): GPL-3.0-or-later** for the core, desktop app and extension
+   (weighed against FSL and BSL: GPL keeps the "open source" trust, App Store clones of GPL code are
+   not allowed anyway, and the paid iPhone app stays closed in its own repository). Register the
+   "Password365" trademark before launch.
 4. **Passphrase default** — 5 words + 1 digit, capitalized, `-` separator (~70 bits)
    **(default applied)**. 1Password defaults to 3 words; we chose stronger.
 5. **Random password default** — 20 chars, all classes (~130 bits) **(default applied)**.
