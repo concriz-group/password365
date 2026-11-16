@@ -114,4 +114,24 @@ mod tests {
         assert!(allowed("http://192.168.1.1/x", "http://192.168.1.1"));
         assert!(!allowed("http://192.168.1.2", "http://192.168.1.1"));
     }
+
+    #[test]
+    fn android_apps_match_only_their_own_package() {
+        assert_eq!(
+            level("androidapp://com.example.bank", "androidapp://com.example.bank"),
+            Some(MatchLevel::Origin)
+        );
+        assert!(allowed("androidapp://com.example.bank", "androidapp://COM.example.bank"));
+        assert_eq!(level("androidapp://com.example.bank", "androidapp://com.example.bank.evil"), None);
+        assert_eq!(level("androidapp://com.example.bank", "androidapp://com.other.bank"), None);
+        // An app is not a website, and a website is not an app.
+        assert_eq!(level("androidapp://com.example.bank", "https://example.bank"), None);
+        assert_eq!(level("https://bank.example.com", "androidapp://com.example.bank"), None);
+    }
+
+    #[test]
+    fn android_app_identities_have_no_path() {
+        assert!(Site::parse("androidapp://com.example.bank/login").is_none());
+        assert!(Site::parse("androidapp://").is_none());
+    }
 }

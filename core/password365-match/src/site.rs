@@ -17,7 +17,9 @@ pub struct Site {
 
 impl Site {
     /// Parses a URL. Values without a scheme (`github.com/login`) are read as
-    /// `https://`. Only `http` and `https` are accepted.
+    /// `https://`. Only `http` and `https` are accepted, and Android apps as
+    /// `androidapp://<package>`: an app matches only exactly the same package
+    /// (no registrable-domain matching — `com.example.app` is not a website).
     #[must_use]
     pub fn parse(raw: &str) -> Option<Self> {
         let trimmed = raw.trim();
@@ -33,6 +35,18 @@ impl Site {
             }
             Err(_) => return None,
         };
+        if url.scheme() == "androidapp" {
+            let package = url.host_str()?.to_ascii_lowercase();
+            if package.is_empty() || !url.path().trim_matches('/').is_empty() {
+                return None;
+            }
+            return Some(Self {
+                scheme: "androidapp".into(),
+                registrable: format!("androidapp:{package}"),
+                host: package,
+                port: None,
+            });
+        }
         if !matches!(url.scheme(), "http" | "https") {
             return None;
         }
