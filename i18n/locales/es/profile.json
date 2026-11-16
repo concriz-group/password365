@@ -1,0 +1,13 @@
+{
+  "title": "Perfil",
+  "identityTitle": "Configura tus datos personales",
+  "identityText": "Añade tu nombre, dirección, teléfonos y más para rellenar formularios más rápido.",
+  "identityLabel": "Identidad predeterminada",
+  "cardTitle": "Configura tu método de pago",
+  "cardText": "Paga más rápido al finalizar la compra: la extensión del navegador rellena tu tarjeta en páginas seguras (https).",
+  "cardLabel": "Tarjeta de pago predeterminada",
+  "createIdentity": "Crear identidad",
+  "addCard": "Añadir tarjeta de pago",
+  "noticeStrong": "Configúralo ahora, ahorra tiempo después.",
+  "noticeText": "La extensión del navegador rellena formularios de dirección y pago con los elementos que elijas aquí. Se quedan en tu bóveda; solo este ordenador recuerda la elección."
+}

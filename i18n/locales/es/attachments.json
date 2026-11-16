@@ -1,0 +1,12 @@
+{
+  "title": "Archivos adjuntos",
+  "notHereYet": "llega con la próxima sincronización",
+  "open": "Abrir",
+  "save": "Guardar…",
+  "remove": "Quitar {name}",
+  "confirmRemove": "Quitar archivo",
+  "attach": "+ Adjuntar un archivo…",
+  "chooseFile": "Elegir el archivo…",
+  "chosen": "Archivo: {name}",
+  "documentHint": "Un documento es un archivo guardado en tu caja fuerte, con sus notas."
+}

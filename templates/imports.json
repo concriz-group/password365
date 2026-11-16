@@ -1,0 +1,159 @@
+{
+  "$comment": "CSV imports. 'columns': header names of each field in exports of browsers and password managers, most specific first (compared without case). 'sources': the tiles of the Migrate your data screen; each source's export steps are translated in i18n/locales/*/migrate.json as steps_<id>.",
+  "columns": {
+    "title": [
+      "title",
+      "name"
+    ],
+    "url": [
+      "url",
+      "login_uri",
+      "website",
+      "uri",
+      "web site",
+      "login url"
+    ],
+    "username": [
+      "username",
+      "login_username",
+      "user name",
+      "login",
+      "user",
+      "email",
+      "e-mail",
+      "username1"
+    ],
+    "password": [
+      "password",
+      "login_password",
+      "pwd",
+      "pass"
+    ],
+    "notes": [
+      "notes",
+      "note",
+      "extra",
+      "comments",
+      "comment"
+    ],
+    "totp": [
+      "otpauth",
+      "login_totp",
+      "totp",
+      "otpsecret",
+      "otp",
+      "one-time password",
+      "2fa"
+    ],
+    "tags": [
+      "tags",
+      "grouping",
+      "folder",
+      "group",
+      "vault",
+      "category"
+    ],
+    "favorite": [
+      "favorite",
+      "fav",
+      "favourite"
+    ]
+  },
+  "sources": [
+    {
+      "id": "chrome",
+      "name": "Chrome",
+      "group": "browser"
+    },
+    {
+      "id": "safari",
+      "name": "Safari",
+      "group": "browser"
+    },
+    {
+      "id": "firefox",
+      "name": "Firefox",
+      "group": "browser"
+    },
+    {
+      "id": "edge",
+      "name": "Edge",
+      "group": "browser"
+    },
+    {
+      "id": "brave",
+      "name": "Brave",
+      "group": "browser"
+    },
+    {
+      "id": "other_browser",
+      "group": "browser"
+    },
+    {
+      "id": "bitwarden",
+      "name": "Bitwarden",
+      "group": "manager"
+    },
+    {
+      "id": "lastpass",
+      "name": "LastPass",
+      "group": "manager"
+    },
+    {
+      "id": "apple_passwords",
+      "name": "iCloud Keychain / Passwords",
+      "group": "manager"
+    },
+    {
+      "id": "dashlane",
+      "name": "Dashlane",
+      "group": "manager"
+    },
+    {
+      "id": "keepass",
+      "name": "KeePass",
+      "group": "manager"
+    },
+    {
+      "id": "keepassxc",
+      "name": "KeePassXC",
+      "group": "manager"
+    },
+    {
+      "id": "roboform",
+      "name": "RoboForm",
+      "group": "manager"
+    },
+    {
+      "id": "onepassword",
+      "name": "1Password",
+      "group": "manager"
+    },
+    {
+      "id": "proton_pass",
+      "name": "Proton Pass",
+      "group": "manager"
+    },
+    {
+      "id": "nordpass",
+      "name": "NordPass",
+      "group": "manager"
+    },
+    {
+      "id": "other_manager",
+      "group": "manager"
+    },
+    {
+      "id": "cxf",
+      "group": "other"
+    },
+    {
+      "id": "spreadsheet",
+      "group": "other"
+    },
+    {
+      "id": "csv",
+      "group": "other"
+    }
+  ]
+}

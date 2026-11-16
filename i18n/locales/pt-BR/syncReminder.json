@@ -1,0 +1,8 @@
+{
+  "firstSync": "Sincronizando com {name} pela primeira vez… Mantenha os dois dispositivos desbloqueados e na mesma rede.",
+  "more_one": "{name} (e mais {count} dispositivo)",
+  "more_other": "{name} (e mais {count} dispositivos)",
+  "missing_one": "Falta {count} alteração feita aqui em {devices}. Coloque os dois dispositivos na mesma rede para sincronizar — até lá, essa alteração existe só neste computador.",
+  "missing_other": "Faltam {count} alterações feitas aqui em {devices}. Coloque os dois dispositivos na mesma rede para sincronizar — até lá, essas alterações existem só neste computador.",
+  "devices": "Dispositivos"
+}

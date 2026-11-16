@@ -1,0 +1,20 @@
+[package]
+name = "password365-host"
+description = "Native-messaging host: relays browser-extension messages to the running Password365 app"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[[bin]]
+name = "password365-host"
+path = "src/main.rs"
+
+[dependencies]
+password365-bridge.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

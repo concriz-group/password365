@@ -1,0 +1,14 @@
+{
+  "very_weak": "Very weak",
+  "weak": "Weak",
+  "fair": "Fair",
+  "good": "Good",
+  "strong": "Strong",
+  "moreChars_one": "{count} more character needed.",
+  "moreChars_other": "{count} more characters needed.",
+  "enough": "Strong enough to protect your vault.",
+  "tooEasy": "Too easy to guess — add more words or characters.",
+  "meter": "Password strength",
+  "notEntered": "Not entered",
+  "hint": "Use at least 10 characters — a few random words work well."
+}

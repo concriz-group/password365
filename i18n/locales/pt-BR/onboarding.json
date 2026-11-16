@@ -1,0 +1,18 @@
+{
+  "saveKeyTitle": "Guarde sua Secret Key",
+  "saveKeyText": "Seu cofre é protegido pela senha mestra e por esta Secret Key. Você precisa das duas para abrir o cofre em um dispositivo novo. Não há servidor nem como recuperá-las.",
+  "printHint": "Imprima seu Kit de Emergência (ou anote a Secret Key) e guarde junto com a senha mestra em um lugar seguro.",
+  "print": "Imprimir Kit de Emergência",
+  "saved": "Guardei minha Secret Key",
+  "open": "Abrir meu cofre",
+  "welcome": "Crie seu cofre",
+  "intro": "Suas senhas ficam nos seus dispositivos. Escolha uma senha mestra forte — é a única coisa que você precisa lembrar.",
+  "repeat": "Repita a senha mestra",
+  "mismatch": "As senhas não coincidem.",
+  "creating": "Criando…",
+  "create": "Criar conta",
+  "already": "Já usa o Password365 em outro computador?",
+  "join": "Configurar com outro dispositivo",
+  "or": "ou",
+  "restore": "restaurar de um backup"
+}

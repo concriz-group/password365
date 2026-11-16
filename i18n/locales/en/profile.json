@@ -1,0 +1,13 @@
+{
+  "title": "Profile",
+  "identityTitle": "Set your personal details",
+  "identityText": "Add your name, address, phone numbers, and more to fill forms faster.",
+  "identityLabel": "Default identity",
+  "cardTitle": "Set your payment method",
+  "cardText": "Pay faster at checkout: the browser extension fills your card on secure (https) pages.",
+  "cardLabel": "Default payment card",
+  "createIdentity": "Create identity",
+  "addCard": "Add payment card",
+  "noticeStrong": "Set details now, save time later.",
+  "noticeText": "The browser extension fills address and payment forms with the items you choose here. They stay in your vault; only this computer remembers the choice."
+}

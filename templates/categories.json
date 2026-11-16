@@ -1,0 +1,183 @@
+{
+  "$comment": "Fields of each category, for every country. A country can replace a category's list in regions/<CODE>.json. See templates/README.md.",
+  "card": [
+    {"label": "cardholder name", "autofill": "cc-name"},
+    {"label": "type", "autofill": "cc-type"},
+    {"label": "number", "concealed": true, "autofill": "cc-number"},
+    {"label": "verification number", "concealed": true, "autofill": "cc-csc"},
+    {"label": "expiry date", "input": "month_year", "autofill": "cc-exp"},
+    {"label": "valid from", "input": "month_year"},
+    {"label": "issuing bank", "section": "Contact Information"},
+    {"label": "phone", "input": "phone", "section": "Contact Information"},
+    {"label": "PIN", "concealed": true, "section": "Additional Details"}
+  ],
+  "identity": [
+    {"label": "first name", "section": "Identification", "autofill": "given-name"},
+    {"label": "initial", "section": "Identification", "autofill": "additional-name"},
+    {"label": "last name", "section": "Identification", "autofill": "family-name"},
+    {"label": "birth date", "input": "date", "section": "Identification", "autofill": "bday"},
+    {"label": "occupation", "section": "Identification"},
+    {"label": "company", "section": "Identification", "autofill": "organization"},
+    {"label": "job title", "section": "Identification", "autofill": "organization-title"},
+    {"label": "address", "input": "multiline", "section": "Address", "autofill": "street-address"},
+    {"label": "city", "section": "Address", "autofill": "address-level2"},
+    {"label": "state", "section": "Address", "autofill": "address-level1"},
+    {"label": "zip", "section": "Address", "autofill": "postal-code"},
+    {"label": "country", "section": "Address", "autofill": "country-name"},
+    {"label": "phone", "input": "phone", "section": "Address", "autofill": "tel"},
+    {"label": "email", "input": "email", "section": "Internet Details", "autofill": "email"},
+    {"label": "website", "input": "url", "section": "Internet Details"}
+  ],
+  "api_credential": [
+    {"label": "username"},
+    {"label": "credential", "concealed": true},
+    {"label": "type"},
+    {"label": "filename"},
+    {"label": "valid from", "input": "date"},
+    {"label": "expires", "input": "date"},
+    {"label": "hostname"}
+  ],
+  "bank_account": [
+    {"label": "bank name"},
+    {"label": "name on account"},
+    {"label": "type"},
+    {"label": "routing number"},
+    {"label": "account number", "concealed": true},
+    {"label": "SWIFT"},
+    {"label": "IBAN", "concealed": true},
+    {"label": "PIN", "concealed": true},
+    {"label": "branch phone", "input": "phone", "section": "Branch Information"},
+    {"label": "branch address", "input": "multiline", "section": "Branch Information"}
+  ],
+  "crypto_wallet": [
+    {"label": "recovery phrase", "input": "multiline", "concealed": true},
+    {"label": "password", "concealed": true},
+    {"label": "wallet address"}
+  ],
+  "database": [
+    {"label": "type"},
+    {"label": "server"},
+    {"label": "port"},
+    {"label": "database"},
+    {"label": "username"},
+    {"label": "password", "concealed": true},
+    {"label": "SID"},
+    {"label": "alias"},
+    {"label": "connection options"}
+  ],
+  "driver_license": [
+    {"label": "full name"},
+    {"label": "address", "input": "multiline"},
+    {"label": "date of birth", "input": "date"},
+    {"label": "sex"},
+    {"label": "height"},
+    {"label": "number"},
+    {"label": "license class"},
+    {"label": "conditions / restrictions"},
+    {"label": "state"},
+    {"label": "country"},
+    {"label": "expiry date", "input": "date"}
+  ],
+  "email": [
+    {"label": "type"},
+    {"label": "username"},
+    {"label": "server"},
+    {"label": "port number"},
+    {"label": "password", "concealed": true},
+    {"label": "security"},
+    {"label": "SMTP server", "section": "SMTP"},
+    {"label": "SMTP port number", "section": "SMTP"},
+    {"label": "SMTP username", "section": "SMTP"},
+    {"label": "SMTP password", "concealed": true, "section": "SMTP"}
+  ],
+  "medical_record": [
+    {"label": "date", "input": "date"},
+    {"label": "location"},
+    {"label": "healthcare professional"},
+    {"label": "patient"},
+    {"label": "reason for visit", "input": "multiline"},
+    {"label": "medication"},
+    {"label": "dosage"}
+  ],
+  "membership": [
+    {"label": "group"},
+    {"label": "member name"},
+    {"label": "member ID"},
+    {"label": "expiry date", "input": "month_year"},
+    {"label": "member since", "input": "month_year"},
+    {"label": "PIN", "concealed": true},
+    {"label": "telephone", "input": "phone"}
+  ],
+  "outdoor_license": [
+    {"label": "full name"},
+    {"label": "valid from", "input": "date"},
+    {"label": "expires", "input": "date"},
+    {"label": "approved wildlife"},
+    {"label": "maximum quota"},
+    {"label": "state"},
+    {"label": "country"}
+  ],
+  "passport": [
+    {"label": "type"},
+    {"label": "issuing country"},
+    {"label": "number"},
+    {"label": "full name"},
+    {"label": "sex"},
+    {"label": "nationality"},
+    {"label": "issuing authority"},
+    {"label": "date of birth", "input": "date"},
+    {"label": "place of birth"},
+    {"label": "issued on", "input": "date"},
+    {"label": "expiry date", "input": "date"}
+  ],
+  "rewards": [
+    {"label": "company name"},
+    {"label": "member name"},
+    {"label": "member ID"},
+    {"label": "PIN", "concealed": true},
+    {"label": "member since", "input": "month_year"},
+    {"label": "customer service phone", "input": "phone"}
+  ],
+  "ssn": [
+    {"label": "name"},
+    {"label": "number", "concealed": true}
+  ],
+  "software_license": [
+    {"label": "version"},
+    {"label": "license key", "input": "multiline", "concealed": true},
+    {"label": "licensed to", "section": "Customer"},
+    {"label": "registered email", "input": "email", "section": "Customer"},
+    {"label": "company", "section": "Customer"},
+    {"label": "download page", "input": "url", "section": "Publisher"},
+    {"label": "publisher", "section": "Publisher"},
+    {"label": "website", "input": "url", "section": "Publisher"},
+    {"label": "purchase date", "input": "date", "section": "Order"},
+    {"label": "order number", "section": "Order"}
+  ],
+  "ssh_key": [
+    {"label": "private key", "input": "multiline", "concealed": true},
+    {"label": "public key", "input": "multiline"},
+    {"label": "fingerprint"},
+    {"label": "key type", "options": ["Ed25519", "RSA", "ECDSA", "DSA"]}
+  ],
+  "server": [
+    {"label": "URL", "input": "url"},
+    {"label": "username"},
+    {"label": "password", "concealed": true},
+    {"label": "admin console URL", "input": "url", "section": "Admin Console"},
+    {"label": "admin console username", "section": "Admin Console"},
+    {"label": "console password", "concealed": true, "section": "Admin Console"},
+    {"label": "hosting provider", "section": "Hosting Provider"},
+    {"label": "support URL", "input": "url", "section": "Hosting Provider"},
+    {"label": "support phone", "input": "phone", "section": "Hosting Provider"}
+  ],
+  "wireless_router": [
+    {"label": "base station name"},
+    {"label": "base station password", "concealed": true},
+    {"label": "server / IP address"},
+    {"label": "network name"},
+    {"label": "wireless security"},
+    {"label": "wireless network password", "concealed": true},
+    {"label": "attached storage password", "concealed": true}
+  ]
+}

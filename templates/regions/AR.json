@@ -1,0 +1,30 @@
+{
+  "$comment": "Argentina: DNI, CUIT/CUIL, calle y número, piso/depto, provincias.",
+  "categories": {
+    "identity": [
+      {"label": "first name", "section": "Identification", "autofill": "given-name"},
+      {"label": "last name", "section": "Identification", "autofill": "family-name"},
+      {"label": "birth date", "input": "date", "section": "Identification", "autofill": "bday"},
+      {"label": "DNI", "section": "Identification", "autofill": "dni", "mask": "00.000.000"},
+      {"label": "CUIT", "name": "CUIT/CUIL", "section": "Identification", "autofill": "cuit", "mask": "00-00000000-0", "validate": "cuit"},
+      {"label": "occupation", "section": "Identification"},
+      {"label": "company", "section": "Identification", "autofill": "organization"},
+      {"label": "job title", "section": "Identification", "autofill": "organization-title"},
+      {"label": "address", "name": "street", "section": "Address", "autofill": "address-line1"},
+      {"label": "number", "section": "Address", "autofill": "house-number"},
+      {"label": "complement", "name": "floor and apartment", "section": "Address", "autofill": "address-line2"},
+      {"label": "zip", "name": "postal code", "section": "Address", "autofill": "postal-code"},
+      {"label": "city", "section": "Address", "autofill": "address-level2"},
+      {"label": "state", "name": "province", "section": "Address", "autofill": "address-level1", "options": ["Buenos Aires", "Ciudad Autónoma de Buenos Aires", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán"]},
+      {"label": "country", "section": "Address", "autofill": "country-name"},
+      {"label": "phone", "input": "phone", "section": "Address", "autofill": "tel"},
+      {"label": "email", "input": "email", "section": "Internet Details", "autofill": "email"},
+      {"label": "website", "input": "url", "section": "Internet Details"}
+    ]
+  },
+  "autofill": {
+    "dni": {"kind": "identity", "hints": ["\\bdni\\b", "documento"]},
+    "cuit": {"kind": "identity", "hints": ["\\bcuit\\b", "\\bcuil\\b"]},
+    "house-number": {"kind": "identity", "hints": ["^(?!.*(tarjeta|card|dni|cuit|tel)).*(\\bn[uú]mero\\b|\\bnro\\b|\\baltura\\b)"]}
+  }
+}

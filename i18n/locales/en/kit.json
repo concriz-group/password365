@@ -1,0 +1,11 @@
+{
+  "label": "Emergency Kit",
+  "title": "Password365 Emergency Kit",
+  "created": "Created {date}",
+  "keep": "Keep this sheet somewhere safe (a physical safe, with your important documents). Together with your master password it is the only way to open your vault on a new device — there is no server and no account recovery.",
+  "writeHere": "Write your master password here",
+  "howTo": "How to restore",
+  "step1": "Install Password365 on the new device.",
+  "step2": "If another of your devices still works: choose “{join}”. Otherwise choose “{restore}” and pick your backup file.",
+  "step3": "Enter your master password, and this Secret Key when asked."
+}

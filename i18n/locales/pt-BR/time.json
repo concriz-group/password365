@@ -1,0 +1,10 @@
+{
+  "never": "nunca",
+  "justNow": "agora mesmo",
+  "minutesAgo_one": "há {count} minuto",
+  "minutesAgo_other": "há {count} minutos",
+  "hoursAgo_one": "há {count} hora",
+  "hoursAgo_other": "há {count} horas",
+  "daysAgo_one": "há {count} dia",
+  "daysAgo_other": "há {count} dias"
+}

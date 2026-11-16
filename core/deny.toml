@@ -1,0 +1,33 @@
+# cargo-deny policy: known vulnerabilities, licenses and sources.
+
+[advisories]
+version = 2
+yanked = "deny"
+
+[licenses]
+version = 2
+confidence-threshold = 0.9
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "Unicode-3.0",
+    "Unlicense",
+    "Zlib",
+    "0BSD",
+    "MPL-2.0",
+    "GPL-3.0-or-later",
+    # HTTPS for the opt-in breach check (rustls, ring, webpki): permissive, GPL-compatible.
+    "ISC",
+    # Mozilla's CA certificate list (webpki-roots): permissive data licence.
+    "CDLA-Permissive-2.0",
+]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

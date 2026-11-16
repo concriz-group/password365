@@ -1,0 +1,15 @@
+{
+  "sshAgent": "Agente SSH",
+  "useAgent": "Usar o agente SSH",
+  "agentHint": "Permite que o ssh e o git usem as chaves Ed25519 dos seus itens Chave SSH. As chaves privadas nunca saem do app; cada chave pede sua autorização uma vez a cada desbloqueio.",
+  "configHint": "Adicione isto ao ~/.ssh/config (ou defina SSH_AUTH_SOCK com o endereço):",
+  "config": "Configuração do SSH",
+  "keys": "Chaves SSH",
+  "noKeys": "Nenhum item Chave SSH ainda. Crie um em + Novo item › Chave SSH e cole a chave privada.",
+  "problem_unreadable": "Não é uma chave privada OpenSSH Ed25519: o agente não consegue usá-la.",
+  "problem_encrypted": "Protegida por senha: adicione um campo chamado “passphrase” com ela.",
+  "approveTitle": "Permitir a chave SSH?",
+  "approveText": "Um programa quer usar a chave SSH “{title}”. Permitir até o Password365 bloquear?",
+  "allow": "Permitir",
+  "deny": "Negar"
+}

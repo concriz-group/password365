@@ -1,0 +1,12 @@
+{
+  "title": "Seu cofre está trancado",
+  "masterPassword": "Senha mestra",
+  "secretKey": "Secret Key",
+  "newDevice": "Dispositivo novo? Digite sua Secret Key",
+  "changedElsewhere": "Trocou a senha mestra em outro dispositivo? Até você atualizar este, ele continua abrindo com a senha anterior.",
+  "unlocking": "Desbloqueando…",
+  "unlock": "Desbloquear",
+  "wait_one": "Muitas senhas erradas. Tente de novo em {count} segundo.",
+  "wait_other": "Muitas senhas erradas. Tente de novo em {count} segundos.",
+  "secretKeyForgotten": "Depois de muitas senhas erradas, este computador esquece a Secret Key. Digite-a do seu Emergency Kit (ou veja nas Configurações de outro dispositivo)."
+}

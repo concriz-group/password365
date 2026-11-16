@@ -1,0 +1,37 @@
+[package]
+name = "password365-app"
+description = "UI-agnostic application service for Password365 frontends (desktop, CLI, mobile)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+password365-crypto.workspace = true
+password365-model.workspace = true
+password365-generator.workspace = true
+password365-vault.workspace = true
+password365-import.workspace = true
+password365-match.workspace = true
+password365-webauthn.workspace = true
+password365-net.workspace = true
+password365-sync.workspace = true
+password365-ssh.workspace = true
+sha1.workspace = true
+zeroize.workspace = true
+ureq.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+serde_json.workspace = true
+zxcvbn.workspace = true
+
+[dev-dependencies]
+zip.workspace = true
+sha2.workspace = true
+password365-crypto = { workspace = true, features = ["insecure-test-params"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

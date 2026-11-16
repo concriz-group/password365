@@ -1,0 +1,11 @@
+{
+  "label": "Kit de Emergência",
+  "title": "Kit de Emergência do Password365",
+  "created": "Criado em {date}",
+  "keep": "Guarde esta folha em um lugar seguro (um cofre físico, junto com seus documentos importantes). Junto com a senha mestra, ela é a única forma de abrir seu cofre em um dispositivo novo — não há servidor nem recuperação de conta.",
+  "writeHere": "Escreva sua senha mestra aqui",
+  "howTo": "Como restaurar",
+  "step1": "Instale o Password365 no dispositivo novo.",
+  "step2": "Se outro dispositivo seu ainda funciona: escolha “{join}”. Caso contrário, escolha “{restore}” e selecione seu arquivo de backup.",
+  "step3": "Digite sua senha mestra e, quando pedido, esta Secret Key."
+}

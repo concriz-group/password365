@@ -1,0 +1,131 @@
+{
+  "$comment": "Icons are 48×48 SVG files in svg/, drawn with currentColor (the colour below) and white only. 'categories': each category's icon and colour. 'library': icons anyone can pick for an item (Choose icon). Add an icon by adding its file and its name here.",
+  "categories": {
+    "login": {
+      "icon": "login",
+      "color": "#f06a00"
+    },
+    "password": {
+      "icon": "password",
+      "color": "#4f46e5"
+    },
+    "note": {
+      "icon": "note",
+      "color": "#ca8a04"
+    },
+    "card": {
+      "icon": "card",
+      "color": "#0891b2"
+    },
+    "identity": {
+      "icon": "identity",
+      "color": "#16a34a"
+    },
+    "api_credential": {
+      "icon": "api_credential",
+      "color": "#7c3aed"
+    },
+    "bank_account": {
+      "icon": "bank_account",
+      "color": "#0d9488"
+    },
+    "crypto_wallet": {
+      "icon": "crypto_wallet",
+      "color": "#a16207"
+    },
+    "database": {
+      "icon": "database",
+      "color": "#0369a1"
+    },
+    "driver_license": {
+      "icon": "driver_license",
+      "color": "#dc2626"
+    },
+    "email": {
+      "icon": "email",
+      "color": "#2563eb"
+    },
+    "medical_record": {
+      "icon": "medical_record",
+      "color": "#e11d48"
+    },
+    "membership": {
+      "icon": "membership",
+      "color": "#9333ea"
+    },
+    "outdoor_license": {
+      "icon": "outdoor_license",
+      "color": "#15803d"
+    },
+    "passport": {
+      "icon": "passport",
+      "color": "#1d4ed8"
+    },
+    "rewards": {
+      "icon": "rewards",
+      "color": "#db2777"
+    },
+    "ssn": {
+      "icon": "ssn",
+      "color": "#475569"
+    },
+    "software_license": {
+      "icon": "software_license",
+      "color": "#0284c7"
+    },
+    "ssh_key": {
+      "icon": "ssh_key",
+      "color": "#334155"
+    },
+    "server": {
+      "icon": "server",
+      "color": "#4338ca"
+    },
+    "wireless_router": {
+      "icon": "wireless_router",
+      "color": "#0891b2"
+    },
+    "document": {
+      "icon": "document",
+      "color": "#64748b"
+    }
+  },
+  "library": [
+    "lock",
+    "home",
+    "work",
+    "bank_account",
+    "card",
+    "cart",
+    "heart",
+    "star",
+    "cloud",
+    "game",
+    "phone",
+    "email",
+    "chat",
+    "globe",
+    "school",
+    "plane",
+    "music",
+    "camera",
+    "shield",
+    "user",
+    "code",
+    "server",
+    "wireless_router",
+    "medical_record",
+    "rewards",
+    "document"
+  ],
+  "colors": [
+    "#2563eb",
+    "#16a34a",
+    "#dc2626",
+    "#d97706",
+    "#7c3aed",
+    "#db2777",
+    "#0891b2",
+    "#334155"
+  ]
+}

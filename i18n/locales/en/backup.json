@@ -1,0 +1,8 @@
+{
+  "title": "Backup",
+  "hint": "An encrypted copy of all your vaults. To restore it on a new computer you need this file, your Secret Key (Emergency Kit) and your master password. Keep it somewhere other than this computer.",
+  "last": "Last backup: {date}",
+  "never": "never",
+  "backUpNow": "Back up now…",
+  "saved": "Backup saved."
+}

@@ -1,0 +1,28 @@
+[package]
+name = "password365-vault"
+description = "Encrypted local vault storage for Password365"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+password365-crypto.workspace = true
+password365-model.workspace = true
+password365-sync.workspace = true
+rusqlite.workspace = true
+postcard.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+zeroize.workspace = true
+sha2.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+password365-crypto = { workspace = true, features = ["insecure-test-params"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

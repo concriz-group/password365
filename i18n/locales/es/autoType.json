@@ -1,0 +1,5 @@
+{
+  "title": "Autoescritura",
+  "noItem": "Ningún elemento está configurado para {window}. Abre el elemento que quieras, elige Editar › Autoescritura y añade el título de la ventana (usa * para las partes que cambian).",
+  "choose": "Elige qué escribir en {window}:"
+}

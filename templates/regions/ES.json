@@ -1,0 +1,26 @@
+{
+  "$comment": "España: DNI/NIE, código postal de 5 cifras, provincias.",
+  "categories": {
+    "identity": [
+      {"label": "first name", "section": "Identification", "autofill": "given-name"},
+      {"label": "last name", "section": "Identification", "autofill": "family-name"},
+      {"label": "birth date", "input": "date", "section": "Identification", "autofill": "bday"},
+      {"label": "DNI", "section": "Identification", "autofill": "dni", "validate": "dni_es"},
+      {"label": "occupation", "section": "Identification"},
+      {"label": "company", "section": "Identification", "autofill": "organization"},
+      {"label": "job title", "section": "Identification", "autofill": "organization-title"},
+      {"label": "address", "name": "street", "section": "Address", "autofill": "address-line1"},
+      {"label": "complement", "name": "floor and door", "section": "Address", "autofill": "address-line2"},
+      {"label": "zip", "name": "postal code", "section": "Address", "autofill": "postal-code", "mask": "00000"},
+      {"label": "city", "section": "Address", "autofill": "address-level2"},
+      {"label": "state", "name": "province", "section": "Address", "autofill": "address-level1", "options": ["Álava", "Albacete", "Alicante", "Almería", "Asturias", "Ávila", "Badajoz", "Barcelona", "Burgos", "Cáceres", "Cádiz", "Cantabria", "Castellón", "Ceuta", "Ciudad Real", "Córdoba", "Cuenca", "Girona", "Granada", "Guadalajara", "Guipúzcoa", "Huelva", "Huesca", "Islas Baleares", "Jaén", "La Coruña", "La Rioja", "Las Palmas", "León", "Lérida", "Lugo", "Madrid", "Málaga", "Melilla", "Murcia", "Navarra", "Orense", "Palencia", "Pontevedra", "Salamanca", "Santa Cruz de Tenerife", "Segovia", "Sevilla", "Soria", "Tarragona", "Teruel", "Toledo", "Valencia", "Valladolid", "Vizcaya", "Zamora", "Zaragoza"]},
+      {"label": "country", "section": "Address", "autofill": "country-name"},
+      {"label": "phone", "input": "phone", "section": "Address", "autofill": "tel", "mask": "000 00 00 00"},
+      {"label": "email", "input": "email", "section": "Internet Details", "autofill": "email"},
+      {"label": "website", "input": "url", "section": "Internet Details"}
+    ]
+  },
+  "autofill": {
+    "dni": {"kind": "identity", "hints": ["\\bdni\\b", "\\bnie\\b", "\\bnif\\b", "documento de identidad"]}
+  }
+}

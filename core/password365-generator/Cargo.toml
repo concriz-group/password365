@@ -1,0 +1,19 @@
+[package]
+name = "password365-generator"
+description = "Password, passphrase and PIN generator for Password365"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+# data/eff_large_wordlist.txt: EFF, CC BY 3.0 US (https://www.eff.org/dice)
+
+[dependencies]
+password365-crypto.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+zeroize.workspace = true
+
+[lints]
+workspace = true

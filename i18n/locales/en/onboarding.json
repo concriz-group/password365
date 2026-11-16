@@ -1,0 +1,18 @@
+{
+  "saveKeyTitle": "Save your Secret Key",
+  "saveKeyText": "Your vault is protected by your master password and this Secret Key. You need both to open your vault on a new device. There is no server and no way to recover them.",
+  "printHint": "Print your Emergency Kit (or write the Secret Key down) and keep it with your master password somewhere safe.",
+  "print": "Print Emergency Kit",
+  "saved": "I have saved my Secret Key",
+  "open": "Open my vault",
+  "welcome": "Create your vault",
+  "intro": "Your passwords stay on your devices. Choose a strong master password — it is the only thing you must remember.",
+  "repeat": "Repeat master password",
+  "mismatch": "Passwords do not match.",
+  "creating": "Creating…",
+  "create": "Create account",
+  "already": "Already use Password365 on another computer?",
+  "join": "Set up with another device",
+  "or": "or",
+  "restore": "restore from a backup"
+}

@@ -1,0 +1,14 @@
+{
+  "locked": "Password365 is locked.",
+  "not_initialized": "There is no account on this computer yet.",
+  "already_initialized": "There is already an account on this computer.",
+  "wrong_credentials": "Wrong master password or Secret Key.",
+  "not_found": "It was not found. It may have been deleted on another device.",
+  "conflict": "This item was changed elsewhere in the meantime. Reopen it and try again.",
+  "validation": "Check what you entered: {detail}",
+  "io": "The file could not be read or written: {detail}",
+  "internal": "Something went wrong: {detail}",
+  "too_many_attempts": "Too many wrong passwords. Wait a moment and try again.",
+  "secret_key_required": "Enter your Secret Key (from the Emergency Kit) with your master password.",
+  "password_required": "Enter your master password."
+}

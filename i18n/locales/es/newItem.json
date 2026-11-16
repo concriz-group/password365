@@ -1,0 +1,6 @@
+{
+  "label": "Nuevo elemento",
+  "title": "¿Qué te gustaría añadir?",
+  "search": "Buscar una categoría",
+  "noMatch": "Ninguna categoría coincide con «{query}»."
+}

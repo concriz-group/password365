@@ -1,0 +1,27 @@
+[package]
+name = "password365-sync"
+description = "Serverless device-to-device sync for Password365: clocks, per-field merge, deltas"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+password365-crypto.workspace = true
+password365-model.workspace = true
+serde.workspace = true
+uuid.workspace = true
+snow.workspace = true
+data-encoding.workspace = true
+sha2.workspace = true
+zeroize.workspace = true
+getrandom.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest = { version = "1.9.0", default-features = false, features = ["std"] }
+
+[lints]
+workspace = true

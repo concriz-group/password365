@@ -1,0 +1,14 @@
+{
+  "locked": "Password365 está bloqueado.",
+  "not_initialized": "Todavía no hay una cuenta en este equipo.",
+  "already_initialized": "Ya existe una cuenta en este equipo.",
+  "wrong_credentials": "Contraseña maestra o Secret Key incorrecta.",
+  "not_found": "No se encontró. Puede que se haya eliminado en otro dispositivo.",
+  "conflict": "Este elemento se modificó en otro lugar mientras tanto. Ábrelo de nuevo e inténtalo otra vez.",
+  "validation": "Revisa lo que has introducido: {detail}",
+  "io": "No se pudo leer o escribir el archivo: {detail}",
+  "internal": "Algo salió mal: {detail}",
+  "too_many_attempts": "Demasiadas contraseñas incorrectas. Espera un momento y vuelve a intentarlo.",
+  "secret_key_required": "Escribe tu Secret Key (del Emergency Kit) junto con la contraseña maestra.",
+  "password_required": "Escribe tu contraseña maestra."
+}

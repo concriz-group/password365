@@ -1,0 +1,18 @@
+{
+  "saveKeyTitle": "Guarda tu Clave secreta",
+  "saveKeyText": "Tu bóveda está protegida por tu contraseña maestra y por esta Clave secreta. Necesitas ambas para abrir tu bóveda en un dispositivo nuevo. No hay servidor ni forma de recuperarlas.",
+  "printHint": "Imprime tu Kit de emergencia (o anota la Clave secreta) y guárdalo con tu contraseña maestra en un lugar seguro.",
+  "print": "Imprimir Kit de emergencia",
+  "saved": "He guardado mi Clave secreta",
+  "open": "Abrir mi bóveda",
+  "welcome": "Crea tu caja fuerte",
+  "intro": "Tus contraseñas se quedan en tus dispositivos. Elige una contraseña maestra segura: es lo único que debes recordar.",
+  "repeat": "Repite la contraseña maestra",
+  "mismatch": "Las contraseñas no coinciden.",
+  "creating": "Creando…",
+  "create": "Crear cuenta",
+  "already": "¿Ya usas Password365 en otro ordenador?",
+  "join": "Configurar con otro dispositivo",
+  "or": "o",
+  "restore": "restaurar desde una copia de seguridad"
+}

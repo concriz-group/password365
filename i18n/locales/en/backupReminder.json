@@ -1,0 +1,6 @@
+{
+  "stale": "No backup in the last 30 days.",
+  "none": "You have no backup yet.",
+  "risk": "Without a backup, losing this computer means losing your passwords.",
+  "backUp": "Back up now…"
+}

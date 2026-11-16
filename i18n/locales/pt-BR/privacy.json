@@ -1,0 +1,6 @@
+{
+  "intro": "O Password365 funciona offline. Nada abaixo funciona sem você ligar.",
+  "watchtower": "Watchtower",
+  "breachCheck": "Verificar senhas vulneráveis",
+  "breachHint": "Consulta suas senhas no haveibeenpwned.com quando você clica em Verificar agora no Watchtower. Só os 5 primeiros caracteres do hash SHA-1 de cada senha saem deste computador, e a resposta vem com enchimento para que ninguém saiba qual senha foi consultada."
+}

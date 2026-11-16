@@ -1,0 +1,26 @@
+[package]
+name = "password365-net"
+description = "Password365 device-to-device transport: framed TCP carrying Noise-encrypted sync"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+password365-crypto.workspace = true
+password365-model.workspace = true
+password365-sync.workspace = true
+password365-vault.workspace = true
+thiserror.workspace = true
+mdns-sd.workspace = true
+getrandom.workspace = true
+zeroize.workspace = true
+
+[dev-dependencies]
+password365-crypto = { workspace = true, features = ["insecure-test-params"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

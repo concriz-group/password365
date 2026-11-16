@@ -1,0 +1,15 @@
+{
+  "title": "Quick Access",
+  "search": "Search Password365",
+  "results": "Items",
+  "none": "No items match.",
+  "locked": "Password365 is locked.",
+  "unlock": "Open Password365 to unlock",
+  "copyUsername": "Copy username",
+  "copyPassword": "Copy password",
+  "copyTotp": "Copy one-time password",
+  "open": "Open in Password365",
+  "no_username": "This item has no username.",
+  "no_password": "This item has no password.",
+  "no_totp": "This item has no one-time password."
+}

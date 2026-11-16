@@ -1,0 +1,27 @@
+[package]
+name = "password365-bridge"
+description = "Browser-extension bridge: protocol, framing, dispatch and local socket transport"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+password365-app.workspace = true
+password365-webauthn.workspace = true
+password365-crypto.workspace = true
+password365-generator.workspace = true
+interprocess.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+directories.workspace = true
+
+[dev-dependencies]
+password365-crypto = { workspace = true, features = ["insecure-test-params"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,7 @@
+{
+  "title": "Emergency Kit",
+  "hint": "Imprime una nueva copia de la hoja con tu Secret Key, por ejemplo si perdiste la anterior. Introduce antes tu contraseña maestra.",
+  "form": "Imprimir Emergency Kit",
+  "masterPassword": "Contraseña maestra",
+  "print": "Imprimir Emergency Kit"
+}

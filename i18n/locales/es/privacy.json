@@ -1,0 +1,6 @@
+{
+  "intro": "Password365 funciona sin conexión. Nada de lo siguiente se ejecuta si no lo activas.",
+  "watchtower": "Watchtower",
+  "breachCheck": "Comprobar contraseñas vulnerables",
+  "breachHint": "Consulta tus contraseñas en haveibeenpwned.com cuando pulsas Comprobar ahora en Watchtower. Solo salen de este ordenador los 5 primeros caracteres del hash SHA-1 de cada contraseña, y la respuesta va rellenada para que nadie sepa qué contraseña se consultó."
+}

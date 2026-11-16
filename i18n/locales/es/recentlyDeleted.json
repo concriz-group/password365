@@ -1,0 +1,11 @@
+{
+  "title": "Eliminados recientemente",
+  "hint": "Los elementos eliminados se quedan aquí 30 días y luego se eliminan definitivamente en todos los dispositivos.",
+  "empty": "No hay elementos eliminados recientemente.",
+  "daysLeft_one": "Queda {count} día",
+  "daysLeft_other": "Quedan {count} días",
+  "restore": "Restaurar",
+  "deletePermanently": "Eliminar definitivamente",
+  "deleteAria": "Eliminar {title} definitivamente",
+  "delete": "Eliminar…"
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Acesso rápido",
+  "search": "Buscar no Password365",
+  "results": "Itens",
+  "none": "Nenhum item encontrado.",
+  "locked": "O Password365 está bloqueado.",
+  "unlock": "Abrir o Password365 para desbloquear",
+  "copyUsername": "Copiar usuário",
+  "copyPassword": "Copiar senha",
+  "copyTotp": "Copiar código de uso único",
+  "open": "Abrir no Password365",
+  "no_username": "Este item não tem usuário.",
+  "no_password": "Este item não tem senha.",
+  "no_totp": "Este item não tem código de uso único."
+}

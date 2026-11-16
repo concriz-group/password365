@@ -1,0 +1,11 @@
+{
+  "title": "Excluídos recentemente",
+  "hint": "Os itens excluídos ficam aqui por 30 dias e depois são apagados definitivamente em todos os dispositivos.",
+  "empty": "Nenhum item excluído recentemente.",
+  "daysLeft_one": "{count} dia restante",
+  "daysLeft_other": "{count} dias restantes",
+  "restore": "Restaurar",
+  "deletePermanently": "Excluir definitivamente",
+  "deleteAria": "Excluir {title} definitivamente",
+  "delete": "Excluir…"
+}

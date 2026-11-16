@@ -1,0 +1,21 @@
+{
+  "save": "Guardar",
+  "cancel": "Cancelar",
+  "close": "Cerrar",
+  "copy": "Copiar",
+  "copied": "Copiado",
+  "edit": "Editar",
+  "delete": "Eliminar",
+  "remove": "Quitar",
+  "reveal": "Mostrar",
+  "hide": "Ocultar",
+  "show": "Mostrar",
+  "loading": "Cargando…",
+  "done": "Listo",
+  "back": "Atrás",
+  "next": "Siguiente",
+  "continue": "Continuar",
+  "retry": "Reintentar",
+  "none": "Ninguno",
+  "search": "Buscar"
+}

@@ -1,0 +1,6 @@
+{
+  "label": "New item",
+  "title": "What would you like to add?",
+  "search": "Search for a category",
+  "noMatch": "No category matches “{query}”."
+}

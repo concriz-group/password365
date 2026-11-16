@@ -1,0 +1,14 @@
+{
+  "very_weak": "Muy débil",
+  "weak": "Débil",
+  "fair": "Aceptable",
+  "good": "Buena",
+  "strong": "Fuerte",
+  "moreChars_one": "Falta {count} carácter.",
+  "moreChars_other": "Faltan {count} caracteres.",
+  "enough": "Lo bastante segura para proteger tu bóveda.",
+  "tooEasy": "Demasiado fácil de adivinar: añade más palabras o caracteres.",
+  "meter": "Seguridad de la contraseña",
+  "notEntered": "Sin escribir",
+  "hint": "Usa al menos 10 caracteres: unas cuantas palabras al azar funcionan bien."
+}

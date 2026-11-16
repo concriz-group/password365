@@ -1,0 +1,9 @@
+{
+  "title": "Atajos de teclado",
+  "quickAccess": "Mostrar el Acceso rápido",
+  "autoType": "Auto-type",
+  "lock": "Bloquear Password365",
+  "press": "Pulsa las teclas…",
+  "none": "Ninguno",
+  "clear": "Borrar el atajo de {label}"
+}

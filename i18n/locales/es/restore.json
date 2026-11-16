@@ -1,0 +1,9 @@
+{
+  "title": "Restaurar desde una copia de seguridad",
+  "intro": "Elige tu archivo {file} y después introduce la Clave secreta de tu Kit de emergencia y tu contraseña maestra.",
+  "choose": "Elegir archivo de copia…",
+  "file": "Archivo de copia de seguridad",
+  "noFile": "Ningún archivo elegido",
+  "restoring": "Restaurando…",
+  "restore": "Restaurar"
+}

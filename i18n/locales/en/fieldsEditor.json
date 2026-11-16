@@ -1,0 +1,16 @@
+{
+  "fields": "Fields",
+  "sectionName": "Section name",
+  "addMore": "+ add more",
+  "nameOf": "Name of {name}",
+  "labelPlaceholder": "label",
+  "removeField": "Remove {name}",
+  "field": "field",
+  "addField": "+ add another field",
+  "addFieldAria": "Add another field",
+  "addFieldTo": "Add another field to {section}",
+  "invalid": "This {name} does not look right. Check it before saving.",
+  "move": "Move {name}",
+  "moveHint": "Drag to move, or press ↑ ↓",
+  "chooseLogin": "Choose a login…"
+}

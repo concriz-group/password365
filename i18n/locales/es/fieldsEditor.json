@@ -1,0 +1,16 @@
+{
+  "fields": "Campos",
+  "sectionName": "Nombre de la sección",
+  "addMore": "+ añadir más",
+  "nameOf": "Nombre de {name}",
+  "labelPlaceholder": "etiqueta",
+  "removeField": "Quitar {name}",
+  "field": "campo",
+  "addField": "+ añadir otro campo",
+  "addFieldAria": "Añadir otro campo",
+  "addFieldTo": "Añadir otro campo a {section}",
+  "invalid": "Este {name} no parece correcto. Revísalo antes de guardar.",
+  "move": "Mover {name}",
+  "moveHint": "Arrastra para mover, o usa ↑ ↓",
+  "chooseLogin": "Elige un inicio de sesión…"
+}

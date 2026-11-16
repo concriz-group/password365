@@ -1,0 +1,12 @@
+{
+  "items": "Itens",
+  "category": "Categoria",
+  "allCategories": "Todas as categorias",
+  "sortBy": "Ordenar por",
+  "sortTitle": "Título",
+  "sortUpdated": "Data de modificação",
+  "noMatches": "Nenhum item encontrado.",
+  "empty": "Nenhum item ainda.",
+  "review": "Revisar",
+  "resize": "Ajustar a largura da lista"
+}

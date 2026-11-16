@@ -1,0 +1,15 @@
+{
+  "title": "Add a device",
+  "preparing": "Preparing…",
+  "scanHint": "On the new device, install Password365 and choose {setup}, then scan this code or paste the text below. Both devices must be on the same network.",
+  "setupChoice": "Set up with another device",
+  "qr": "Pairing QR code",
+  "copyCode": "Copy code",
+  "waiting": "Waiting for the new device… The code works once and expires in 5 minutes.",
+  "checkCode": "Check that the new device shows the same code:",
+  "verificationCode": "Verification code",
+  "vaults": "Vaults on the new device",
+  "match": "The codes match — add device",
+  "noMatch": "They don't match",
+  "finishing": "Waiting for the master password on the new device…"
+}

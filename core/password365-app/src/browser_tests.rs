@@ -1,0 +1,255 @@
+//! Tests for the browser-extension operations.
+
+use password365_crypto::kdf::KdfParams;
+
+use super::*;
+use crate::AppConfig;
+use crate::item_input::ItemInput;
+use crate::secret_key_store::MemorySecretKeyStore;
+
+const PW: &str = "correct horse battery";
+
+fn app() -> (tempfile::TempDir, AppService) {
+    let dir = tempfile::tempdir().unwrap();
+    let config = AppConfig {
+        store_path: dir.path().join("s.qlvault"),
+        kdf: KdfParams::insecure_for_tests(),
+        auto_lock_ms: 0,
+        settings_path: None,
+    };
+    let mut app = AppService::new(config, Box::new(MemorySecretKeyStore::default()));
+    app.create_account(PW.into(), &PW.into()).unwrap();
+    (dir, app)
+}
+
+fn add(app: &mut AppService, title: &str, url: &str, user: &str, pw: &str) -> String {
+    app.create_item(&ItemInput {
+        title: title.into(),
+        username: Some(user.into()),
+        urls: vec![url.into()],
+        password: Some(pw.into()),
+        ..ItemInput::default()
+    })
+    .unwrap()
+    .summary
+    .id
+}
+
+fn submitted(url: &str, user: &str, pw: &str) -> SubmittedLogin {
+    SubmittedLogin {
+        page_url: url.into(),
+        username: Some(user.into()),
+        password: pw.into(),
+        title: None,
+    }
+}
+
+#[test]
+fn candidates_are_matched_and_ranked() {
+    let (_d, mut app) = app();
+    add(
+        &mut app,
+        "Google (site)",
+        "https://www.google.com",
+        "a",
+        "1",
+    );
+    add(
+        &mut app,
+        "Google (origin)",
+        "https://accounts.google.com",
+        "b",
+        "2",
+    );
+    add(&mut app, "GitHub", "https://github.com", "c", "3");
+    add(&mut app, "Phish", "https://google.com.evil.io", "d", "4");
+    app.create_item(&ItemInput {
+        kind: Some("note".into()),
+        title: "Note".into(),
+        urls: vec!["https://accounts.google.com".into()],
+        ..ItemInput::default()
+    })
+    .unwrap();
+
+    let found = app
+        .logins_for_url("https://accounts.google.com/signin?x")
+        .unwrap();
+    let titles: Vec<_> = found
+        .iter()
+        .map(|c| (c.title.as_str(), c.match_level))
+        .collect();
+    assert_eq!(
+        titles,
+        vec![("Google (origin)", "origin"), ("Google (site)", "site")]
+    );
+    assert!(
+        app.logins_for_url("https://example.org")
+            .unwrap()
+            .is_empty()
+    );
+}
+
+#[test]
+fn no_candidates_on_http_for_https_logins() {
+    let (_d, mut app) = app();
+    add(&mut app, "Bank", "https://bank.example", "u", "p");
+    assert!(
+        app.logins_for_url("http://bank.example")
+            .unwrap()
+            .is_empty()
+    );
+}
+
+#[test]
+fn fill_is_released_only_for_matching_pages() {
+    let (_d, mut app) = app();
+    let id = add(&mut app, "GitHub", "https://github.com", "octo", "s3cret");
+    let creds = app
+        .fill_credentials(&id, "https://github.com/login")
+        .unwrap();
+    assert_eq!(
+        creds,
+        FillCredentials {
+            username: Some("octo".into()),
+            password: Some("s3cret".into())
+        }
+    );
+
+    let err = app
+        .fill_credentials(&id, "https://github.com.evil.io/login")
+        .unwrap_err();
+    assert_eq!(err.code(), "validation");
+    assert_eq!(
+        app.fill_credentials(&id, "not a url at all ://")
+            .unwrap_err()
+            .code(),
+        "validation"
+    );
+}
+
+#[test]
+fn submission_classification() {
+    let (_d, mut app) = app();
+    let id = add(&mut app, "GitHub", "https://github.com", "Octo", "old");
+    assert_eq!(
+        app.check_submitted(&submitted("https://github.com/session", "octo", "old"))
+            .unwrap(),
+        SubmissionCheck::Known { id: id.clone() }
+    );
+    assert_eq!(
+        app.check_submitted(&submitted("https://github.com/session", "octo", "new"))
+            .unwrap(),
+        SubmissionCheck::PasswordChanged { id }
+    );
+    assert_eq!(
+        app.check_submitted(&submitted("https://github.com", "someone-else", "x"))
+            .unwrap(),
+        SubmissionCheck::New
+    );
+    assert_eq!(
+        app.check_submitted(&submitted("https://gitlab.com", "octo", "old"))
+            .unwrap(),
+        SubmissionCheck::New
+    );
+}
+
+#[test]
+fn saving_a_new_login() {
+    let (_d, mut app) = app();
+    let mut login = submitted("https://www.shop.example/login?next=/", "me@x.com", "pw1");
+    let saved = app.save_submitted(&login, None).unwrap();
+    assert_eq!(saved.summary.title, "shop.example");
+    assert_eq!(saved.summary.urls, vec!["https://www.shop.example"]);
+    assert_eq!(
+        app.check_submitted(&login).unwrap(),
+        SubmissionCheck::Known {
+            id: saved.summary.id.clone()
+        }
+    );
+
+    login.username = Some("other".into());
+    login.title = Some("My Shop".into());
+    assert_eq!(
+        app.save_submitted(&login, None).unwrap().summary.title,
+        "My Shop"
+    );
+}
+
+#[test]
+fn saving_updates_a_changed_password_and_keeps_history() {
+    let (_d, mut app) = app();
+    let id = add(&mut app, "GitHub", "https://github.com", "octo", "old");
+    let updated = app
+        .save_submitted(&submitted("https://github.com", "octo", "new"), None)
+        .unwrap();
+    assert_eq!(updated.summary.id, id);
+    assert_eq!(updated.password_history_count, 1);
+    assert_eq!(
+        app.fill_credentials(&id, "https://github.com")
+            .unwrap()
+            .password
+            .as_deref(),
+        Some("new")
+    );
+
+    let same = app
+        .save_submitted(&submitted("https://github.com", "octo", "new"), None)
+        .unwrap();
+    assert_eq!(
+        same.version, updated.version,
+        "unchanged password is a no-op"
+    );
+}
+
+#[test]
+fn saving_rejects_empty_password_and_bad_pages() {
+    let (_d, mut app) = app();
+    assert_eq!(
+        app.save_submitted(&submitted("https://a.com", "u", ""), None)
+            .unwrap_err()
+            .code(),
+        "validation"
+    );
+    assert_eq!(
+        app.save_submitted(&submitted("chrome://settings", "u", "p"), None)
+            .unwrap_err()
+            .code(),
+        "validation"
+    );
+}
+
+#[test]
+fn locked_vault_refuses_everything() {
+    let (_d, mut app) = app();
+    app.lock();
+    assert_eq!(
+        app.logins_for_url("https://a.com").unwrap_err(),
+        AppError::Locked
+    );
+    assert_eq!(
+        app.check_submitted(&submitted("https://a.com", "u", "p"))
+            .unwrap_err(),
+        AppError::Locked
+    );
+}
+
+#[test]
+fn submitted_login_json_shape() {
+    let login: SubmittedLogin =
+        serde_json::from_str(r#"{"page_url":"https://a.com","password":"p"}"#).unwrap();
+    assert!(login.username.is_none() && login.title.is_none());
+    let json = serde_json::to_string(&SubmissionCheck::PasswordChanged { id: "x".into() }).unwrap();
+    assert_eq!(json, r#"{"status":"password_changed","id":"x"}"#);
+}
+
+#[test]
+fn archived_logins_are_not_offered() {
+    let (_d, mut app) = app();
+    let id = add(&mut app, "Old bank", "https://bank.example", "u", "p");
+    app.set_archived(&id, true).unwrap();
+    assert!(
+        app.logins_for_url("https://bank.example")
+            .unwrap()
+            .is_empty()
+    );
+}

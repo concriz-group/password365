@@ -1,0 +1,11 @@
+{
+  "label": "Kit de emergencia",
+  "title": "Kit de emergencia de Password365",
+  "created": "Creado el {date}",
+  "keep": "Guarda esta hoja en un lugar seguro (una caja fuerte, con tus documentos importantes). Junto con tu contraseña maestra es la única forma de abrir tu bóveda en un dispositivo nuevo: no hay servidor ni recuperación de cuenta.",
+  "writeHere": "Escribe aquí tu contraseña maestra",
+  "howTo": "Cómo restaurar",
+  "step1": "Instala Password365 en el dispositivo nuevo.",
+  "step2": "Si otro de tus dispositivos todavía funciona, elige «{join}». Si no, elige «{restore}» y selecciona tu archivo de copia.",
+  "step3": "Introduce tu contraseña maestra y, cuando se te pida, esta Clave secreta."
+}

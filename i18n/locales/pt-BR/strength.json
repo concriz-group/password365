@@ -1,0 +1,14 @@
+{
+  "very_weak": "Muito fraca",
+  "weak": "Fraca",
+  "fair": "Razoável",
+  "good": "Boa",
+  "strong": "Forte",
+  "moreChars_one": "Falta {count} caractere.",
+  "moreChars_other": "Faltam {count} caracteres.",
+  "enough": "Forte o suficiente para proteger seu cofre.",
+  "tooEasy": "Fácil demais de adivinhar — adicione mais palavras ou caracteres.",
+  "meter": "Força da senha",
+  "notEntered": "Não informada",
+  "hint": "Use pelo menos 10 caracteres — algumas palavras aleatórias funcionam bem."
+}

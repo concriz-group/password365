@@ -1,0 +1,21 @@
+{
+  "save": "Save",
+  "cancel": "Cancel",
+  "close": "Close",
+  "copy": "Copy",
+  "copied": "Copied",
+  "edit": "Edit",
+  "delete": "Delete",
+  "remove": "Remove",
+  "reveal": "Reveal",
+  "hide": "Hide",
+  "show": "Show",
+  "loading": "Loading…",
+  "done": "Done",
+  "back": "Back",
+  "next": "Next",
+  "continue": "Continue",
+  "retry": "Try again",
+  "none": "None",
+  "search": "Search"
+}

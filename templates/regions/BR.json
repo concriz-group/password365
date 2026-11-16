@@ -1,0 +1,49 @@
+{
+  "$comment": "Brasil: documentos (CPF, RG, CNH) e endereço como os formulários brasileiros pedem (CEP, logradouro, número, complemento, bairro, UF).",
+  "categories": {
+    "identity": [
+      {"label": "first name", "section": "Identification", "autofill": "given-name"},
+      {"label": "last name", "section": "Identification", "autofill": "family-name"},
+      {"label": "birth date", "input": "date", "section": "Identification", "autofill": "bday"},
+      {"label": "CPF", "section": "Identification", "autofill": "cpf", "mask": "000.000.000-00", "validate": "cpf"},
+      {"label": "RG", "section": "Identification", "autofill": "rg"},
+      {"label": "RG issuer", "section": "Identification", "autofill": "rg-issuer"},
+      {"label": "CNH", "section": "Identification", "autofill": "cnh", "mask": "00000000000"},
+      {"label": "occupation", "section": "Identification"},
+      {"label": "company", "section": "Identification", "autofill": "organization"},
+      {"label": "CNPJ", "section": "Identification", "autofill": "cnpj", "mask": "00.000.000/0000-00", "validate": "cnpj"},
+      {"label": "job title", "section": "Identification", "autofill": "organization-title"},
+      {"label": "zip", "name": "cep", "section": "Address", "autofill": "postal-code", "mask": "00000-000"},
+      {"label": "address", "name": "street", "section": "Address", "autofill": "address-line1"},
+      {"label": "number", "section": "Address", "autofill": "house-number"},
+      {"label": "complement", "section": "Address", "autofill": "address-line2"},
+      {"label": "neighborhood", "section": "Address", "autofill": "address-level3"},
+      {"label": "city", "section": "Address", "autofill": "address-level2"},
+      {"label": "state", "section": "Address", "autofill": "address-level1", "options": ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]},
+      {"label": "country", "section": "Address", "autofill": "country-name"},
+      {"label": "phone", "input": "phone", "section": "Address", "autofill": "tel", "mask": "(00) 00000-0000"},
+      {"label": "email", "input": "email", "section": "Internet Details", "autofill": "email"},
+      {"label": "website", "input": "url", "section": "Internet Details"}
+    ],
+    "driver_license": [
+      {"label": "full name"},
+      {"label": "number", "name": "registro", "mask": "00000000000"},
+      {"label": "CPF", "mask": "000.000.000-00", "validate": "cpf"},
+      {"label": "date of birth", "input": "date"},
+      {"label": "license class", "name": "categoria"},
+      {"label": "first license", "input": "date"},
+      {"label": "issued on", "input": "date"},
+      {"label": "expiry date", "input": "date"},
+      {"label": "state", "options": ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"]}
+    ]
+  },
+  "autofill": {
+    "cpf": {"kind": "identity", "hints": ["\\bcpf\\b"]},
+    "rg": {"kind": "identity", "hints": ["\\brg\\b", "registro.?geral", "identidade"]},
+    "rg-issuer": {"kind": "identity", "hints": ["[oó]rg[aã]o.?(emissor|expedidor)", "\\buf.?rg\\b"]},
+    "cnh": {"kind": "identity", "hints": ["\\bcnh\\b", "habilita[cç][aã]o"]},
+    "cnpj": {"kind": "identity", "hints": ["\\bcnpj\\b"]},
+    "house-number": {"kind": "identity", "hints": ["^(?!.*(cart|card|tarjeta|cpf|cnpj|rg|telefone|phone|celular)).*(\\bn[uú]mero\\b|\\bnro\\b|\\bnum\\b|^n[ºo°]?$|house.?number|street.?number)"]},
+    "address-level3": {"kind": "identity", "hints": ["bairro", "neighbou?rhood", "district"]}
+  }
+}

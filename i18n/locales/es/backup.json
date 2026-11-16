@@ -1,0 +1,8 @@
+{
+  "title": "Copia de seguridad",
+  "hint": "Una copia cifrada de todas tus bóvedas. Para restaurarla en un equipo nuevo necesitas este archivo, tu Secret Key (Emergency Kit) y tu contraseña maestra. Guárdala en otro sitio, fuera de este equipo.",
+  "last": "Última copia: {date}",
+  "never": "nunca",
+  "backUpNow": "Hacer copia ahora…",
+  "saved": "Copia de seguridad guardada."
+}

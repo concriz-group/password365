@@ -1,0 +1,46 @@
+# cargo-deny policy: known vulnerabilities, licenses and sources.
+
+[advisories]
+version = 2
+yanked = "deny"
+# Unmaintained (not vulnerable) crates with no replacement yet, used on Linux only.
+# Review when the upstream crates move on (checked 2026-11-14).
+ignore = [
+    # zbus: keyring's Linux Secret Service backend (where the Secret Key is kept).
+    { id = "RUSTSEC-2026-0370", reason = "zvariant, via keyring's Linux Secret Service store; no maintained successor yet" },
+    { id = "RUSTSEC-2026-0371", reason = "zbus_names, same path" },
+    { id = "RUSTSEC-2026-0372", reason = "zvariant_derive, same path" },
+    # gtk-rs 0.18 (Tauri's Linux toolkit): a compile-time macro helper.
+    { id = "RUSTSEC-2024-0370", reason = "proc-macro-error, build-time only, via glib-macros 0.18 in Tauri's Linux toolkit" },
+]
+
+[licenses]
+version = 2
+confidence-threshold = 0.9
+allow = [
+    "MIT",
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "Unicode-3.0",
+    "Unlicense",
+    "Zlib",
+    "0BSD",
+    "MPL-2.0",
+    "GPL-3.0-or-later",
+    # HTTPS for the opt-in breach check (rustls, ring, webpki): permissive, GPL-compatible.
+    "ISC",
+    # Mozilla's CA certificate list (webpki-roots): permissive data licence.
+    "CDLA-Permissive-2.0",
+    # Desktop only (Tauri and its toolkit): Boost and LLVM's Apache variant, both permissive and GPL-compatible.
+    "BSL-1.0",
+    "Apache-2.0 WITH LLVM-exception",
+]
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

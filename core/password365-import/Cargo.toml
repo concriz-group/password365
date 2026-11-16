@@ -1,0 +1,28 @@
+[package]
+name = "password365-import"
+description = "Import/export of browser password CSV files for Password365"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[dependencies]
+password365-crypto.workspace = true
+password365-model.workspace = true
+csv.workspace = true
+url.workspace = true
+thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+data-encoding.workspace = true
+zip.workspace = true
+keepass.workspace = true
+
+[lints]
+workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+keepass = { workspace = true, features = ["save_kdbx4"] }

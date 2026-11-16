@@ -1,0 +1,15 @@
+{
+  "title": "Acceso rápido",
+  "search": "Buscar en Password365",
+  "results": "Elementos",
+  "none": "Ningún elemento coincide.",
+  "locked": "Password365 está bloqueado.",
+  "unlock": "Abrir Password365 para desbloquear",
+  "copyUsername": "Copiar usuario",
+  "copyPassword": "Copiar contraseña",
+  "copyTotp": "Copiar contraseña de un solo uso",
+  "open": "Abrir en Password365",
+  "no_username": "Este elemento no tiene usuario.",
+  "no_password": "Este elemento no tiene contraseña.",
+  "no_totp": "Este elemento no tiene contraseña de un solo uso."
+}

@@ -1,0 +1,15 @@
+{
+  "sshAgent": "Agente SSH",
+  "useAgent": "Usar el agente SSH",
+  "agentHint": "Permite que ssh y git usen las claves Ed25519 de tus elementos Clave SSH. Las claves privadas nunca salen de la app; cada clave pide tu permiso una vez por desbloqueo.",
+  "configHint": "Añade esto a ~/.ssh/config (o define SSH_AUTH_SOCK con la dirección):",
+  "config": "Configuración de SSH",
+  "keys": "Claves SSH",
+  "noKeys": "Aún no hay elementos Clave SSH. Crea uno con + Nuevo elemento › Clave SSH y pega la clave privada.",
+  "problem_unreadable": "No es una clave privada OpenSSH Ed25519: el agente no puede usarla.",
+  "problem_encrypted": "Protegida con frase de contraseña: añade un campo llamado “passphrase” con ella.",
+  "approveTitle": "¿Permitir la clave SSH?",
+  "approveText": "Un programa quiere usar la clave SSH “{title}”. ¿Permitirlo hasta que Password365 se bloquee?",
+  "allow": "Permitir",
+  "deny": "Denegar"
+}

@@ -1,0 +1,13 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 65163273158776544fc84cb34dde8c11daaefe65312bd371934c4b545d3ce974 # shrinks to ops = [(0, Password(1)), (2, Password(1))]
+cc 674b3bc9aec1f5afea5011e16bef1d0cbbf8848181dac2f4f5088290ea9d43e9 # shrinks to ops = [(0, Title(0)), (0, Title(0)), (2, Password(2)), (0, Password(2))]
+cc 8153a19753c4004d2ce038a4d8af386a0285f5c605d6ab77759fed2b32383311 # shrinks to ops = [(2, Password(0)), (2, Delete)]
+cc 7245ea8cdc6e82cb9722b331f1571d145d89743bf197f8044d2a1019c452979f # shrinks to ops = [(2, Password(0)), (1, Delete), (0, Title(0))]
+cc 330687047346618d0c01d32e7c457beace5230670cd451cfd84fdab3996289fa # shrinks to ops = [(1, Delete), (0, Title(0)), (2, Password(0))]
+cc 4b10154de4c9d7ca973865ef208a525b92c1293b5ff9f96b53eda0d76c52007f # shrinks to ops = [(0, Delete), (2, Password(0))]
+cc 42c84f4e0f60d232eaf5e7522ae5d43c93adcb0c7117088ac5c60a0f066a7211 # shrinks to ops = [(2, Password(0)), (0, Delete)]

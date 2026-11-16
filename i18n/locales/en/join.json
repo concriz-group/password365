@@ -1,0 +1,15 @@
+{
+  "title": "Set up with another device",
+  "intro": "On a computer that already has Password365, open {place}. Then paste the pairing code it shows here. Both computers must be on the same network.",
+  "place": "Devices › Add a device",
+  "code": "Pairing code",
+  "connecting": "Connecting…",
+  "check": "Check that the other device shows the same code, then confirm there:",
+  "verification": "Verification code",
+  "waiting": "Waiting for approval on the other device…",
+  "approved": "Approved. Enter the master password you use on the other device, and give this device a name. Your items arrive right after.",
+  "deviceName": "Name for this device",
+  "deviceNameExample": "e.g. Work laptop",
+  "settingUp": "Setting up…",
+  "finish": "Finish"
+}

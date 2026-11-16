@@ -1,0 +1,12 @@
+{
+  "items": "Items",
+  "category": "Category",
+  "allCategories": "All Categories",
+  "sortBy": "Sort by",
+  "sortTitle": "Title",
+  "sortUpdated": "Date Modified",
+  "noMatches": "No matching items.",
+  "empty": "No items yet.",
+  "review": "Review",
+  "resize": "Resize the item list"
+}

@@ -1,0 +1,24 @@
+{
+  "$comment": "How the browser extension recognises a form field when the page does not say (no autocomplete attribute): regular expressions, case-insensitive, tried in this order against the field's name, id, placeholder, aria-label and label. Countries add their own tokens in regions/<CODE>.json (tried first). Add words in any language.",
+  "fields": [
+    {"token": "cc-number", "kind": "card", "hints": ["card.?num|cc.?num|cardnumber|n[uú]mero.{0,12}cart[aã]o|n[uú]mero.{0,12}tarjeta|credit.?card(?!.*name)"]},
+    {"token": "cc-csc", "kind": "card", "hints": ["\\b(cvv|cvc|csc|cvn)\\d?\\b|security.?code|c[oó]digo.{0,6}seguran"]},
+    {"token": "cc-exp", "kind": "card", "hints": ["\\bmm\\s*\\/\\s*(yy|aa)"]},
+    {"token": "cc-exp-month", "kind": "card", "hints": ["(exp|valid|venc).{0,12}(month|m[eê]s|\\bmm\\b)|(month|m[eê]s).{0,12}(exp|valid|venc)"]},
+    {"token": "cc-exp-year", "kind": "card", "hints": ["(exp|valid|venc).{0,12}(year|ano|a[nñ]o|\\byy)|(year|ano).{0,12}(exp|valid|venc)"]},
+    {"token": "cc-exp", "kind": "card", "hints": ["expir|exp.?date|valid.?thru|validade|vencimiento"]},
+    {"token": "cc-name", "kind": "card", "hints": ["card.?holder|name.?on.?card|holder.?name|nome.{0,12}(cart[aã]o|titular)|titular"]},
+    {"token": "address-line2", "kind": "identity", "hints": ["address.?(line)?.?2|line.?2|complemento|apartment|\\bapt\\b|suite"]},
+    {"token": "postal-code", "kind": "identity", "hints": ["zip|postal|post.?code|\\bcep\\b|c[oó]digo.?postal"]},
+    {"token": "address-level2", "kind": "identity", "hints": ["city|cidade|ciudad|town|munic[ií]pio"]},
+    {"token": "address-level1", "kind": "identity", "hints": ["state|province|estado|regi[oã]o|region|\\buf\\b"]},
+    {"token": "country", "kind": "identity", "hints": ["country|pa[ií]s"]},
+    {"token": "address-line1", "kind": "identity", "hints": ["address|street|endere[cç]o|\\brua\\b|logradouro|direcci[oó]n"]},
+    {"token": "organization", "kind": "identity", "hints": ["company|organi[sz]ation|empresa"]},
+    {"token": "given-name", "kind": "identity", "hints": ["first.?name|given.?name|fname|primeiro.?nome|\\bnombre\\b"]},
+    {"token": "family-name", "kind": "identity", "hints": ["last.?name|surname|family.?name|lname|sobrenome|apellido"]},
+    {"token": "name", "kind": "identity", "hints": ["full.?name|your.?name|nome.?completo|^\\s*(name|nome)\\s*$"]},
+    {"token": "email", "kind": "identity", "hints": ["e.?mail"]},
+    {"token": "tel", "kind": "identity", "hints": ["phone|\\btel\\b|telefone|celular|mobile|tel[eé]fono"]}
+  ]
+}

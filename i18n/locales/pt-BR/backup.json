@@ -1,0 +1,8 @@
+{
+  "title": "Backup",
+  "hint": "Uma cópia criptografada de todos os seus cofres. Para restaurá-la num computador novo você precisa deste arquivo, da sua Secret Key (Emergency Kit) e da sua senha mestra. Guarde-a em outro lugar, fora deste computador.",
+  "last": "Último backup: {date}",
+  "never": "nunca",
+  "backUpNow": "Fazer backup agora…",
+  "saved": "Backup salvo."
+}

@@ -1,0 +1,64 @@
+{
+  "algorithm": [
+    "k_pw = Argon2id(NFKD(password), salt, params), 32 bytes",
+    "k_sk = HKDF-SHA256(ikm = secret_key, salt = account_id, info = \"quillock/v1/secret-key\"), 32 bytes",
+    "AUK  = HKDF-SHA256(ikm = k_pw || k_sk, salt = salt, info = \"quillock/v1/auk\"), 32 bytes"
+  ],
+  "cases": [
+    {
+      "account_id_hex": "6163636f756e742d30303031",
+      "argon2id": {
+        "iterations": 3,
+        "memory_kib": 65536,
+        "output_len": 32,
+        "parallelism": 1,
+        "version": "0x13"
+      },
+      "auk_hex": "f7b7c4efeb6e185df6d624f280e3e3b7cc7b54df78e5041e1dac24a49bb4c1a9",
+      "k_pw_hex": "0a14f7b0dcfa0e4887b1e8c39481fd27327331fda408c3e3d1b2194fcff952da",
+      "k_sk_hex": "1f0343f80392f5e0216e72504909720494b44ebd11c5056749fab2c99bd00c8f",
+      "note": "ASCII password, minimum parameters",
+      "password_utf8": "correct horse battery staple",
+      "salt_hex": "2222222222222222222222222222222222222222222222222222222222222222",
+      "secret_key_display": "Q1-248H-248H-248H-248H-248H-248H-24AP",
+      "secret_key_hex": "11111111111111111111111111111111"
+    },
+    {
+      "account_id_hex": "6163636f756e742d30303032",
+      "argon2id": {
+        "iterations": 3,
+        "memory_kib": 65536,
+        "output_len": 32,
+        "parallelism": 1,
+        "version": "0x13"
+      },
+      "auk_hex": "3c4df3b3c3b5afab21ba039e841ad07819ed5a12c959f2499ddb5528c7f58011",
+      "k_pw_hex": "553e0c3824ac3ec2e18a2646afe9c91c2b3c5fa0f69cf7a405f44d158506719a",
+      "k_sk_hex": "5eaac9f2fae8e947045bfbf5214271806c4a515229d14672d72f18390e697f98",
+      "note": "password with a precomposed é: it is NFKD-normalised before Argon2id",
+      "password_utf8": "café pass①",
+      "salt_hex": "5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a5a",
+      "secret_key_display": "Q1-60RK-4CSM-6MV3-EE1S-C5H6-6S35-CRR8",
+      "secret_key_hex": "30313233343536373839616263646566"
+    },
+    {
+      "account_id_hex": "00000000000000000000000000000000",
+      "argon2id": {
+        "iterations": 3,
+        "memory_kib": 262144,
+        "output_len": 32,
+        "parallelism": 4,
+        "version": "0x13"
+      },
+      "auk_hex": "6b8d11cbd0082c013d36f7ee7fd6796fd6d8acf5530aac0785543b51dedac573",
+      "k_pw_hex": "31c191aef7c77327821f71f64ac5abb038b54136e27c18935f23352bdc170d9c",
+      "k_sk_hex": "c12cd154c4e55078cdea2751851148147874501ccdfd66b1ceb4e6b55df06c2f",
+      "note": "desktop parameters (256 MiB, 3 passes, 4 lanes)",
+      "password_utf8": "another long master password",
+      "salt_hex": "0101010101010101010101010101010101010101010101010101010101010101",
+      "secret_key_display": "Q1-ZVZF-XZQY-ZVZF-XZQY-ZVZF-XZQY-ZRAZ",
+      "secret_key_hex": "fefefefefefefefefefefefefefefefe"
+    }
+  ],
+  "description": "Password365 account unlock key (AUK) derivation, format v1. See docs/crypto-spec.md §3."
+}

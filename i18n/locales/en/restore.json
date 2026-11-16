@@ -1,0 +1,9 @@
+{
+  "title": "Restore from a backup",
+  "intro": "Choose your {file} file, then enter the Secret Key from your Emergency Kit and your master password.",
+  "choose": "Choose backup file…",
+  "file": "Backup file",
+  "noFile": "No file chosen",
+  "restoring": "Restoring…",
+  "restore": "Restore"
+}

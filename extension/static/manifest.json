@@ -1,0 +1,91 @@
+{
+  "manifest_version": 3,
+  "name": "Password365",
+  "version": "0.5.0",
+  "description": "Offline-first password manager: fill and save logins from the Password365 desktop app.",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAw7kg/34fyhbOouyBatZhZBXckYKA5LkCbHHu4fEdbHOSL5O487TqUW0LeahXJHtFGTxusP6Mbaz9V4tX0+zFYAOakaSvo1KpJxVCwUVFWWJVzB6pb3s+EwMsXrcwz3sRLVqhFwCGVcjvI58EGvOzPWzML3UamvmPjrRQbRncJrZHhYLzBVcBHY8Nw/qwQgJUQkcF9hg6VozKNWVrFXYmhI2Bid1f9Xmwc8cJdAtOFv1976do93tv4dRGKm5Ru7t8ZBskiLrdTS7av1l14XS5hLIgrhmE7UwD0+MMaSwEm39IiQUj0s/y26EbLP4PlaMaVoC+fB5TsTM7++Rblrqk4QIDAQAB",
+  "permissions": [
+    "nativeMessaging",
+    "activeTab",
+    "storage",
+    "contextMenus"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Password365",
+    "default_icon": {
+      "32": "icons/32.png",
+      "128": "icons/128.png"
+    }
+  },
+  "icons": {
+    "32": "icons/32.png",
+    "128": "icons/128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://*/*",
+        "http://localhost/*",
+        "http://*.localhost/*"
+      ],
+      "js": [
+        "passkey-page.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": false
+    },
+    {
+      "matches": [
+        "https://*/*",
+        "http://localhost/*",
+        "http://*.localhost/*"
+      ],
+      "js": [
+        "passkey-relay.js"
+      ],
+      "run_at": "document_start",
+      "all_frames": false
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "menu.html",
+        "icons/32.png"
+      ],
+      "matches": [
+        "https://*/*",
+        "http://*/*"
+      ]
+    }
+  ],
+  "commands": {
+    "fill-login": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+L",
+        "mac": "Command+Shift+L"
+      },
+      "description": "Fill a login on this page"
+    }
+  }
+}

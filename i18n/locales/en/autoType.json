@@ -1,0 +1,5 @@
+{
+  "title": "Auto-type",
+  "noItem": "No item is set up for {window}. Open the item you want, choose Edit › Auto-type and add the window title (use * for the parts that change).",
+  "choose": "Choose what to type into {window}:"
+}

@@ -1,0 +1,38 @@
+{
+  "$comment": "United States: middle initial, street with apartment line, two-letter states, ZIP codes.",
+  "categories": {
+    "identity": [
+      {"label": "first name", "section": "Identification", "autofill": "given-name"},
+      {"label": "initial", "name": "middle name", "section": "Identification", "autofill": "additional-name"},
+      {"label": "last name", "section": "Identification", "autofill": "family-name"},
+      {"label": "birth date", "input": "date", "section": "Identification", "autofill": "bday"},
+      {"label": "occupation", "section": "Identification"},
+      {"label": "company", "section": "Identification", "autofill": "organization"},
+      {"label": "job title", "section": "Identification", "autofill": "organization-title"},
+      {"label": "address", "name": "street", "section": "Address", "autofill": "address-line1"},
+      {"label": "complement", "name": "apartment", "section": "Address", "autofill": "address-line2"},
+      {"label": "city", "section": "Address", "autofill": "address-level2"},
+      {"label": "state", "section": "Address", "autofill": "address-level1", "options": ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "PR"]},
+      {"label": "zip", "section": "Address", "autofill": "postal-code", "mask": "00000"},
+      {"label": "country", "section": "Address", "autofill": "country-name"},
+      {"label": "phone", "input": "phone", "section": "Address", "autofill": "tel", "mask": "(000) 000-0000"},
+      {"label": "email", "input": "email", "section": "Internet Details", "autofill": "email"},
+      {"label": "website", "input": "url", "section": "Internet Details"}
+    ],
+    "driver_license": [
+      {"label": "full name"},
+      {"label": "address", "input": "multiline"},
+      {"label": "date of birth", "input": "date"},
+      {"label": "sex"},
+      {"label": "height"},
+      {"label": "number"},
+      {"label": "license class"},
+      {"label": "conditions / restrictions"},
+      {"label": "state", "options": ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "DC", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY", "PR"]},
+      {"label": "expiry date", "input": "date"}
+    ]
+  },
+  "autofill": {
+
+  }
+}

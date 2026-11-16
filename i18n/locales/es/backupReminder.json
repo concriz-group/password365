@@ -1,0 +1,6 @@
+{
+  "stale": "No hay copia de seguridad en los últimos 30 días.",
+  "none": "Todavía no tienes copia de seguridad.",
+  "risk": "Sin copia de seguridad, perder este ordenador significa perder tus contraseñas.",
+  "backUp": "Hacer copia ahora…"
+}

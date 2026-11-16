@@ -1,0 +1,65 @@
+[package]
+name = "password365-desktop"
+description = "Password365 desktop app (Tauri shell over password365-app)"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+rust-version = "1.88"
+publish = false
+
+# Standalone workspace: keeps GUI system dependencies (WebKitGTK etc.) out of the core CI.
+[workspace]
+
+[lib]
+name = "password365_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.7.4", features = [] }
+
+[dependencies]
+tauri = { version = "2.12.5", features = [] }
+tauri-plugin-dialog = "2.8.4"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+password365-app = { path = "../../../core/password365-app" }
+password365-crypto = { path = "../../../core/password365-crypto" }
+password365-model = { path = "../../../core/password365-model" }
+password365-vault = { path = "../../../core/password365-vault" }
+password365-bridge = { path = "../../../core/password365-bridge" }
+password365-net = { path = "../../../core/password365-net" }
+qrcode = { version = "0.14.1", default-features = false, features = ["svg"] }
+zeroize = "1.9.1"
+keyring = "4.2.0"
+enigo = "0.6.1"
+tauri-plugin-global-shortcut = "2.3.2"
+active-win-pos-rs = "0.11.0"
+tauri-plugin-autostart = "2.5.1"
+interprocess = "2.4.8"
+arboard = { version = "3.7.0", default-features = false }
+password365-ssh = { path = "../../../core/password365-ssh" }
+tauri-plugin-window-state = "2.4.1"
+
+[dev-dependencies]
+password365-crypto = { path = "../../../core/password365-crypto", features = ["insecure-test-params"] }
+tempfile = "3.27.0"
+tauri = { version = "2.12.5", features = ["test"] }
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+needless_pass_by_value = "allow" # tauri::State is passed by value by design
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+[profile.dev.package.argon2]
+opt-level = 3
+[profile.dev.package.blake2]
+opt-level = 3

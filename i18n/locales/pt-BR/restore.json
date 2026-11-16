@@ -1,0 +1,9 @@
+{
+  "title": "Restaurar de um backup",
+  "intro": "Escolha seu arquivo {file} e depois digite a Secret Key do seu Kit de Emergência e sua senha mestra.",
+  "choose": "Escolher arquivo de backup…",
+  "file": "Arquivo de backup",
+  "noFile": "Nenhum arquivo escolhido",
+  "restoring": "Restaurando…",
+  "restore": "Restaurar"
+}

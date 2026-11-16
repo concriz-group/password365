@@ -1,0 +1,107 @@
+[workspace]
+resolver = "3"
+members = [
+    "password365-crypto",
+    "password365-model",
+    "password365-generator",
+    "password365-vault",
+    "password365-import",
+    "password365-app",
+    "password365-match",
+    "password365-bridge",
+    "password365-cli",
+    "password365-host",
+    "password365-sync",
+    "password365-net",
+    "password365-ssh",
+    "password365-webauthn",
+    "password365-ffi",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0-or-later"
+repository = "https://github.com/remofurlanetto/password365"
+rust-version = "1.88"
+
+[workspace.dependencies]
+# internal
+password365-crypto = { path = "password365-crypto" }
+password365-model = { path = "password365-model" }
+password365-generator = { path = "password365-generator" }
+password365-vault = { path = "password365-vault" }
+password365-import = { path = "password365-import" }
+password365-app = { path = "password365-app" }
+password365-webauthn = { path = "password365-webauthn" }
+password365-match = { path = "password365-match" }
+password365-bridge = { path = "password365-bridge" }
+password365-sync = { path = "password365-sync" }
+password365-net = { path = "password365-net" }
+password365-ssh = { path = "password365-ssh" }
+
+# crypto
+argon2 = { version = "0.6.0", default-features = false, features = ["alloc", "zeroize"] }
+chacha20poly1305 = "0.11.0"
+hkdf = "0.13.0"
+hmac = "0.13.0"
+sha1 = "0.11.0"
+# keepass asks for aes "<0.9.3"; Cargo.lock pins it to aes 0.9.2 (the aes 0.8 already in the
+# tree does not compile with it). Keep that line in Cargo.lock when updating.
+keepass = { version = "0.14.0", default-features = false }
+proptest = { version = "1.9.0", default-features = false, features = ["std"] }
+zip = { version = "9.5.1", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+ureq = { version = "3.5.2", default-features = false, features = ["rustls"] }
+sha2 = "0.11.1"
+p256 = { version = "0.14.0", default-features = false, features = ["ecdsa", "std", "pkcs8"] }
+getrandom = "0.4.3"
+zeroize = { version = "1.9.1", features = ["derive"] }
+subtle = "2.6.1"
+unicode-normalization = "0.1.26"
+snow = { version = "0.10.0", default-features = false, features = ["use-chacha20poly1305", "use-blake2", "use-curve25519", "use-getrandom"] }
+data-encoding = "2.11.1"
+mdns-sd = { version = "0.21.7", default-features = false }
+
+# general
+thiserror = "2.0.21"
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+rusqlite = { version = "0.41.1", features = ["bundled"] }
+uuid = { version = "1.29.1", features = ["v4", "serde"] }
+csv = "1.4.0"
+url = "2.5.8"
+zxcvbn = { version = "3.1.1", default-features = false }
+psl = "2.1.248"
+interprocess = "2.4.8"
+clap = { version = "4.6.7", features = ["derive", "env"] }
+anyhow = "1.0.104"
+rpassword = "7.5.4"
+directories = "6.0.0"
+
+# dev
+tempfile = "3.27.0"
+hex = "0.4.3"
+postcard = { version = "1.1.3", default-features = false, features = ["alloc"] }
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+unwrap_used = "warn"
+module_name_repetitions = "allow"
+missing_errors_doc = "allow"
+
+[profile.release]
+lto = true
+codegen-units = 1
+panic = "abort"
+strip = true
+
+# Argon2 is unbearably slow unoptimised; keep tests fast.
+[profile.dev.package.argon2]
+opt-level = 3
+[profile.dev.package.blake2]
+opt-level = 3

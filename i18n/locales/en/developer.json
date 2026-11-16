@@ -1,0 +1,15 @@
+{
+  "sshAgent": "SSH agent",
+  "useAgent": "Use the SSH agent",
+  "agentHint": "Lets ssh and git use the Ed25519 keys in your SSH Key items. The private keys never leave the app; each key asks for your OK once per unlock.",
+  "configHint": "Add this to ~/.ssh/config (or set SSH_AUTH_SOCK to the address):",
+  "config": "SSH configuration",
+  "keys": "SSH keys",
+  "noKeys": "No SSH Key items yet. Create one with + New item › SSH Key and paste the private key.",
+  "problem_unreadable": "Not an OpenSSH Ed25519 private key: the agent cannot use it.",
+  "problem_encrypted": "Protected by a passphrase: add a field called “passphrase” with it.",
+  "approveTitle": "Allow SSH key?",
+  "approveText": "A program wants to use the SSH key “{title}”. Allow it until Password365 locks?",
+  "allow": "Allow",
+  "deny": "Deny"
+}

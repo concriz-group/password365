@@ -1,0 +1,12 @@
+/core/target/
+/target/
+*.profraw
+lcov.info
+.DS_Store
+# never commit vaults or exports
+*.qlvault
+*.csv
+!**/tests/fixtures/*.csv
+*.qlbackup
+*.qlsync
+node_modules/

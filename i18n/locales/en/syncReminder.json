@@ -1,0 +1,8 @@
+{
+  "firstSync": "Syncing with {name} for the first time… Keep both devices unlocked and on the same network.",
+  "more_one": "{name} (and {count} more device)",
+  "more_other": "{name} (and {count} more devices)",
+  "missing_one": "{devices} is missing {count} change made here. Put both devices on the same network to sync — until then, that change exists only on this computer.",
+  "missing_other": "{devices} is missing {count} changes made here. Put both devices on the same network to sync — until then, those changes exist only on this computer.",
+  "devices": "Devices"
+}

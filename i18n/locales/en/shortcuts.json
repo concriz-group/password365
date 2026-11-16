@@ -1,0 +1,9 @@
+{
+  "title": "Keyboard shortcuts",
+  "quickAccess": "Show Quick Access",
+  "autoType": "Auto-type",
+  "lock": "Lock Password365",
+  "press": "Press the keys…",
+  "none": "None",
+  "clear": "Clear the shortcut for {label}"
+}

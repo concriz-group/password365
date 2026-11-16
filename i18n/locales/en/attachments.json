@@ -1,0 +1,12 @@
+{
+  "title": "Attachments",
+  "notHereYet": "arrives with the next sync",
+  "open": "Open",
+  "save": "Save…",
+  "remove": "Remove {name}",
+  "confirmRemove": "Remove file",
+  "attach": "+ Attach a file…",
+  "chooseFile": "Choose the file…",
+  "chosen": "File: {name}",
+  "documentHint": "A document is a file kept in your vault, with its notes."
+}

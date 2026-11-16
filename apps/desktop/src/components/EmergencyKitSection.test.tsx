@@ -1,0 +1,39 @@
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+
+import { fakeClient, renderWithClient } from "../test/fakeClient";
+import { EmergencyKitSection } from "./EmergencyKitSection";
+
+describe("EmergencyKitSection", () => {
+  it("asks for the master password, prints the kit and forgets the Secret Key", async () => {
+    let shownWhilePrinting = "";
+    const client = fakeClient({
+      revealSecretKey: vi.fn().mockResolvedValue("Q1-ABC"),
+      printPage: vi.fn(async () => {
+        shownWhilePrinting = screen.getByLabelText("Emergency Kit").textContent ?? "";
+      }),
+    });
+    renderWithClient(<EmergencyKitSection />, client);
+    const user = userEvent.setup();
+    expect(screen.getByRole("button", { name: "Print Emergency Kit" })).toBeDisabled();
+    await user.type(screen.getByLabelText("Master password"), "pw");
+    await user.click(screen.getByRole("button", { name: "Print Emergency Kit" }));
+    await waitFor(() => expect(client.printPage).toHaveBeenCalled());
+    expect(client.revealSecretKey).toHaveBeenCalledWith("pw");
+    expect(shownWhilePrinting).toContain("Q1-ABC");
+    await waitFor(() => expect(screen.queryByLabelText("Emergency Kit")).not.toBeInTheDocument());
+    expect(screen.getByLabelText("Master password")).toHaveValue("");
+  });
+
+  it("shows a wrong password", async () => {
+    const client = fakeClient({
+      revealSecretKey: vi.fn().mockRejectedValue({ code: "wrong_credentials", message: "wrong master password" }),
+    });
+    renderWithClient(<EmergencyKitSection />, client);
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText("Master password"), "nope");
+    await user.click(screen.getByRole("button", { name: "Print Emergency Kit" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("wrong master password");
+    expect(client.printPage).not.toHaveBeenCalled();
+  });
+});

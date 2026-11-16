@@ -1,0 +1,11 @@
+{
+  "title": "Recently Deleted",
+  "hint": "Deleted items stay here for 30 days, then are deleted permanently on every device.",
+  "empty": "No recently deleted items.",
+  "daysLeft_one": "{count} day left",
+  "daysLeft_other": "{count} days left",
+  "restore": "Restore",
+  "deletePermanently": "Delete permanently",
+  "deleteAria": "Delete {title} permanently",
+  "delete": "Delete…"
+}

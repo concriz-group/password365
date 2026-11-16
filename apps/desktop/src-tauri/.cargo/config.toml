@@ -1,0 +1,3 @@
+# Sign dev builds with a stable identity on macOS (see scripts/macos-dev-sign.sh).
+[target.'cfg(target_os = "macos")']
+runner = "scripts/macos-dev-sign.sh"

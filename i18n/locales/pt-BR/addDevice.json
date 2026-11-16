@@ -1,0 +1,15 @@
+{
+  "title": "Adicionar um dispositivo",
+  "preparing": "Preparando…",
+  "scanHint": "No dispositivo novo, instale o Password365 e escolha {setup}; depois escaneie este código ou cole o texto abaixo. Os dois dispositivos precisam estar na mesma rede.",
+  "setupChoice": "Configurar com outro dispositivo",
+  "qr": "QR code de pareamento",
+  "copyCode": "Copiar código",
+  "waiting": "Aguardando o novo dispositivo… O código vale uma única vez e expira em 5 minutos.",
+  "checkCode": "Confira se o novo dispositivo mostra o mesmo código:",
+  "verificationCode": "Código de verificação",
+  "vaults": "Cofres no novo dispositivo",
+  "match": "Os códigos são iguais — adicionar dispositivo",
+  "noMatch": "São diferentes",
+  "finishing": "Aguardando a senha mestra no novo dispositivo…"
+}

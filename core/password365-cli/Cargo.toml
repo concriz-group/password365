@@ -1,0 +1,31 @@
+[package]
+name = "password365-cli"
+description = "Command-line interface for the Password365 password manager"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[[bin]]
+name = "password365"
+path = "src/main.rs"
+
+[dependencies]
+password365-crypto.workspace = true
+password365-model.workspace = true
+password365-generator.workspace = true
+password365-vault.workspace = true
+password365-app.workspace = true
+clap.workspace = true
+anyhow.workspace = true
+rpassword.workspace = true
+directories.workspace = true
+
+[dev-dependencies]
+password365-crypto = { workspace = true, features = ["insecure-test-params"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,12 @@
+{
+  "title": "Your vault is locked",
+  "masterPassword": "Master password",
+  "secretKey": "Secret Key",
+  "newDevice": "New device? Enter your Secret Key",
+  "changedElsewhere": "Changed your master password on another device? Until you update this one, it still opens with the previous password.",
+  "unlocking": "Unlocking…",
+  "unlock": "Unlock",
+  "wait_one": "Too many wrong passwords. Try again in {count} second.",
+  "wait_other": "Too many wrong passwords. Try again in {count} seconds.",
+  "secretKeyForgotten": "After many wrong passwords this computer forgets the Secret Key. Type it from your Emergency Kit (or see it in Settings on another device)."
+}

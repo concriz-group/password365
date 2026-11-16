@@ -1,0 +1,12 @@
+{
+  "items": "Elementos",
+  "category": "Categoría",
+  "allCategories": "Todas las categorías",
+  "sortBy": "Ordenar por",
+  "sortTitle": "Título",
+  "sortUpdated": "Fecha de modificación",
+  "noMatches": "No hay elementos que coincidan.",
+  "empty": "Todavía no hay elementos.",
+  "review": "Revisar",
+  "resize": "Ajustar el ancho de la lista"
+}

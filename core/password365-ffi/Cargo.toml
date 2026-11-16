@@ -1,0 +1,31 @@
+[package]
+name = "password365-ffi"
+description = "Password365 for the mobile apps: the Rust core behind a UniFFI interface (Swift, Kotlin)"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[lib]
+crate-type = ["lib", "staticlib"]
+
+[dependencies]
+password365-app.workspace = true
+password365-crypto.workspace = true
+password365-generator.workspace = true
+password365-model.workspace = true
+password365-net.workspace = true
+password365-webauthn.workspace = true
+zeroize.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+uniffi = "0.32.2"
+
+[dev-dependencies]
+password365-crypto = { workspace = true, features = ["insecure-test-params"] }
+tempfile.workspace = true
+
+[lints]
+workspace = true

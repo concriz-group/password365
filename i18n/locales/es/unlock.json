@@ -1,0 +1,12 @@
+{
+  "title": "Tu caja fuerte está bloqueada",
+  "masterPassword": "Contraseña maestra",
+  "secretKey": "Clave secreta",
+  "newDevice": "¿Dispositivo nuevo? Introduce tu Clave secreta",
+  "changedElsewhere": "¿Cambiaste tu contraseña maestra en otro dispositivo? Hasta que actualices este, se sigue abriendo con la contraseña anterior.",
+  "unlocking": "Desbloqueando…",
+  "unlock": "Desbloquear",
+  "wait_one": "Demasiadas contraseñas incorrectas. Inténtalo de nuevo en {count} segundo.",
+  "wait_other": "Demasiadas contraseñas incorrectas. Inténtalo de nuevo en {count} segundos.",
+  "secretKeyForgotten": "Tras muchas contraseñas incorrectas, este ordenador olvida la Secret Key. Escríbela desde tu Emergency Kit (o mírala en los Ajustes de otro dispositivo)."
+}

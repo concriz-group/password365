@@ -1,0 +1,28 @@
+{
+  "$comment": "Portugal: NIF, Cartão de Cidadão, código postal 0000-000, distritos.",
+  "categories": {
+    "identity": [
+      {"label": "first name", "section": "Identification", "autofill": "given-name"},
+      {"label": "last name", "section": "Identification", "autofill": "family-name"},
+      {"label": "birth date", "input": "date", "section": "Identification", "autofill": "bday"},
+      {"label": "NIF", "section": "Identification", "autofill": "nif", "mask": "000000000", "validate": "nif_pt"},
+      {"label": "citizen card", "section": "Identification", "autofill": "citizen-card"},
+      {"label": "occupation", "section": "Identification"},
+      {"label": "company", "section": "Identification", "autofill": "organization"},
+      {"label": "job title", "section": "Identification", "autofill": "organization-title"},
+      {"label": "address", "name": "street", "section": "Address", "autofill": "address-line1"},
+      {"label": "complement", "section": "Address", "autofill": "address-line2"},
+      {"label": "zip", "name": "postal code", "section": "Address", "autofill": "postal-code", "mask": "0000-000"},
+      {"label": "city", "name": "locality", "section": "Address", "autofill": "address-level2"},
+      {"label": "state", "name": "district", "section": "Address", "autofill": "address-level1"},
+      {"label": "country", "section": "Address", "autofill": "country-name"},
+      {"label": "phone", "input": "phone", "section": "Address", "autofill": "tel", "mask": "000 000 000"},
+      {"label": "email", "input": "email", "section": "Internet Details", "autofill": "email"},
+      {"label": "website", "input": "url", "section": "Internet Details"}
+    ]
+  },
+  "autofill": {
+    "nif": {"kind": "identity", "hints": ["\\bnif\\b", "contribuinte", "n[uú]mero fiscal"]},
+    "citizen-card": {"kind": "identity", "hints": ["cart[aã]o de cidad[aã]o"]}
+  }
+}

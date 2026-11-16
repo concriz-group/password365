@@ -1,0 +1,32 @@
+{
+  "$comment": "México: CURP, RFC, número exterior e interior, colonia, estados.",
+  "categories": {
+    "identity": [
+      {"label": "first name", "section": "Identification", "autofill": "given-name"},
+      {"label": "last name", "section": "Identification", "autofill": "family-name"},
+      {"label": "birth date", "input": "date", "section": "Identification", "autofill": "bday"},
+      {"label": "CURP", "section": "Identification", "autofill": "curp", "mask": "AAAA000000AAAAAA**"},
+      {"label": "RFC", "section": "Identification", "autofill": "rfc"},
+      {"label": "occupation", "section": "Identification"},
+      {"label": "company", "section": "Identification", "autofill": "organization"},
+      {"label": "job title", "section": "Identification", "autofill": "organization-title"},
+      {"label": "address", "name": "street", "section": "Address", "autofill": "address-line1"},
+      {"label": "number", "name": "exterior number", "section": "Address", "autofill": "house-number"},
+      {"label": "complement", "name": "interior number", "section": "Address", "autofill": "address-line2"},
+      {"label": "neighborhood", "name": "colonia", "section": "Address", "autofill": "address-level3"},
+      {"label": "zip", "name": "postal code", "section": "Address", "autofill": "postal-code", "mask": "00000"},
+      {"label": "city", "name": "municipality", "section": "Address", "autofill": "address-level2"},
+      {"label": "state", "section": "Address", "autofill": "address-level1", "options": ["Aguascalientes", "Baja California", "Baja California Sur", "Campeche", "Chiapas", "Chihuahua", "Ciudad de México", "Coahuila", "Colima", "Durango", "Estado de México", "Guanajuato", "Guerrero", "Hidalgo", "Jalisco", "Michoacán", "Morelos", "Nayarit", "Nuevo León", "Oaxaca", "Puebla", "Querétaro", "Quintana Roo", "San Luis Potosí", "Sinaloa", "Sonora", "Tabasco", "Tamaulipas", "Tlaxcala", "Veracruz", "Yucatán", "Zacatecas"]},
+      {"label": "country", "section": "Address", "autofill": "country-name"},
+      {"label": "phone", "input": "phone", "section": "Address", "autofill": "tel", "mask": "00 0000 0000"},
+      {"label": "email", "input": "email", "section": "Internet Details", "autofill": "email"},
+      {"label": "website", "input": "url", "section": "Internet Details"}
+    ]
+  },
+  "autofill": {
+    "curp": {"kind": "identity", "hints": ["\\bcurp\\b"]},
+    "rfc": {"kind": "identity", "hints": ["\\brfc\\b"]},
+    "address-level3": {"kind": "identity", "hints": ["colonia", "\\bcol\\.?\\b"]},
+    "house-number": {"kind": "identity", "hints": ["^(?!.*(tarjeta|card|curp|rfc|tel)).*(n[uú]m(ero)?\\.?\\s*ext|\\bno\\.?\\s*ext|exterior)"]}
+  }
+}

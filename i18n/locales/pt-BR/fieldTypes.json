@@ -1,0 +1,11 @@
+{
+  "text": "Texto",
+  "url": "URL",
+  "email": "E-mail",
+  "address": "Endereço",
+  "date": "Data",
+  "totp": "Senha de uso único",
+  "password": "Senha",
+  "phone": "Telefone",
+  "signInWith": "Entrar com"
+}

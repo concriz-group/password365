@@ -1,0 +1,37 @@
+[package]
+name = "password365-crypto"
+description = "Cryptographic primitives and key hierarchy for Password365"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+repository.workspace = true
+rust-version.workspace = true
+publish = false
+
+[features]
+# Enables `KdfParams::insecure_for_tests()`. NEVER enable in production builds.
+insecure-test-params = []
+
+[dependencies]
+argon2.workspace = true
+chacha20poly1305.workspace = true
+hkdf.workspace = true
+hmac.workspace = true
+sha1.workspace = true
+data-encoding.workspace = true
+sha2.workspace = true
+p256.workspace = true
+getrandom.workspace = true
+zeroize.workspace = true
+subtle.workspace = true
+unicode-normalization.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+
+[dev-dependencies]
+proptest.workspace = true
+hex.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

@@ -1,0 +1,12 @@
+{
+  "title": "Anexos",
+  "notHereYet": "chega no próximo sync",
+  "open": "Abrir",
+  "save": "Salvar…",
+  "remove": "Remover {name}",
+  "confirmRemove": "Remover arquivo",
+  "attach": "+ Anexar um arquivo…",
+  "chooseFile": "Escolher o arquivo…",
+  "chosen": "Arquivo: {name}",
+  "documentHint": "Um documento é um arquivo guardado no seu cofre, com as notas dele."
+}
