@@ -8,6 +8,8 @@ interface Package {
   license: string;
   ecosystem: "rust" | "javascript";
   texts: string[];
+  /** No licence file came with it: the texts are its licence's standard text. */
+  standard?: boolean;
 }
 export interface LicenceData {
   packages: Package[];
@@ -47,6 +49,7 @@ export function ThirdPartyLicenses({ source = load }: { source?: () => Promise<L
                 <span className="licence-name">{p.name}</span> <span className="muted">{p.version}</span>
                 <span className="licence-id">{p.license}</span>
               </summary>
+              {p.standard && <p className="hint">{t("settings.standardLicenceText", { license: p.license })}</p>}
               {p.texts.length === 0 ? (
                 <p className="hint">{t("settings.noLicenceFile", { license: p.license })}</p>
               ) : (

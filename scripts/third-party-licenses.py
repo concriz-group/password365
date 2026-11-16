@@ -2,8 +2,12 @@
 desktop, its JavaScript packages) with each one's licence text, for the
 in-app "Third-party licenses" screen.
 
-    python3 scripts/third-party-licenses.py <Cargo.toml> [<package.json dir>] <out.json>
+    python3 scripts/third-party-licenses.py [--root <crate>] <Cargo.toml> [<package.json dir>] <out.json>
 
+--root lists only what that workspace crate links (e.g. password365-ffi for the
+phone apps); without it, everything the workspace links. A package that ships no licence file gets the standard text of its licence
+(scripts/licence-texts, from the SPDX licence list; for "A OR B", MIT when
+offered, else the first we have) and is marked "standard".
 Identical licence texts are stored once. Workspace crates (ours) are left out.
 """
 import hashlib, json, os, re, subprocess, sys
@@ -23,13 +27,16 @@ def texts_in(folder):
                 pass
     return out
 
-def rust(manifest):
+def rust(manifest, root=None):
     meta = json.loads(subprocess.check_output(
         ["cargo", "metadata", "--format-version", "1", "--manifest-path", manifest], text=True))
     local = set(meta["workspace_members"])
+    roots = [i for i in local if root is None or next(p for p in meta["packages"] if p["id"] == i)["name"] == root]
+    if not roots:
+        sys.exit(f"no workspace crate named {root}")
     # Only what the app links: normal dependencies reachable from the workspace, any platform.
     nodes = {n["id"]: n for n in meta["resolve"]["nodes"]}
-    shipped, todo = set(), list(local)
+    shipped, todo = set(), list(roots)
     while todo:
         node = nodes[todo.pop()]
         for dep in node["deps"]:
@@ -64,17 +71,40 @@ def javascript(folder):
     walk(tree.get("dependencies"))
     return out
 
+STANDARD = os.path.join(os.path.dirname(os.path.abspath(__file__)), "licence-texts")
+
+def standard_texts(expression):
+    """The standard text(s) for an SPDX expression such as "MIT OR Apache-2.0"."""
+    ids = re.split(r"\s+AND\s+", expression.replace("/", " OR ").replace("(", "").replace(")", ""))
+    out = []
+    for part in ids:
+        choices = [c.strip() for c in re.split(r"\s+OR\s+", part)]
+        have = [c for c in choices if os.path.isfile(os.path.join(STANDARD, c + ".txt"))]
+        pick = "MIT" if "MIT" in have else (have[0] if have else None)
+        if pick:
+            out.append(open(os.path.join(STANDARD, pick + ".txt"), encoding="utf-8").read().strip())
+    return out
+
 args = sys.argv[1:]
+root = None
+if args[:1] == ["--root"]:
+    root, args = args[1], args[2:]
 manifest, out_path = args[0], args[-1]
-packages = rust(manifest) + (javascript(args[1]) if len(args) == 3 else [])
+packages = rust(manifest, root) + (javascript(args[1]) if len(args) == 3 else [])
 texts, rows = {}, []
 for ecosystem, name, version, licence, found in sorted(packages, key=lambda p: (p[1].lower(), p[2])):
+    standard = not found
+    if standard:
+        found = standard_texts(licence)
     ids = []
     for text in found:
         key = hashlib.sha256(text.encode()).hexdigest()[:12]
         texts.setdefault(key, text)
         ids.append(key)
-    rows.append({"name": name, "version": version, "license": licence, "ecosystem": ecosystem, "texts": ids})
+    row = {"name": name, "version": version, "license": licence, "ecosystem": ecosystem, "texts": ids}
+    if standard and ids:
+        row["standard"] = True
+    rows.append(row)
 json.dump({"packages": rows, "texts": texts}, open(out_path, "w"), ensure_ascii=False, separators=(",", ":"))
 missing = [r["name"] for r in rows if not r["texts"]]
 print(f"{len(rows)} packages, {len(texts)} distinct licence texts, {os.path.getsize(out_path) // 1024} KB; without a licence file: {len(missing)}")

@@ -65,5 +65,6 @@
   "section_export": "Exportar",
   "thirdParty": "Licenças de terceiros",
   "thirdPartyIntro": "O Password365 inclui {count} pacotes de código aberto. Cada um aparece com a licença e o texto de licença que veio com ele.",
-  "noLicenceFile": "Este pacote não traz arquivo de licença; a licença dele é {license}."
+  "noLicenceFile": "Este pacote não traz arquivo de licença; a licença dele é {license}.",
+  "standardLicenceText": "Este pacote não traz arquivo de licença; abaixo está o texto padrão da licença dele ({license})."
 }
