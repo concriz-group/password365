@@ -4,7 +4,7 @@
   "place": "Dispositivos › Adicionar dispositivo",
   "code": "Código de pareamento",
   "connecting": "Conectando…",
-  "check": "Confira se o outro dispositivo mostra o mesmo código e confirme lá:",
+  "check": "Digite este código no outro dispositivo:",
   "verification": "Código de verificação",
   "waiting": "Aguardando aprovação no outro dispositivo…",
   "approved": "Aprovado. Digite a senha mestra que você usa no outro dispositivo e dê um nome a este. Seus itens chegam em seguida.",

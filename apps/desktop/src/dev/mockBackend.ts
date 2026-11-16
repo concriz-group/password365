@@ -315,7 +315,7 @@ export function createMockBackend(): Invoke {
           qr_svg: '<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220"><rect width="220" height="220" fill="#fff"/><text x="20" y="115">demo QR</text></svg>',
         };
       case "wait_for_new_device":
-        return new Promise((resolve) => setTimeout(() => resolve("482 913"), 2500));
+        return new Promise((resolve) => setTimeout(() => resolve(undefined), 2500));
       case "approve_new_device": {
         const added = { id: `d-${Date.now()}`, name: "New laptop", paired_at: Date.now(), last_sync: Date.now(), pending_changes: 0, addr: null, out_of_sync: false };
         devices.push(added);

@@ -4,7 +4,7 @@
   "place": "Dispositivos › Añadir un dispositivo",
   "code": "Código de emparejamiento",
   "connecting": "Conectando…",
-  "check": "Comprueba que el otro dispositivo muestra el mismo código y confirma allí:",
+  "check": "Escribe este código en el otro dispositivo:",
   "verification": "Código de verificación",
   "waiting": "Esperando la aprobación en el otro dispositivo…",
   "approved": "Aprobado. Introduce la contraseña maestra que usas en el otro dispositivo y ponle un nombre a este. Tus elementos llegarán enseguida.",

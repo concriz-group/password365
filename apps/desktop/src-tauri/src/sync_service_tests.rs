@@ -36,13 +36,16 @@ fn paired() -> (
     let invite = invite_on(&a, &slots, LOCALHOST).unwrap();
     let vault = a.with(|s| Ok(s.vaults()?[0].id.clone())).unwrap();
     let (a2, s2) = (Arc::clone(&a), Arc::clone(&slots));
+    let (typed, read_typed) = std::sync::mpsc::channel::<String>();
     let host = thread::spawn(move || {
         wait_for_device(&s2).unwrap();
-        approve_device(&a2, &s2, &[vault]).unwrap();
+        approve_device(&a2, &s2, &read_typed.recv().unwrap(), &[vault]).unwrap();
     });
     let (db, b) = state();
     let joining = PairingSlots::default();
-    join_connect(&joining, &invite.code).unwrap();
+    typed
+        .send(join_connect(&joining, &invite.code).unwrap())
+        .unwrap();
     join_wait_approval(&joining).unwrap();
     join_finish(&b, &joining, PW.into(), "Phone").unwrap();
     host.join().unwrap();

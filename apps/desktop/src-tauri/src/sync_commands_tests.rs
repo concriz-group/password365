@@ -28,28 +28,63 @@ fn a_new_device_is_invited_approved_and_joins() {
     let vault = a.with(|s| Ok(s.vaults()?[0].id.clone())).unwrap();
 
     let (a2, s2) = (Arc::clone(&a), Arc::clone(&slots_a));
+    let (typed, read_typed) = std::sync::mpsc::channel::<String>();
     let existing_side = thread::spawn(move || {
-        let code = wait_for_device(&s2).unwrap();
-        let device = approve_device(&a2, &s2, &[vault]).unwrap();
-        (code, device)
+        wait_for_device(&s2).unwrap();
+        // The user types the code the new device shows.
+        approve_device(&a2, &s2, &read_typed.recv().unwrap(), &[vault]).unwrap()
     });
 
     let (_db, b) = state();
     let slots_b = PairingSlots::default();
     let code_on_new = join_connect(&slots_b, &invite.code).unwrap();
+    typed.send(format!(" {code_on_new} ")).unwrap();
     join_wait_approval(&slots_b).unwrap();
     join_wait_approval(&slots_b).unwrap(); // a repeated wait is harmless
     let wrong = join_finish(&b, &slots_b, "wrong".into(), "Phone");
     assert_eq!(wrong.unwrap_err(), AppError::WrongCredentials);
     join_finish(&b, &slots_b, PW.into(), "Phone").unwrap();
 
-    let (code_on_existing, device) = existing_side.join().unwrap();
-    assert_eq!(code_on_new, code_on_existing);
+    let device = existing_side.join().unwrap();
     assert_eq!(device.name, "Phone");
     let on_b = b.with(AppService::devices).unwrap();
     assert_eq!(on_b[0].name, "Laptop");
     assert!(b.with(|s| Ok(s.status().unlocked)).unwrap());
     assert!(slots_b.bundle().is_err(), "the bundle is wiped once joined");
+}
+
+#[test]
+fn a_wrong_code_ends_the_pairing_without_sending_anything() {
+    let (_da, a) = existing();
+    let slots_a = Arc::new(PairingSlots::default());
+    let invite = invite_on(&a, &slots_a, LOCALHOST).unwrap();
+    let vault = a.with(|s| Ok(s.vaults()?[0].id.clone())).unwrap();
+    let (a2, s2) = (Arc::clone(&a), Arc::clone(&slots_a));
+    let existing_side = thread::spawn(move || {
+        wait_for_device(&s2).unwrap();
+        approve_device(&a2, &s2, "000000", &[vault])
+    });
+    let slots_b = PairingSlots::default();
+    let shown = join_connect(&slots_b, &invite.code).unwrap();
+    let result = existing_side.join().unwrap();
+    if shown != "000000" {
+        assert_eq!(
+            result.unwrap_err(),
+            AppError::Validation("wrong_pairing_code".into())
+        );
+        assert!(
+            join_wait_approval(&slots_b).is_err(),
+            "the new device gets nothing"
+        );
+    }
+    assert!(a.with(AppService::devices).unwrap().is_empty());
+}
+
+#[test]
+fn typed_codes_ignore_spaces_but_not_digits() {
+    assert!(same_code(" 123 456 ", "123456"));
+    assert!(!same_code("123457", "123456"));
+    assert!(!same_code("", ""));
 }
 
 #[test]
@@ -83,7 +118,7 @@ fn steps_out_of_order_explain_themselves() {
     let (_da, a) = existing();
     let slots = PairingSlots::default();
     assert!(wait_for_device(&slots).is_err());
-    assert!(approve_device(&a, &slots, &[]).is_err());
+    assert!(approve_device(&a, &slots, "123456", &[]).is_err());
     assert!(join_wait_approval(&slots).is_err());
     assert!(join_finish(&a, &slots, PW.into(), "x").is_err());
     assert_eq!(

@@ -4,7 +4,7 @@
   "place": "Devices › Add a device",
   "code": "Pairing code",
   "connecting": "Connecting…",
-  "check": "Check that the other device shows the same code, then confirm there:",
+  "check": "Type this code on the other device:",
   "verification": "Verification code",
   "waiting": "Waiting for approval on the other device…",
   "approved": "Approved. Enter the master password you use on the other device, and give this device a name. Your items arrive right after.",

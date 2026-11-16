@@ -157,11 +157,12 @@ describe("DevicesPanel", () => {
   it("reports a newly added device", async () => {
     const { user } = setup({
       inviteDevice: vi.fn().mockResolvedValue({ code: "C", qr_svg: "<svg/>" }),
-      waitForNewDevice: vi.fn().mockResolvedValue("123 456"),
+      waitForNewDevice: vi.fn().mockResolvedValue(undefined),
       approveNewDevice: vi.fn().mockResolvedValue({ ...phone, name: "Tablet" }),
     });
     await user.click(await screen.findByRole("button", { name: "Add a device…" }));
-    await user.click(await screen.findByRole("button", { name: "The codes match — add device" }));
+    await user.type(await screen.findByLabelText("Verification code"), "123456");
+    await user.click(screen.getByRole("button", { name: "Add device" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Tablet was added.");
   });
 });
@@ -170,7 +171,7 @@ describe("AddDevice", () => {
   function setup(overrides = {}) {
     const client = fakeClient({
       inviteDevice: vi.fn().mockResolvedValue({ code: "CODE", qr_svg: "<svg/>" }),
-      waitForNewDevice: vi.fn().mockResolvedValue("123 456"),
+      waitForNewDevice: vi.fn().mockResolvedValue(undefined),
       approveNewDevice: vi.fn().mockResolvedValue(phone),
       ...overrides,
     });
@@ -180,43 +181,47 @@ describe("AddDevice", () => {
     return { client, onAdded, onClose, view, user: userEvent.setup() };
   }
 
-  it("shows the code to compare, lets the user choose vaults and approves", async () => {
+  it("asks for the code the new device shows, lets the user choose vaults and approves", async () => {
     const { client, onAdded, view, user } = setup();
-    expect(await screen.findByLabelText("Verification code")).toHaveTextContent("123 456");
+    const code = await screen.findByLabelText("Verification code");
+    expect(code).toHaveValue("");
+    expect(screen.getByRole("button", { name: "Add device" })).toBeDisabled();
+    await user.type(code, "123 456");
     await user.click(screen.getByRole("checkbox", { name: /Work/ }));
-    await user.click(screen.getByRole("button", { name: "The codes match — add device" }));
+    await user.click(screen.getByRole("button", { name: "Add device" }));
     await waitFor(() => expect(onAdded).toHaveBeenCalledWith(phone));
-    expect(client.approveNewDevice).toHaveBeenCalledWith(["v1"]);
+    expect(client.approveNewDevice).toHaveBeenCalledWith("123456", ["v1"]);
     view.unmount();
     expect(client.cancelPairing).not.toHaveBeenCalled();
   });
 
   it("needs at least one vault", async () => {
     const { user } = setup();
-    await screen.findByLabelText("Verification code");
+    await user.type(await screen.findByLabelText("Verification code"), "123456");
     await user.click(screen.getByRole("checkbox", { name: /Personal/ }));
     await user.click(screen.getByRole("checkbox", { name: /Work/ }));
-    expect(screen.getByRole("button", { name: "The codes match — add device" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Add device" })).toBeDisabled();
     await user.click(screen.getByRole("checkbox", { name: /Work/ }));
-    expect(screen.getByRole("button", { name: "The codes match — add device" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Add device" })).toBeEnabled();
   });
 
-  it("closes when the codes do not match and cancels the pairing", async () => {
+  it("closes on cancel and cancels the pairing", async () => {
     const { client, onClose, view, user } = setup();
-    await user.click(await screen.findByRole("button", { name: "They don't match" }));
+    await screen.findByLabelText("Verification code");
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onClose).toHaveBeenCalled();
     view.unmount();
     expect(client.cancelPairing).toHaveBeenCalled();
   });
 
   it("shows the QR code while waiting", async () => {
-    const wait = deferred<string>();
+    const wait = deferred<void>();
     setup({ waitForNewDevice: vi.fn().mockReturnValue(wait.promise) });
     const qr = await screen.findByRole("img", { name: "Pairing QR code" });
     expect(qr.getAttribute("src")).toBe(`data:image/svg+xml;utf8,${encodeURIComponent("<svg/>")}`);
     expect(screen.getByRole("status")).toHaveTextContent("Waiting for the new device");
-    await act(async () => wait.resolve("111 222"));
-    expect(await screen.findByLabelText("Verification code")).toHaveTextContent("111 222");
+    await act(async () => wait.resolve(undefined));
+    expect(await screen.findByLabelText("Verification code")).toHaveValue("");
   });
 
   it("copies the pairing code", async () => {
@@ -235,11 +240,21 @@ describe("AddDevice", () => {
   it("shows failures and waits for the other side while finishing", async () => {
     const approve = deferred<Device>();
     const { user } = setup({ approveNewDevice: vi.fn().mockReturnValue(approve.promise) });
-    await user.click(await screen.findByRole("button", { name: "The codes match — add device" }));
+    await user.type(await screen.findByLabelText("Verification code"), "123456");
+    await user.click(screen.getByRole("button", { name: "Add device" }));
     expect(screen.getByRole("status")).toHaveTextContent("Waiting for the master password on the new device");
     await act(async () => approve.reject({ code: "validation", message: "pairing was cancelled on the other device" }));
     expect(await screen.findByRole("alert")).toHaveTextContent("cancelled on the other device");
     expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
+  });
+
+  it("explains a wrong code (the pairing stops)", async () => {
+    const { user } = setup({
+      approveNewDevice: vi.fn().mockRejectedValue({ code: "validation", message: "wrong_pairing_code" }),
+    });
+    await user.type(await screen.findByLabelText("Verification code"), "999999");
+    await user.click(screen.getByRole("button", { name: "Add device" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("not the code the new device shows");
   });
 
   it("reports when the invite cannot be opened", async () => {

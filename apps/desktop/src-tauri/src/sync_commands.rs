@@ -47,23 +47,37 @@ pub fn invite_on(
     })
 }
 
-/// Existing device: waits for the new device; returns the code to compare.
-pub fn wait_for_device(slots: &PairingSlots) -> Result<String> {
+/// Existing device: waits for the new device. Its code is not shown here:
+/// the user types the code the new device shows (see [`approve_device`]).
+pub fn wait_for_device(slots: &PairingSlots) -> Result<()> {
     let host = slots.take_host()?;
     let cancel = slots.cancel_flag()?;
     let pairing = host.accept_cancellable(&cancel).map_err(net_error)?;
-    let code = pairing.verification_code().to_owned();
     slots.put_pairing(pairing)?;
-    Ok(code)
+    Ok(())
 }
 
-/// Existing device: codes matched; send the account and pin the new device.
+/// Whether the code the user typed is this connection's (spaces ignored).
+pub(crate) fn same_code(typed: &str, expected: &str) -> bool {
+    let digits = |s: &str| s.chars().filter(char::is_ascii_digit).collect::<String>();
+    let typed = digits(typed);
+    !typed.is_empty() && typed == digits(expected)
+}
+
+/// Existing device: the user typed the code the new device shows. If it is
+/// this connection's, send the account and pin the new device; if not, the
+/// pairing ends (someone else may have connected with a stolen invite).
 pub fn approve_device(
     state: &AppState,
     slots: &PairingSlots,
+    typed_code: &str,
     vault_ids: &[String],
 ) -> Result<DeviceDto> {
     let mut pairing = slots.take_pairing()?;
+    if !same_code(typed_code, pairing.verification_code()) {
+        let _ = pairing.reject();
+        return Err(AppError::Validation("wrong_pairing_code".into()));
+    }
     state.with(|s| s.send_pairing_bundle(&mut pairing, vault_ids))?;
     let peer = pairing.wait_joined(SYNC_PORT).map_err(net_error)?;
     state.with(|s| s.pin_device(peer))
@@ -183,7 +197,7 @@ pub fn invite_device(
 }
 
 #[tauri::command]
-pub async fn wait_for_new_device(slots: State<'_, SharedSlots>) -> Result<String> {
+pub async fn wait_for_new_device(slots: State<'_, SharedSlots>) -> Result<()> {
     let slots = SharedSlots::clone(&slots);
     blocking(move || wait_for_device(&slots)).await
 }
@@ -192,10 +206,11 @@ pub async fn wait_for_new_device(slots: State<'_, SharedSlots>) -> Result<String
 pub async fn approve_new_device(
     state: State<'_, SharedState>,
     slots: State<'_, SharedSlots>,
+    code: String,
     vault_ids: Vec<String>,
 ) -> Result<DeviceDto> {
     let (state, slots) = (SharedState::clone(&state), SharedSlots::clone(&slots));
-    blocking(move || approve_device(&state, &slots, &vault_ids)).await
+    blocking(move || approve_device(&state, &slots, &code, &vault_ids)).await
 }
 
 #[tauri::command]

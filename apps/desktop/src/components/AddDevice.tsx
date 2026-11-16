@@ -18,13 +18,14 @@ interface Props {
 type Step =
   | { kind: "opening" }
   | { kind: "waiting"; invite: Invite }
-  | { kind: "verify"; code: string }
+  | { kind: "verify" }
   | { kind: "finishing" }
   | { kind: "failed"; error: ApiError };
 
 /**
- * Add a device (as in 1Password): show a QR code / pairing code, compare the
- * six digits on both screens, choose vaults, then wait for the other device.
+ * Add a device: show a QR code / pairing code; once a device connects, the
+ * user types the six digits it shows (typing, not just a click, makes sure the
+ * device that connected is theirs), chooses vaults, then waits for it.
  */
 export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
   const client = useClient();
@@ -33,6 +34,8 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
   const [chosen, setChosen] = useState<Set<string>>(() => new Set(vaults.map((v) => v.id)));
   const finished = useRef(false);
   const [copied, setCopied] = useState(false);
+  const [typed, setTyped] = useState("");
+  const digits = typed.replace(/\D/g, "");
 
   useEffect(() => {
     let alive = true;
@@ -42,9 +45,9 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
       .then((invite) => {
         if (!alive) return null;
         setStep({ kind: "waiting", invite });
-        return client.waitForNewDevice();
+        return client.waitForNewDevice().then(() => true);
       })
-      .then((code) => alive && code && setStep({ kind: "verify", code }), fail);
+      .then((connected) => alive && connected && setStep({ kind: "verify" }), fail);
     return () => {
       alive = false;
       if (!finished.current) void client.cancelPairing();
@@ -54,7 +57,7 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
   async function approve() {
     setStep({ kind: "finishing" });
     try {
-      const device = await client.approveNewDevice([...chosen]);
+      const device = await client.approveNewDevice(digits, [...chosen]);
       finished.current = true;
       onAdded(device);
     } catch (e) {
@@ -95,10 +98,19 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
       )}
       {step.kind === "verify" && (
         <>
-          <p>{t("addDevice.checkCode")}</p>
-          <p className="verification-code" aria-label={t("addDevice.verificationCode")}>
-            {step.code}
-          </p>
+          <label>
+            {t("addDevice.checkCode")}
+            <input
+              className="verification-code"
+              aria-label={t("addDevice.verificationCode")}
+              inputMode="numeric"
+              autoComplete="off"
+              autoFocus
+              maxLength={7}
+              value={typed}
+              onChange={(e) => setTyped(e.target.value)}
+            />
+          </label>
           <fieldset>
             <legend>{t("addDevice.vaults")}</legend>
             {vaults.map((v) => (
@@ -107,7 +119,7 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
               </label>
             ))}
           </fieldset>
-          <button type="button" className="primary" onClick={approve} disabled={chosen.size === 0}>
+          <button type="button" className="primary" onClick={approve} disabled={chosen.size === 0 || digits.length !== 6}>
             {t("addDevice.match")}
           </button>
           <button type="button" className="ghost" onClick={onClose}>
@@ -120,7 +132,14 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
           {t("addDevice.finishing")}
         </p>
       )}
-      {step.kind === "failed" && <ErrorMessage error={step.error} />}
+      {step.kind === "failed" &&
+        (step.error.message === "wrong_pairing_code" ? (
+          <p role="alert" className="error">
+            {t("addDevice.wrongCode")}
+          </p>
+        ) : (
+          <ErrorMessage error={step.error} />
+        ))}
       {step.kind !== "verify" && (
         <button type="button" className="ghost" onClick={onClose}>
           {step.kind === "failed" ? t("common.close") : t("common.cancel")}

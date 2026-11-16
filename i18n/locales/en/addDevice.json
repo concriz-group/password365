@@ -6,10 +6,11 @@
   "qr": "Pairing QR code",
   "copyCode": "Copy code",
   "waiting": "Waiting for the new device… The code works once and expires in 5 minutes.",
-  "checkCode": "Check that the new device shows the same code:",
+  "checkCode": "Type the 6-digit code the new device shows:",
   "verificationCode": "Verification code",
   "vaults": "Vaults on the new device",
-  "match": "The codes match — add device",
-  "noMatch": "They don't match",
-  "finishing": "Waiting for the master password on the new device…"
+  "match": "Add device",
+  "noMatch": "Cancel",
+  "finishing": "Waiting for the master password on the new device…",
+  "wrongCode": "That is not the code the new device shows. For your safety the pairing was stopped: start again."
 }

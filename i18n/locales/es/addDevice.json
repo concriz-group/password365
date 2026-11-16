@@ -6,10 +6,11 @@
   "qr": "Código QR de vinculación",
   "copyCode": "Copiar código",
   "waiting": "Esperando al nuevo dispositivo… El código sirve una sola vez y caduca en 5 minutos.",
-  "checkCode": "Comprueba que el nuevo dispositivo muestra el mismo código:",
+  "checkCode": "Escribe el código de 6 dígitos que muestra el nuevo dispositivo:",
   "verificationCode": "Código de verificación",
   "vaults": "Bóvedas en el nuevo dispositivo",
-  "match": "Los códigos coinciden: añadir dispositivo",
-  "noMatch": "No coinciden",
-  "finishing": "Esperando la contraseña maestra en el nuevo dispositivo…"
+  "match": "Añadir dispositivo",
+  "noMatch": "Cancelar",
+  "finishing": "Esperando la contraseña maestra en el nuevo dispositivo…",
+  "wrongCode": "Ese no es el código que muestra el nuevo dispositivo. Por seguridad se detuvo el emparejamiento: empieza de nuevo."
 }
