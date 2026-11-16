@@ -69,3 +69,11 @@ Both need the app signed with your own identities:
 Needed from you: Apple Developer Program membership (Team ID, Developer ID Application certificate,
 an app-specific password or API key for notarization) and, for Windows, a code-signing certificate
 or Azure Trusted Signing account. Until then these stay off; everything else works without them.
+
+## Later (owner, 2026-11-16: "deixa anotado para o futuro, quando o mais importante estiver pronto")
+Polish to do once the important features are done — not before:
+- Website: screenshots of the desktop app (made-up data, no real brands), more pages, visual polish.
+- App Store: compare the logo with the closest password-manager icons; review the store texts and
+  screenshots again right before submission (`store-screenshots.sh` regenerates them).
+- Extension: verify the conditional passkey flow (passkey offered in the username field's menu)
+  on a real site.
