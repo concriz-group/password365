@@ -27,6 +27,7 @@ pub mod passkeys;
 pub mod password_policy;
 pub mod profile;
 pub mod quick_unlock;
+pub mod reach;
 pub mod recently_deleted;
 pub mod secret_key_store;
 mod service;

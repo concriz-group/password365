@@ -353,7 +353,7 @@ mod joining {
             keeper.load().is_some(),
             "the account's Secret Key is in the Keychain"
         );
-        let (mut mac, phone_on_mac) = inviter.join().unwrap();
+        let (mac, phone_on_mac) = inviter.join().unwrap();
         assert_eq!(phone_on_mac.name, "iPhone");
         let devices = phone.devices().unwrap();
         assert_eq!(
@@ -363,17 +363,16 @@ mod joining {
         assert_eq!(phone.device_name().unwrap(), "iPhone");
 
         // The Mac listens (on a free port here); the phone syncs.
-        let listener = TcpListener::bind((LOCALHOST, 0)).unwrap();
-        let addr = listener.local_addr().unwrap();
-        let key = mac.network_key().unwrap();
-        let server = thread::spawn(move || {
-            let (mut stream, _) = tcp::accept(&listener, &key).unwrap();
-            mac.sync_over(&mut stream, None).unwrap();
-            mac
-        });
-        let summary = phone.sync_at(&devices[0].id, addr).unwrap();
+        let (addr, server) = serve_once(mac);
+        // The address remembered at pairing leads nowhere here: found by discovery.
+        let mac_id = devices[0].id.clone();
+        phone
+            .app()
+            .set_device_address(&mac_id, &dead().to_string())
+            .unwrap();
+        let summary = phone.sync_device(&mac_id, || vec![addr]).unwrap();
         assert_eq!(summary.changed, 1);
-        let mut mac = server.join().unwrap();
+        let mac = server.join().unwrap();
         let row = phone.items(String::new()).unwrap().remove(0);
         assert_eq!(row.title, "From the Mac");
         assert_eq!(
@@ -390,21 +389,25 @@ mod joining {
                 String::new(),
             )
             .unwrap();
-        let listener = TcpListener::bind((LOCALHOST, 0)).unwrap();
-        let addr = listener.local_addr().unwrap();
-        let key = mac.network_key().unwrap();
-        let server = thread::spawn(move || {
-            let (mut stream, _) = tcp::accept(&listener, &key).unwrap();
-            mac.sync_over(&mut stream, None).unwrap();
-            mac
-        });
-        phone.sync_at(&devices[0].id, addr).unwrap();
+        let (addr, server) = serve_once(mac);
+        phone
+            .app()
+            .set_device_address(&mac_id, &dead().to_string())
+            .unwrap();
+        let found = Arc::new(Found::new(vec![addr.to_string(), "not an address".into()]));
+        let summary = phone.sync_all(Some(found.clone())).unwrap();
+        assert_eq!((summary.changed, summary.unreachable), (0, 0));
+        assert_eq!(found.calls(), 1, "looked for once");
         let mut mac = server.join().unwrap();
         assert_eq!(mac.items("From the phone", None).unwrap().len(), 1);
 
         // Nothing listens at the remembered address: counted, not an error.
         let _ = &mut mac;
-        let unreachable = phone.sync_all().unwrap();
+        phone
+            .app()
+            .set_device_address(&mac_id, &dead().to_string())
+            .unwrap();
+        let unreachable = phone.sync_all(None).unwrap();
         assert_eq!((unreachable.changed, unreachable.unreachable), (0, 1));
     }
 
@@ -416,6 +419,51 @@ mod joining {
         assert!(phone.join_wait().is_err());
         phone.join_cancel();
         assert!(!phone.status().initialized);
+    }
+    /// The Mac listens on a free port and answers one sync.
+    fn serve_once(mut mac: AppService) -> (std::net::SocketAddr, thread::JoinHandle<AppService>) {
+        let listener = TcpListener::bind((LOCALHOST, 0)).unwrap();
+        let addr = listener.local_addr().unwrap();
+        let key = mac.network_key().unwrap();
+        let server = thread::spawn(move || {
+            let (mut stream, _) = tcp::accept(&listener, &key).unwrap();
+            mac.sync_over(&mut stream, None).unwrap();
+            mac
+        });
+        (addr, server)
+    }
+
+    /// A local address nothing listens on.
+    fn dead() -> std::net::SocketAddr {
+        TcpListener::bind((LOCALHOST, 0))
+            .unwrap()
+            .local_addr()
+            .unwrap()
+    }
+
+    /// Discovery that returns fixed addresses and counts how often it was asked.
+    struct Found {
+        addrs: Vec<String>,
+        calls: std::sync::atomic::AtomicUsize,
+    }
+
+    impl Found {
+        fn new(addrs: Vec<String>) -> Self {
+            Self {
+                addrs,
+                calls: 0.into(),
+            }
+        }
+        fn calls(&self) -> usize {
+            self.calls.load(std::sync::atomic::Ordering::SeqCst)
+        }
+    }
+
+    impl crate::pairing::Discovery for Found {
+        fn browse(&self) -> Vec<String> {
+            self.calls.fetch_add(1, std::sync::atomic::Ordering::SeqCst);
+            self.addrs.clone()
+        }
     }
 }
 

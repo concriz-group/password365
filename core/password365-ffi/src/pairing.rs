@@ -3,15 +3,25 @@
 //! the local network. iOS lets the app use the network only while it is
 //! open, so the phone starts every sync; network waits never hold the vault.
 
+use std::cell::OnceCell;
 use std::net::SocketAddr;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 
 use password365_app::devices::{DeviceDto, net_error};
+use password365_app::reach::reach;
 use password365_net::pairing::Joining;
-use password365_net::tcp;
 use zeroize::Zeroizing;
 
 use crate::{Failure, Password365, Result};
+
+/// Finds Password365 devices on the local network. On iPhone this is the
+/// system's Bonjour (Swift): only it may browse without Apple's multicast
+/// entitlement. Asked only when a device is not at its known address.
+#[uniffi::export(with_foreign)]
+pub trait Discovery: Send + Sync {
+    /// `ip:port` of every device advertising Password365 sync right now.
+    fn browse(&self) -> Vec<String>;
+}
 
 /// A join in progress (between the steps the user takes).
 #[derive(Default)]
@@ -74,20 +84,26 @@ impl Password365 {
             .unwrap_or_else(std::sync::PoisonError::into_inner)
     }
 
-    /// Syncs with the device whose sync channel is at `addr`.
-    pub(crate) fn sync_at(&self, id: &str, addr: SocketAddr) -> Result<SyncSummary> {
-        let (key, expected) = {
+    /// Syncs with one paired device: at its known address, else wherever
+    /// `discover` finds it (proven by its pinned key); a new address is
+    /// remembered.
+    pub(crate) fn sync_device(
+        &self,
+        id: &str,
+        discover: impl FnOnce() -> Vec<SocketAddr>,
+    ) -> Result<SyncSummary> {
+        let (known, key, expected) = {
             let mut app = self.app();
-            (app.network_key()?, app.device_key(id)?)
+            (
+                app.device_address(id).ok(),
+                app.network_key()?,
+                app.device_key(id)?,
+            )
         };
-        let mut stream = tcp::connect(addr, &key).map_err(net_error)?;
-        if stream.remote_static() != expected {
-            return Err(Failure::Failed {
-                code: "io".into(),
-                message: "another device answered at that address".into(),
-            });
-        }
-        let result = self.app().sync_over(&mut stream, None)?;
+        let mut reached = reach(known, &key, &expected, discover)?;
+        let result = self
+            .app()
+            .sync_over(&mut reached.stream, reached.moved_to)?;
         Ok(SyncSummary {
             changed: result.changed as u64,
             conflicts: result.conflicts.len() as u64,
@@ -162,26 +178,29 @@ impl Password365 {
             .collect())
     }
 
-    /// Syncs with every paired device it can reach on this network.
-    pub fn sync_all(&self) -> Result<SyncSummary> {
-        let targets: Vec<(String, Option<SocketAddr>)> = {
-            let mut app = self.app();
-            let ids: Vec<String> = app.devices()?.into_iter().map(|d| d.id).collect();
-            ids.into_iter()
-                .map(|id| {
-                    let addr = app.device_address(&id).ok();
-                    (id, addr)
+    /// Syncs with every paired device it can reach on this network. Devices
+    /// that moved are looked for with `discovery` (once per call).
+    pub fn sync_all(&self, discovery: Option<Arc<dyn Discovery>>) -> Result<SyncSummary> {
+        let ids: Vec<String> = self.app().devices()?.into_iter().map(|d| d.id).collect();
+        let found: OnceCell<Vec<SocketAddr>> = OnceCell::new();
+        let discover = || {
+            found
+                .get_or_init(|| {
+                    discovery
+                        .as_ref()
+                        .map(|d| d.browse().iter().filter_map(|a| a.parse().ok()).collect())
+                        .unwrap_or_default()
                 })
-                .collect()
+                .clone()
         };
         let mut total = SyncSummary {
             changed: 0,
             conflicts: 0,
             unreachable: 0,
         };
-        for (id, addr) in targets {
-            match addr.map(|a| self.sync_at(&id, a)) {
-                Some(Ok(done)) => {
+        for id in ids {
+            match self.sync_device(&id, discover) {
+                Ok(done) => {
                     total.changed += done.changed;
                     total.conflicts += done.conflicts;
                 }

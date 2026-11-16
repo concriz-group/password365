@@ -17,6 +17,7 @@ use std::time::{Duration, Instant};
 
 use password365_app::Result;
 use password365_app::devices::{SyncResultDto, net_error};
+use password365_app::reach::reach;
 use password365_net::discovery::{self, Advertiser};
 use password365_net::pairing::local_ip;
 use password365_net::tcp::{self, SYNC_PORT};
@@ -55,23 +56,8 @@ pub fn sync_device_with(
             s.device_key(id)?,
         ))
     })?;
-    let mut last_error = None;
-    if let Some(addr) = known {
-        match tcp::connect(addr, &key) {
-            Ok(mut stream) => return state.with(|s| s.sync_over(&mut stream, None)),
-            Err(e) => last_error = Some(net_error(e)),
-        }
-    }
-    for addr in discover() {
-        if let Ok(mut stream) = tcp::connect(addr, &key)
-            && stream.remote_static() == expected
-        {
-            return state.with(|s| s.sync_over(&mut stream, Some(addr.ip())));
-        }
-    }
-    Err(last_error.unwrap_or_else(|| {
-        password365_app::AppError::Io("The device was not found on this network.".into())
-    }))
+    let mut reached = reach(known, &key, &expected, discover)?;
+    state.with(|s| s.sync_over(&mut reached.stream, reached.moved_to))
 }
 
 /// Syncs with every paired device; returns how many items changed here.
