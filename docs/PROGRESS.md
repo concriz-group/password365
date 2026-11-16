@@ -378,3 +378,20 @@ Phase 8 audit & release — see `PLAN.md` §7.
   published AUK vectors unchanged but for the display text); backups are `.p365backup` and sync
   files `.p365sync` (the desktop still opens `.qlbackup` / `.qlsync`, saves only the new names).
   Internal labels (`quillock/v1/…`, `.qlvault`, `QLSYNC1`) stay: format v1, never shown.
+- **Releases and updates (desktop)** (2026-11-16):
+  - `.github/workflows/release.yml`: macOS (universal), Windows (NSIS + MSI) and Linux (AppImage +
+    deb) installers; for a `v*` tag, a GitHub release with stable file names, the signed update
+    bundles, `latest.json` and the version's `CHANGELOG.md` section
+    (`scripts/release/latest_json.py`, tested). Without the signing key it only builds installers.
+    How to release and the one-time key setup: `scripts/release/README.md`.
+  - Updates in the app (`tauri-plugin-updater` behind the app's own `update_check` /
+    `update_install`): off until the first-run question is answered; automatic = shortly after
+    start, then daily; Settings › About › Check for updates; the notice shows what changed and
+    offers "Skip this version" (`skipped_update`). Every update must carry Password365's signature.
+  - The browser extension's helper ships inside the app (`bundle.externalBin`, built by
+    `apps/desktop/scripts/sidecar.mjs`) and the app registers it with every installed browser at
+    start (`browser_host.rs`; HKCU registry on Windows) — no more `npm run install-host` for users.
+  - Settings › About › Help and feedback: bug, idea, translation, private security report, email
+    (fixed addresses in `help.rs`).
+  - Public-repository files: README, CONTRIBUTING (translations), SECURITY, CHANGELOG, issue forms,
+    pull-request template.
