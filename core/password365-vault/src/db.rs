@@ -3,6 +3,7 @@
 use std::path::Path;
 
 use password365_crypto::kdf::KdfParams;
+use rusqlite::config::DbConfig;
 use rusqlite::{Connection, OptionalExtension, params};
 
 use crate::header::Header;
@@ -51,12 +52,46 @@ impl Database {
         Ok(db)
     }
 
-    /// Opens an existing store file.
+    /// Opens an existing store file. Refuses files whose database holds
+    /// anything but this format's tables (triggers, views, other tables or
+    /// changed columns): the file is not trusted until its records decrypt.
     pub(crate) fn open(path: &Path) -> Result<Self> {
         if !path.is_file() {
             return Err(VaultError::NotInitialized);
         }
-        Self::connect(Connection::open(path)?)
+        let db = Self::connect(Connection::open(path)?)?;
+        db.check_schema()?;
+        Ok(db)
+    }
+
+    /// Fails unless the schema is exactly this format's (attachments optional).
+    fn check_schema(&self) -> Result<()> {
+        let expected = Connection::open_in_memory()?;
+        expected.execute_batch(SCHEMA)?;
+        expected.execute_batch(ATTACHMENTS)?;
+        let objects = |conn: &Connection| -> Result<Vec<(String, String, String)>> {
+            let mut st = conn.prepare(
+                "SELECT type, name, coalesce(sql, '') FROM sqlite_schema ORDER BY type, name",
+            )?;
+            let rows = st
+                .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            Ok(rows)
+        };
+        let normal = |sql: &str| sql.split_whitespace().collect::<Vec<_>>().join(" ");
+        let wanted: Vec<_> = objects(&expected)?
+            .into_iter()
+            .map(|(t, n, sql)| (t, n, normal(&sql)))
+            .collect();
+        for (kind, name, sql) in objects(&self.conn)? {
+            let known = wanted
+                .iter()
+                .any(|(t, n, s)| *t == kind && *n == name && *s == normal(&sql));
+            if !known {
+                return Err(VaultError::Corrupt("unexpected database schema"));
+            }
+        }
+        Ok(())
     }
 
     /// In-memory database (tests).
@@ -68,6 +103,17 @@ impl Database {
     }
 
     fn connect(conn: Connection) -> Result<Self> {
+        // The file is untrusted input: no triggers or views run, nothing in it
+        // can change the schema behind our back, and no SQL functions with
+        // side effects are callable from it (defensive mode).
+        for (option, on) in [
+            (DbConfig::SQLITE_DBCONFIG_DEFENSIVE, true),
+            (DbConfig::SQLITE_DBCONFIG_TRUSTED_SCHEMA, false),
+            (DbConfig::SQLITE_DBCONFIG_ENABLE_TRIGGER, false),
+            (DbConfig::SQLITE_DBCONFIG_ENABLE_VIEW, false),
+        ] {
+            conn.set_db_config(option, on)?;
+        }
         // Overwrite deleted content instead of leaving it in free pages.
         conn.execute_batch("PRAGMA secure_delete = ON;")?;
         Ok(Self { conn })
@@ -342,6 +388,60 @@ mod tests {
         assert!(result.is_err());
         assert!(db.records().unwrap().is_empty());
         db.in_transaction(|| db.put_record(&[1; 16], b"x")).unwrap();
+        assert_eq!(db.records().unwrap().len(), 1);
+    }
+
+    /// A store file someone planted a trigger (or a view, or an extra table) in.
+    fn tampered(sql: &str) -> (tempfile::TempDir, std::path::PathBuf) {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("store.qlvault");
+        let db = Database::create(&path).unwrap();
+        db.write_header(&header()).unwrap();
+        db.ensure_attachments().unwrap();
+        drop(db);
+        Connection::open(&path).unwrap().execute_batch(sql).unwrap();
+        (dir, path)
+    }
+
+    #[test]
+    fn files_with_triggers_views_or_other_tables_are_refused() {
+        for sql in [
+            "CREATE TRIGGER t BEFORE UPDATE ON header BEGIN SELECT RAISE(IGNORE); END;",
+            "CREATE TRIGGER t AFTER INSERT ON records BEGIN DELETE FROM records; END;",
+            "CREATE VIEW v AS SELECT * FROM records;",
+            "CREATE TABLE extra (x);",
+            "CREATE INDEX i ON records (blob);",
+        ] {
+            let (_dir, path) = tampered(sql);
+            assert!(
+                matches!(Database::open(&path), Err(VaultError::Corrupt(_))),
+                "{sql}"
+            );
+        }
+        // A changed table definition too.
+        let (_dir, path) = tampered(
+            "DROP TABLE attachments; CREATE TABLE attachments (id BLOB PRIMARY KEY, blob BLOB DEFAULT x'00') WITHOUT ROWID;",
+        );
+        assert!(Database::open(&path).is_err());
+        // Untouched files (with or without the attachments table) open.
+        let (_dir, path) = tampered("SELECT 1;");
+        assert!(Database::open(&path).is_ok());
+        let (_dir, path) = tampered("DROP TABLE attachments;");
+        assert!(Database::open(&path).is_ok());
+    }
+
+    #[test]
+    fn triggers_never_run_even_if_present() {
+        let (_dir, path) = tampered("SELECT 1;");
+        let db = Database::open(&path).unwrap();
+        // Planted after the check (e.g. by another process): still inert.
+        Connection::open(&path)
+            .unwrap()
+            .execute_batch(
+                "CREATE TRIGGER t BEFORE INSERT ON records BEGIN SELECT RAISE(IGNORE); END;",
+            )
+            .unwrap();
+        db.put_record(&[1; 16], b"x").unwrap();
         assert_eq!(db.records().unwrap().len(), 1);
     }
 
