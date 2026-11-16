@@ -1,7 +1,9 @@
 //! A stand-in "computer" for the iOS join UI test: an account with one item
 //! that invites a device on 127.0.0.1, approves it as soon as it connects
 //! (as if the user confirmed the six digits) and pins it. Prints
-//! `CODE <invite>` and later `JOINED <name>`. Not part of the app.
+//! `CODE <invite>` and later `JOINED <name>`. With `FAKE_MAC_SYNC_FILE` set,
+//! it then adds "Carried by file" and writes a sync file for the phone there
+//! (`SYNCFILE <path>`). Not part of the app.
 
 use std::io::Write;
 use std::net::{IpAddr, Ipv4Addr};
@@ -43,5 +45,16 @@ fn main() {
     mac.send_pairing_bundle(&mut pairing, &[vault])
         .expect("approve");
     let peer = pairing.wait_joined(SYNC_PORT).expect("phone joins");
-    println!("JOINED {}", mac.pin_device(peer).expect("pin").name);
+    let phone = mac.pin_device(peer).expect("pin");
+    println!("JOINED {}", phone.name);
+    if let Ok(path) = std::env::var("FAKE_MAC_SYNC_FILE") {
+        mac.create_item(&ItemInput {
+            title: "Carried by file".into(),
+            ..ItemInput::default()
+        })
+        .expect("item");
+        mac.export_sync_file(&phone.id, std::path::Path::new(&path))
+            .expect("sync file");
+        println!("SYNCFILE {path}");
+    }
 }
