@@ -26,5 +26,9 @@
   "filterByTag": "Filtrar por etiqueta",
   "fingerprint": "Desbloquear con huella digital",
   "biometryHintAndroid": "La contraseña maestra se sigue pidiendo cada 14 días, cuando cambia y cuando cambian las huellas de este móvil.",
-  "unlockFingerprint": "Usar huella digital"
+  "unlockFingerprint": "Usar huella digital",
+  "autofillNeedsFingerprint": "Abre Password365 y activa el desbloqueo con huella en Ajustes para rellenar desde aquí.",
+  "autofillWith": "Rellenar con Password365",
+  "autofillService": "Password365 como servicio de autorrelleno",
+  "autofillServiceHint": "Rellena usuarios, contraseñas y códigos en apps y navegadores. En Chrome, elige también Configuración › Servicios de autocompletar › Autocompletar con otro servicio."
 }

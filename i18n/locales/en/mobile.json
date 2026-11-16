@@ -26,5 +26,9 @@
   "filterByTag": "Filter by tag",
   "fingerprint": "Unlock with fingerprint",
   "biometryHintAndroid": "Your master password is still needed every 14 days, after it changes, and when the fingerprints on this phone change.",
-  "unlockFingerprint": "Use fingerprint"
+  "unlockFingerprint": "Use fingerprint",
+  "autofillNeedsFingerprint": "Open Password365 and turn on fingerprint unlock in Settings to fill from here.",
+  "autofillWith": "Fill with Password365",
+  "autofillService": "Password365 as Autofill service",
+  "autofillServiceHint": "Fill usernames, passwords and codes in apps and browsers. In Chrome, also choose Settings › Autofill services › Autofill using another service."
 }

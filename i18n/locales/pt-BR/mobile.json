@@ -26,5 +26,9 @@
   "filterByTag": "Filtrar por etiqueta",
   "fingerprint": "Desbloquear com impressão digital",
   "biometryHintAndroid": "A senha mestra continua sendo pedida a cada 14 dias, quando ela muda e quando as impressões digitais deste celular mudam.",
-  "unlockFingerprint": "Usar impressão digital"
+  "unlockFingerprint": "Usar impressão digital",
+  "autofillNeedsFingerprint": "Abra o Password365 e ative o desbloqueio com impressão digital nos Ajustes para preencher daqui.",
+  "autofillWith": "Preencher com o Password365",
+  "autofillService": "Password365 como serviço de preenchimento",
+  "autofillServiceHint": "Preencha usuários, senhas e códigos em apps e navegadores. No Chrome, escolha também Configurações › Serviços de preenchimento automático › Preencher usando outro serviço."
 }
