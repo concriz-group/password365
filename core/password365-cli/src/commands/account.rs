@@ -99,8 +99,11 @@ mod tests {
     #[test]
     fn init_removes_key_file_when_store_creation_fails() {
         let mut fx = Fixture::new(&[PASSWORD, PASSWORD]);
+        // A folder inside a file: impossible on every system.
+        let blocker = fx.dir.path().join("a-file");
+        std::fs::write(&blocker, b"x").unwrap();
         let mut app = fx.app();
-        app.paths.store = "/nonexistent-password365-dir/x/store".into();
+        app.paths.store = blocker.join("x").join("store");
         assert!(init(&mut app).is_err());
         assert!(!fx.dir.path().join("secret-key").exists());
     }

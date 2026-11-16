@@ -4,7 +4,9 @@ use std::io::{self, Read, Write};
 use std::sync::Arc;
 use std::thread::{self, JoinHandle};
 
-use interprocess::local_socket::{ListenerOptions, Stream, prelude::*};
+#[cfg(unix)]
+use interprocess::local_socket::Stream;
+use interprocess::local_socket::{ListenerOptions, prelude::*};
 
 use crate::endpoint::Endpoint;
 use crate::framing::{read_frame, write_frame};
@@ -64,6 +66,7 @@ mod tests {
     use std::io::Cursor;
 
     use super::*;
+    #[cfg(unix)]
     use crate::client::BridgeClient;
 
     /// In-memory duplex: reads from `input`, writes into `output`.

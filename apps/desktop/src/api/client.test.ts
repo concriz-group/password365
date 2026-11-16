@@ -87,3 +87,22 @@ describe("createClient", () => {
     }
   });
 });
+
+describe("every wrapper", () => {
+  it("sends one snake_case command to the backend", async () => {
+    const seen: string[] = [];
+    const client = createClient(async (command) => {
+      seen.push(command);
+      return null;
+    });
+    const wrappers = Object.entries(client).filter(([, v]) => typeof v === "function") as [string, (...a: unknown[]) => unknown][];
+    expect(wrappers.length).toBeGreaterThan(50);
+    for (const [name, wrapper] of wrappers) {
+      const before = seen.length;
+      // Arguments do not matter here: each wrapper forwards what it gets.
+      await Promise.resolve(wrapper("x", "y", "z", "w")).catch(() => undefined);
+      expect(seen.length, name).toBe(before + 1);
+      expect(seen.at(-1), name).toMatch(/^[a-z][a-z0-9_]*$/);
+    }
+  });
+});
