@@ -117,6 +117,9 @@ pub struct Settings {
     pub region: String,
     /// Looking for new versions (Settings › About).
     pub update_checks: UpdateChecks,
+    /// A version the user chose to skip: automatic checks do not announce it
+    /// (a newer one, or "Check for updates", still does). Empty: none.
+    pub skipped_update: String,
 }
 
 /// Quick Access's default shortcut: Shift+Cmd+Space on a Mac, like 1Password.
@@ -151,6 +154,7 @@ impl Default for Settings {
             shortcut_lock: String::new(),
             region: String::new(),
             update_checks: UpdateChecks::Unasked,
+            skipped_update: String::new(),
         }
     }
 }
@@ -261,6 +265,7 @@ mod tests {
         assert_eq!(old.update_checks, UpdateChecks::Unasked);
         let on: Settings = serde_json::from_str(r#"{"update_checks": "automatic"}"#).unwrap();
         assert_eq!(on.update_checks, UpdateChecks::Automatic);
+        assert_eq!(Settings::default().skipped_update, "");
     }
 
     #[test]
