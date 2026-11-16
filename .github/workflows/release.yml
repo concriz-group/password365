@@ -26,12 +26,17 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  # Every test, lint and dependency check (cargo deny) passes before anything
+  # is built or published.
+  checks:
+    uses: ./.github/workflows/ci.yml
+
   version:
     runs-on: ubuntu-latest
     outputs:
       version: ${{ steps.read.outputs.version }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - id: read
         name: The app's version (and the tag, when there is one, must match it)
         run: |
@@ -42,7 +47,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"
 
   build:
-    needs: version
+    needs: [checks, version]
     strategy:
       fail-fast: false
       matrix:
@@ -65,12 +70,13 @@ jobs:
         shell: bash
         working-directory: apps/desktop
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # stable
         with:
+          toolchain: stable
           targets: ${{ matrix.rust_targets }}
       - name: Linux system libraries
         if: runner.os == 'Linux'
@@ -116,20 +122,21 @@ jobs:
           take '*.AppImage.sig' Password365-Linux.AppImage.sig
           take '*.deb' Password365-Linux.deb
           ls -la "$out"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: bundles-${{ matrix.os }}
           path: out/*
           if-no-files-found: error
 
   extension:
+    needs: checks
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: extension
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
       - run: npm ci
@@ -141,7 +148,7 @@ jobs:
           (cd dist && zip -qr "$GITHUB_WORKSPACE/out/Password365-extension-Chromium.zip" .)
           (cd dist-firefox && zip -qr "$GITHUB_WORKSPACE/out/Password365-extension-Firefox.zip" .)
           ls -la "$GITHUB_WORKSPACE/out"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: extension
           path: out/*
@@ -157,8 +164,8 @@ jobs:
       VERSION: ${{ needs.version.outputs.version }}
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           path: bundles
           merge-multiple: true
