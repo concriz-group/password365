@@ -62,7 +62,7 @@ mod tests {
             vault: None,
             username: Some("me".into()),
             urls: vec!["https://site.com".into()],
-            notes: None,
+            notes: false,
             tags: vec![],
             generate: false,
         });

@@ -54,8 +54,12 @@ fn add(app: &mut App, session: &mut Session, args: &AddItemArgs) -> Result<()> {
         ItemKind::SecureNote => SecretString::default(),
         _ => obtain_password(app, args.generate)?,
     };
-    let details =
-        ItemDetails::with_password(password).notes(args.notes.as_deref().unwrap_or("").into());
+    let notes = if args.notes {
+        app.prompter.secret("Notes")?
+    } else {
+        SecretString::default()
+    };
+    let details = ItemDetails::with_password(password).notes(notes);
     let id = session.add_item(vault_id, kind, overview, details)?;
     writeln!(app.out, "Item created: {id}")?;
     Ok(())
@@ -137,7 +141,7 @@ mod tests {
         let mut fx = Fixture::initialized(&[]);
         let out = exec(
             &mut fx,
-            &["s3cret-pw", "s3cret-pw"],
+            &["s3cret-pw", "s3cret-pw", "n"],
             &[
                 "add",
                 "--title",
@@ -149,7 +153,6 @@ mod tests {
                 "--tag",
                 "dev",
                 "--notes",
-                "n",
             ],
         )
         .unwrap();
@@ -195,10 +198,15 @@ mod tests {
 
         exec(
             &mut fx,
-            &[],
-            &["add", "--title", "Memo", "--kind", "note", "--notes", "hi"],
+            &["the note"],
+            &["add", "--title", "Memo", "--kind", "note", "--notes"],
         )
         .unwrap();
+        assert!(
+            exec(&mut fx, &[], &["show", "Memo", "--reveal"])
+                .unwrap()
+                .contains("the note")
+        );
         assert!(
             !exec(&mut fx, &[], &["show", "Memo"])
                 .unwrap()

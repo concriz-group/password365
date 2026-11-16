@@ -128,9 +128,10 @@ pub struct AddItemArgs {
     /// Website URL (repeatable).
     #[arg(long = "url")]
     pub urls: Vec<String>,
-    /// Notes.
+    /// Ask for notes (typed at a prompt: never on the command line, where
+    /// other programs could read them in the process list).
     #[arg(long)]
-    pub notes: Option<String>,
+    pub notes: bool,
     /// Tag (repeatable).
     #[arg(long = "tag")]
     pub tags: Vec<String>,
