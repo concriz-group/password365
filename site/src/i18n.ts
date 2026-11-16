@@ -9,7 +9,7 @@ type Catalog = { [key: string]: string | Catalog };
 /** Language tag → URL prefix ("" for the default, English). */
 export const languages = [
   { tag: "en", path: "" },
-  { tag: "pt-BR", path: "pt-br" },
+  { tag: "pt", path: "pt" },
   { tag: "es", path: "es" },
 ] as const;
 export type Tag = (typeof languages)[number]["tag"];

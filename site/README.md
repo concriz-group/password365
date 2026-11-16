@@ -1,7 +1,7 @@
 # password365.app
 
 The website: static pages made with [Astro](https://astro.build), English at `/`, Portuguese
-at `/pt-br/`, Spanish at `/es/`.
+at `/pt/`, Spanish at `/es/`.
 
 ```sh
 npm install

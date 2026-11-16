@@ -11,7 +11,7 @@ locales/
     common.json
     settings.json
     …
-  pt-BR/
+  pt-BR/      ← the apps (the website uses plain "pt": i18n/site/pt.json)
   es/
 ```
 

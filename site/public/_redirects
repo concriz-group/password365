@@ -1,0 +1,3 @@
+# The Portuguese pages moved from /pt-br/ to /pt/.
+/pt-br /pt/ 301
+/pt-br/* /pt/:splat 301
