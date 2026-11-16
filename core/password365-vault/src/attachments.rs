@@ -50,12 +50,29 @@ pub fn digest_of(bytes: &[u8]) -> String {
     hex(&Sha256::digest(bytes))
 }
 
-/// Encrypts a new file; returns its record (for the item) and its encrypted bytes.
+/// The size a file of `len` bytes is padded to (Padmé): at most about 12 %
+/// more, and the encrypted size reveals only a coarse bucket of the real one.
+#[must_use]
+pub fn padded_len(len: usize) -> usize {
+    if len < 2 {
+        return len;
+    }
+    let e = usize::BITS - 1 - len.leading_zeros(); // floor(log2 len)
+    let s = u32::BITS - e.leading_zeros(); // floor(log2 e) + 1
+    let mask = (1usize << (e - s)) - 1;
+    (len + mask) & !mask
+}
+
+/// Encrypts a new file; returns its record (for the item) and its encrypted
+/// bytes (padded: see [`padded_len`]; the real size is in the record).
 pub fn encrypt(name: &str, content_type: &str, plaintext: &[u8]) -> Result<(Attachment, Vec<u8>)> {
     let id = AttachmentId::new();
     let raw: Zeroizing<[u8; 32]> = Zeroizing::new(random::bytes()?);
     let key = SymmetricKey::from_bytes(*raw);
-    let sealed = aead::seal(&key, plaintext, &aad(id))?;
+    let mut padded = Zeroizing::new(Vec::with_capacity(padded_len(plaintext.len())));
+    padded.extend_from_slice(plaintext);
+    padded.resize(padded_len(plaintext.len()), 0);
+    let sealed = aead::seal(&key, &padded, &aad(id))?;
     let attachment = Attachment {
         id,
         name: name.trim().to_owned(),
@@ -73,8 +90,16 @@ pub fn decrypt(attachment: &Attachment, sealed: &[u8]) -> Result<Zeroizing<Vec<u
     if digest_of(sealed) != attachment.digest {
         return Err(VaultError::Corrupt("attachment bytes"));
     }
-    aead::open(&key_of(attachment)?, sealed, &aad(attachment.id))
-        .map_err(|_| VaultError::Corrupt("attachment bytes"))
+    let mut plain = aead::open(&key_of(attachment)?, sealed, &aad(attachment.id))
+        .map_err(|_| VaultError::Corrupt("attachment bytes"))?;
+    // Padding removed (files from before padding are already their size).
+    let size =
+        usize::try_from(attachment.size).map_err(|_| VaultError::Corrupt("attachment size"))?;
+    if size > plain.len() {
+        return Err(VaultError::Corrupt("attachment size"));
+    }
+    plain.truncate(size);
+    Ok(plain)
 }
 
 impl Session {
@@ -226,6 +251,27 @@ mod tests {
     use password365_model::{ItemDetails, ItemKind, ItemOverview};
 
     use super::*;
+
+    #[test]
+    fn files_are_padded_to_coarse_sizes_and_come_back_exact() {
+        assert_eq!((padded_len(0), padded_len(1), padded_len(100)), (0, 1, 104));
+        for len in [1000usize, 4097, 123_457, 10_000_001] {
+            let p = padded_len(len);
+            assert!(p >= len && p <= len + len / 8, "{len} -> {p}");
+        }
+        assert_eq!(
+            padded_len(123_457),
+            padded_len(123_400),
+            "nearby sizes look the same"
+        );
+        let content = vec![7u8; 123_457];
+        let (attachment, sealed) = encrypt("a.bin", "application/octet-stream", &content).unwrap();
+        assert!(sealed.len() > content.len() + 16);
+        assert_eq!(
+            decrypt(&attachment, &sealed).unwrap().as_slice(),
+            content.as_slice()
+        );
+    }
     use crate::store::test_support::new_session;
 
     fn note(s: &mut Session) -> ItemId {

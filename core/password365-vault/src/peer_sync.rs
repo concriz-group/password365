@@ -49,8 +49,9 @@ pub struct PeerSync {
     receiving: BTreeMap<AttachmentId, Vec<u8>>,
 }
 
-/// Largest encrypted attachment accepted (the file plus encryption overhead).
-const MAX_SEALED: u64 = MAX_ATTACHMENT_BYTES + 1024;
+/// Largest encrypted attachment accepted (the largest file, padded, plus
+/// encryption overhead).
+const MAX_SEALED: u64 = MAX_ATTACHMENT_BYTES + MAX_ATTACHMENT_BYTES / 8 + 1024;
 
 impl PeerSync {
     /// Starts syncing with the paired device whose channel key is
