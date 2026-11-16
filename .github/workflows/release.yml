@@ -84,7 +84,6 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
         run: |
-          extra=()
           if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ]; then
             if [ "${GITHUB_REF_TYPE}" = tag ]; then
               echo "::error::a release needs the update signing key (scripts/release/README.md)"; exit 1
@@ -92,10 +91,15 @@ jobs:
             # A test build: a throwaway key just so the app builds; no update bundles, nothing published.
             echo "::warning::no update signing key: test build with a throwaway updater key"
             npx tauri signer generate --ci -w "$RUNNER_TEMP/throwaway.key" >/dev/null
-            pub=$(cat "$RUNNER_TEMP/throwaway.key.pub")
-            extra=(--config "{\"bundle\":{\"createUpdaterArtifacts\":false},\"plugins\":{\"updater\":{\"pubkey\":\"$pub\"}}}")
+            # In this runner's checkout only (never committed): the throwaway public key, no update bundles.
+            PUB_FILE="$RUNNER_TEMP/throwaway.key.pub" node -e '
+              const fs = require("fs"), file = "src-tauri/tauri.conf.json";
+              const conf = JSON.parse(fs.readFileSync(file, "utf8"));
+              conf.plugins.updater.pubkey = fs.readFileSync(process.env.PUB_FILE, "utf8").trim();
+              conf.bundle.createUpdaterArtifacts = false;
+              fs.writeFileSync(file, JSON.stringify(conf, null, 2));'
           fi
-          npx tauri build --target ${{ matrix.target }} --bundles ${{ matrix.bundles }} "${extra[@]}"
+          npx tauri build --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
       - name: Collect the installers and update bundles under stable names
         run: |
           out="$GITHUB_WORKSPACE/out"
