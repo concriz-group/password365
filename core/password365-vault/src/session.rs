@@ -84,6 +84,11 @@ impl Session {
             revoked: std::collections::BTreeSet::new(),
             password: None,
         };
+        // Before anything is read or written: nothing rolled back or removed.
+        session.db.check_integrity(crate::integrity::key(
+            &session.storage_key,
+            &session.header.store_id,
+        )?)?;
         let mut item_records = Vec::new();
         let mut sync_records = BTreeMap::new();
         let mut device = None;
@@ -167,13 +172,20 @@ impl Session {
         let new_key = SymmetricKey::generate()?;
         let header = self.header.rewrap(&new_key, new, kdf)?;
         let store_id = self.header.store_id;
+        let new_integrity = crate::integrity::key(&new_key, &store_id)?;
         self.db.in_transaction(|| {
             for (id, blob) in self.db.records()? {
-                let moved = records::reseal(&self.storage_key, &new_key, &store_id, &id, &blob)?;
-                self.db.put_record(&id, &moved)?;
+                // Records the key does not open (another format) stay as they are.
+                if let Ok(moved) =
+                    records::reseal(&self.storage_key, &new_key, &store_id, &id, &blob)
+                {
+                    self.db.put_record(&id, &moved)?;
+                }
             }
+            self.db.store_sum_under(&new_integrity)?;
             self.db.write_header(&header)
         })?;
+        self.db.use_integrity_key(new_integrity);
         self.header = header;
         self.storage_key = new_key;
         Ok(())

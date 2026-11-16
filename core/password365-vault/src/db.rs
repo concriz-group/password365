@@ -38,9 +38,19 @@ CREATE TABLE IF NOT EXISTS attachments (
 ) WITHOUT ROWID;
 ";
 
+/// The records' integrity sum (see `integrity`); created on first unlock.
+const INTEGRITY: &str = "
+CREATE TABLE IF NOT EXISTS integrity (
+    id  INTEGER PRIMARY KEY CHECK (id = 1),
+    sum BLOB NOT NULL
+);
+";
+
 /// Handle to the store database.
 pub(crate) struct Database {
     conn: Connection,
+    /// The integrity MAC key once unlocked: record writes keep the sum.
+    integrity: std::cell::RefCell<Option<password365_crypto::key::SymmetricKey>>,
 }
 
 impl Database {
@@ -69,6 +79,7 @@ impl Database {
         let expected = Connection::open_in_memory()?;
         expected.execute_batch(SCHEMA)?;
         expected.execute_batch(ATTACHMENTS)?;
+        expected.execute_batch(INTEGRITY)?;
         let objects = |conn: &Connection| -> Result<Vec<(String, String, String)>> {
             let mut st = conn.prepare(
                 "SELECT type, name, coalesce(sql, '') FROM sqlite_schema ORDER BY type, name",
@@ -116,7 +127,10 @@ impl Database {
         }
         // Overwrite deleted content instead of leaving it in free pages.
         conn.execute_batch("PRAGMA secure_delete = ON;")?;
-        Ok(Self { conn })
+        Ok(Self {
+            conn,
+            integrity: std::cell::RefCell::new(None),
+        })
     }
 
     /// Makes sure the attachments table exists (older stores lack it).
@@ -270,18 +284,125 @@ impl Database {
 
     /// Inserts or replaces a record.
     pub(crate) fn put_record(&self, id: &RecordId, blob: &[u8]) -> Result<()> {
-        self.conn.execute(
-            "INSERT OR REPLACE INTO records (id, blob) VALUES (?1, ?2)",
-            params![id.as_slice(), blob],
-        )?;
-        Ok(())
+        self.with_sum(id, Some(blob), || {
+            self.conn.execute(
+                "INSERT OR REPLACE INTO records (id, blob) VALUES (?1, ?2)",
+                params![id.as_slice(), blob],
+            )?;
+            Ok(())
+        })
     }
 
     /// Deletes a record (no error if absent).
     pub(crate) fn delete_record(&self, id: &RecordId) -> Result<()> {
-        self.conn
-            .execute("DELETE FROM records WHERE id = ?1", params![id.as_slice()])?;
+        self.with_sum(id, None, || {
+            self.conn
+                .execute("DELETE FROM records WHERE id = ?1", params![id.as_slice()])?;
+            Ok(())
+        })
+    }
+
+    fn record(&self, id: &RecordId) -> Result<Option<Vec<u8>>> {
+        Ok(self
+            .conn
+            .query_row(
+                "SELECT blob FROM records WHERE id = ?1",
+                params![id.as_slice()],
+                |r| r.get(0),
+            )
+            .optional()?)
+    }
+
+    /// Runs `write` (record `id` becomes `new`, or goes) and moves the
+    /// integrity sum with it, both or neither (a savepoint).
+    fn with_sum(
+        &self,
+        id: &RecordId,
+        new: Option<&[u8]>,
+        write: impl FnOnce() -> Result<()>,
+    ) -> Result<()> {
+        let key = self.integrity.borrow().clone();
+        let Some(key) = key else {
+            return write();
+        };
+        self.conn.execute_batch("SAVEPOINT record_write")?;
+        let result = (|| {
+            let mut sum = self.stored_sum()?.unwrap_or_default();
+            if let Some(old) = self.record(id)? {
+                sum = crate::integrity::sub(&sum, &crate::integrity::element(&key, id, &old));
+            }
+            write()?;
+            if let Some(new) = new {
+                sum = crate::integrity::add(&sum, &crate::integrity::element(&key, id, new));
+            }
+            self.store_sum(&sum)
+        })();
+        if result.is_ok() {
+            self.conn.execute_batch("RELEASE record_write")?;
+        } else {
+            let _ = self
+                .conn
+                .execute_batch("ROLLBACK TO record_write; RELEASE record_write");
+        }
+        result
+    }
+
+    fn stored_sum(&self) -> Result<Option<crate::integrity::Sum>> {
+        self.conn.execute_batch(INTEGRITY)?;
+        let blob: Option<Vec<u8>> = self
+            .conn
+            .query_row("SELECT sum FROM integrity WHERE id = 1", [], |r| r.get(0))
+            .optional()?;
+        blob.map(|b| <crate::integrity::Sum>::try_from(b.as_slice()))
+            .transpose()
+            .map_err(|_| VaultError::Corrupt("integrity sum"))
+    }
+
+    fn store_sum(&self, sum: &crate::integrity::Sum) -> Result<()> {
+        self.conn.execute_batch(INTEGRITY)?;
+        self.conn.execute(
+            "INSERT OR REPLACE INTO integrity (id, sum) VALUES (1, ?1)",
+            params![sum.as_slice()],
+        )?;
         Ok(())
+    }
+
+    /// The sum of every record now, under `key`.
+    fn current_sum(
+        &self,
+        key: &password365_crypto::key::SymmetricKey,
+    ) -> Result<crate::integrity::Sum> {
+        Ok(self.records()?.iter().fold([0; 32], |sum, (id, blob)| {
+            crate::integrity::add(&sum, &crate::integrity::element(key, id, blob))
+        }))
+    }
+
+    /// After unlocking: checks the records against the stored sum (a store
+    /// without one gets it now) and keeps the sum from then on.
+    pub(crate) fn check_integrity(&self, key: password365_crypto::key::SymmetricKey) -> Result<()> {
+        let now = self.current_sum(&key)?;
+        match self.stored_sum()? {
+            Some(stored) if stored != now => return Err(VaultError::Tampered),
+            Some(_) => {}
+            None => self.store_sum(&now)?,
+        }
+        *self.integrity.borrow_mut() = Some(key);
+        Ok(())
+    }
+
+    /// The storage key is changing: stores the sum under the new MAC `key`
+    /// (inside the change's transaction). Writes keep using the old key until
+    /// [`Self::use_integrity_key`].
+    pub(crate) fn store_sum_under(
+        &self,
+        key: &password365_crypto::key::SymmetricKey,
+    ) -> Result<()> {
+        self.store_sum(&self.current_sum(key)?)
+    }
+
+    /// The storage key changed (committed): later writes use `key`.
+    pub(crate) fn use_integrity_key(&self, key: password365_crypto::key::SymmetricKey) {
+        *self.integrity.borrow_mut() = Some(key);
     }
 
     /// All records. Rows with malformed ids are skipped.

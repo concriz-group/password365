@@ -16,6 +16,7 @@ mod db;
 mod envelope;
 mod error;
 mod header;
+mod integrity;
 mod item_crypto;
 mod item_summary;
 mod join;

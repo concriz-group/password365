@@ -51,6 +51,11 @@ pub enum VaultError {
     /// ahead): taking them would let them win every conflict until then.
     #[error("the other device's clock is ahead of this one's: check the date and time on both")]
     ClockAhead,
+    /// Records were rolled back, removed or added outside Password365.
+    #[error(
+        "this vault file was changed outside Password365 (records put back, removed or added): restore a backup or set this device up again from another one"
+    )]
+    Tampered,
     /// A file chosen for import is not a Password365 sync file.
     #[error("this file is not a Password365 sync file, or it is damaged")]
     NotASyncFile,

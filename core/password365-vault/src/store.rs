@@ -222,6 +222,113 @@ mod tests {
         assert_eq!(s.vaults().len(), 1);
     }
 
+    fn raw(dir: &tempfile::TempDir) -> rusqlite::Connection {
+        rusqlite::Connection::open(path(dir)).unwrap()
+    }
+
+    #[test]
+    fn records_put_back_or_removed_behind_the_apps_back_are_noticed() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut s = Store::create(
+            &path(&dir),
+            &credentials("pw"),
+            KdfParams::insecure_for_tests(),
+        )
+        .unwrap();
+        let v = s.vault_by_name("Personal").unwrap().id;
+        let id = s
+            .add_item(
+                v,
+                password365_model::ItemKind::Login,
+                password365_model::ItemOverview::new("Bank").unwrap(),
+                password365_model::ItemDetails::with_password("old".into()),
+            )
+            .unwrap();
+        let before: Vec<(Vec<u8>, Vec<u8>)> = {
+            let conn = raw(&dir);
+            let mut st = conn.prepare("SELECT id, blob FROM records").unwrap();
+            st.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))
+                .unwrap()
+                .collect::<rusqlite::Result<Vec<_>>>()
+                .unwrap()
+        };
+        let mut item = s.item(id).unwrap();
+        item.details.password = Some("new".into());
+        item.touch(password365_model::Timestamp::now());
+        s.save_item(&item).unwrap();
+        s.lock();
+        let unlock = || Store::open(&path(&dir)).unwrap().unlock(&credentials("pw"));
+        assert!(unlock().is_ok(), "untouched: opens");
+
+        // An older copy of the records put back: noticed.
+        let conn = raw(&dir);
+        for (rid, blob) in &before {
+            conn.execute(
+                "INSERT OR REPLACE INTO records (id, blob) VALUES (?1, ?2)",
+                rusqlite::params![rid, blob],
+            )
+            .unwrap();
+        }
+        drop(conn);
+        assert!(matches!(unlock(), Err(VaultError::Tampered)));
+
+        // A record removed: noticed too.
+        let dir2 = tempfile::tempdir().unwrap();
+        let s = Store::create(
+            &path(&dir2),
+            &credentials("pw"),
+            KdfParams::insecure_for_tests(),
+        )
+        .unwrap();
+        s.lock();
+        raw(&dir2)
+            .execute(
+                "DELETE FROM records WHERE rowid IN (SELECT rowid FROM records LIMIT 1)",
+                [],
+            )
+            .ok();
+        raw(&dir2)
+            .execute(
+                "DELETE FROM records WHERE id = (SELECT id FROM records LIMIT 1)",
+                [],
+            )
+            .unwrap();
+        assert!(matches!(
+            Store::open(&path(&dir2))
+                .unwrap()
+                .unlock(&credentials("pw")),
+            Err(VaultError::Tampered)
+        ));
+    }
+
+    #[test]
+    fn a_store_made_before_the_sum_existed_gets_one_on_unlock() {
+        let dir = tempfile::tempdir().unwrap();
+        let s = Store::create(
+            &path(&dir),
+            &credentials("pw"),
+            KdfParams::insecure_for_tests(),
+        )
+        .unwrap();
+        s.lock();
+        raw(&dir).execute("DROP TABLE integrity", []).unwrap();
+        let s = Store::open(&path(&dir))
+            .unwrap()
+            .unlock(&credentials("pw"))
+            .unwrap();
+        s.lock();
+        let rows: i64 = raw(&dir)
+            .query_row("SELECT count(*) FROM integrity", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(rows, 1);
+        assert!(
+            Store::open(&path(&dir))
+                .unwrap()
+                .unlock(&credentials("pw"))
+                .is_ok()
+        );
+    }
+
     #[test]
     fn an_old_header_and_the_old_password_do_not_open_the_store_after_a_change() {
         let dir = tempfile::tempdir().unwrap();
