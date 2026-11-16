@@ -223,6 +223,46 @@ mod tests {
     }
 
     #[test]
+    fn an_old_header_and_the_old_password_do_not_open_the_store_after_a_change() {
+        let dir = tempfile::tempdir().unwrap();
+        let mut s = Store::create(
+            &path(&dir),
+            &credentials("old"),
+            KdfParams::insecure_for_tests(),
+        )
+        .unwrap();
+        let v = s.vault_by_name("Personal").unwrap().id;
+        s.add_item(
+            v,
+            password365_model::ItemKind::Login,
+            password365_model::ItemOverview::new("Bank").unwrap(),
+            password365_model::ItemDetails::with_password("p".into()),
+        )
+        .unwrap();
+        let old_header = Store::open(&path(&dir)).unwrap().header;
+        let old_key = old_header.unlock(&credentials("old")).unwrap();
+        s.change_credentials(&credentials("new"), KdfParams::insecure_for_tests())
+            .unwrap();
+        // The attacker's old header gives the old key: no current record opens with it.
+        let db = Database::open(&path(&dir)).unwrap();
+        let records = db.records().unwrap();
+        assert!(!records.is_empty());
+        for (id, blob) in records {
+            assert!(crate::records::open(&old_key, &old_header.store_id, &id, &blob).is_err());
+        }
+        s.lock();
+        let s = Store::open(&path(&dir))
+            .unwrap()
+            .unlock(&credentials("new"))
+            .unwrap();
+        assert_eq!(
+            s.items().len(),
+            1,
+            "everything still opens with the new password"
+        );
+    }
+
+    #[test]
     fn file_contains_no_plaintext() {
         let dir = tempfile::tempdir().unwrap();
         let mut s = Store::create(

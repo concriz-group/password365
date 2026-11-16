@@ -153,6 +153,17 @@ pub(crate) fn seal(
     envelope::seal(storage_key, body, &context::record(store_id, record_id))
 }
 
+/// Re-encrypts a sealed record from `old` to `new` (body untouched).
+pub(crate) fn reseal(
+    old: &SymmetricKey,
+    new: &SymmetricKey,
+    store_id: &StoreId,
+    record_id: &RecordId,
+    blob: &[u8],
+) -> Result<Vec<u8>> {
+    envelope::reseal(old, new, blob, &context::record(store_id, record_id))
+}
+
 /// Decrypts a record body.
 pub(crate) fn open(
     storage_key: &SymmetricKey,

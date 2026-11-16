@@ -21,6 +21,18 @@ pub(crate) fn open<T: DeserializeOwned>(key: &SymmetricKey, sealed: &[u8], aad: 
     codec::decode(padding::unpad(&padded)?)
 }
 
+/// Moves a sealed value from `old` to `new` without decoding it (so records
+/// of kinds this build does not know survive a key change).
+pub(crate) fn reseal(
+    old: &SymmetricKey,
+    new: &SymmetricKey,
+    sealed: &[u8],
+    aad: &Aad,
+) -> Result<Vec<u8>> {
+    let padded = zeroize::Zeroizing::new(aead::open(old, sealed, aad)?);
+    Ok(aead::seal(new, &padded, aad)?)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

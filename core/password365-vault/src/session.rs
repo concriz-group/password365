@@ -159,11 +159,23 @@ impl Session {
     /// Locks the session, wiping keys from memory.
     pub fn lock(self) {}
 
-    /// Changes the master password and/or Secret Key (and optionally KDF cost).
+    /// Changes the master password and/or Secret Key (and optionally KDF
+    /// cost). The store also gets a new storage key, every record re-encrypted
+    /// under it in the same transaction: someone who knew the old password and
+    /// kept an old copy of the header (a backup) cannot open later copies.
     pub fn change_credentials(&mut self, new: &Credentials, kdf: KdfParams) -> Result<()> {
-        let header = self.header.rewrap(&self.storage_key, new, kdf)?;
-        self.db.write_header(&header)?;
+        let new_key = SymmetricKey::generate()?;
+        let header = self.header.rewrap(&new_key, new, kdf)?;
+        let store_id = self.header.store_id;
+        self.db.in_transaction(|| {
+            for (id, blob) in self.db.records()? {
+                let moved = records::reseal(&self.storage_key, &new_key, &store_id, &id, &blob)?;
+                self.db.put_record(&id, &moved)?;
+            }
+            self.db.write_header(&header)
+        })?;
         self.header = header;
+        self.storage_key = new_key;
         Ok(())
     }
 
