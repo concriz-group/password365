@@ -196,6 +196,28 @@ describe("renderMenu — passkeys", () => {
     expect(send).toHaveBeenCalledWith({ kind: "menu-passkey-choose", itemId: "i1" });
   });
 
+  it("after a choice, asks to confirm it is you in the popup when the site requires it", async () => {
+    vi.useFakeTimers();
+    try {
+      const choices = [{ item_id: "i1", title: "Example", user_name: "ana" }];
+      const states = [ok({ kind: "get", site: "example.com", choices }), ok({ kind: "verify", site: "example.com" }), ok(null)];
+      const root = document.createElement("main");
+      const send = vi.fn(async (m: MenuMessage) =>
+        m.kind === "menu-passkey-state" ? states.shift()! : m.kind === "menu-passkey-choose" ? ok("verify") : ok(true),
+      );
+      await renderMenu(root, { send, mode: "passkey", pollMs: 500 });
+      [...root.querySelectorAll<HTMLButtonElement>("button.row")][0]!.click();
+      await vi.advanceTimersByTimeAsync(0);
+      expect(root.textContent).toContain("example.com asks to confirm it is you");
+      [...root.querySelectorAll<HTMLButtonElement>("button.row")][0]!.click();
+      expect(send).toHaveBeenCalledWith({ kind: "menu-passkey-unlock" });
+      await vi.advanceTimersByTimeAsync(500);
+      expect(root.textContent).not.toContain("confirm it is you");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("asks to unlock and carries on once the app is unlocked", async () => {
     vi.useFakeTimers();
     try {

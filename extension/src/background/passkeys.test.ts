@@ -1,7 +1,8 @@
+import { Password365Error } from "../shared/protocol";
 import { createPasskeys } from "./passkeys";
 
-const createOptions = { rp_id: "example.com", rp_name: "Example", user_id: "AQ", user_name: "ana", challenge: "Ag", algorithms: [-7], exclude: ["Bw"] };
-const getOptions = { rp_id: "example.com", challenge: "Aw", allow: [] };
+const createOptions = { rp_id: "example.com", rp_name: "Example", user_id: "AQ", user_name: "ana", challenge: "Ag", algorithms: [-7], exclude: ["Bw"], user_verification: "preferred" as const };
+const getOptions = { rp_id: "example.com", challenge: "Aw", allow: [] as string[], user_verification: "preferred" as const };
 const choice = { item_id: "i1", title: "Example", user_name: "ana" };
 
 function setup({ unlocked = true, initialized = true, choices = [choice], url = "https://example.com/a" } = {}) {
@@ -30,6 +31,33 @@ function setup({ unlocked = true, initialized = true, choices = [choice], url = 
 const flush = () => new Promise((r) => setTimeout(r));
 
 describe("background passkeys", () => {
+  it("asks for the master password in the popup when the site requires verification", async () => {
+    const { passkeys, tabs, bridge, openPopup } = setup();
+    const assert = bridge.request.getMockImplementation()!;
+    bridge.request.mockImplementation(async (body: { type: string; password?: string }) => {
+      if (body.type !== "passkey_assert") return assert(body);
+      if (body.password === undefined) throw new Password365Error("verification_needed", "confirm");
+      if (body.password !== "master") throw new Password365Error("wrong_credentials", "wrong");
+      return { credential_id: "AQ", signature: "sig" };
+    });
+    const reply = passkeys.request(3, "https://example.com/a", "get", { ...getOptions, user_verification: "required" });
+    await flush();
+    await passkeys.prompt(3);
+    expect(await passkeys.choose(3, "i1")).toBe("verify");
+    expect(openPopup).toHaveBeenCalled();
+    expect(passkeys.verifying(3)).toBe(true);
+    expect(await passkeys.prompt(3)).toEqual({ kind: "verify", site: "example.com" });
+    await expect(passkeys.verify(3, "nope")).rejects.toMatchObject({ code: "wrong_credentials" });
+    expect(passkeys.verifying(3)).toBe(true);
+    expect(await passkeys.verify(3, "master")).toBe(true);
+    expect(await reply).toEqual({ result: { credential_id: "AQ", signature: "sig" } });
+    expect(bridge.request).toHaveBeenLastCalledWith(expect.objectContaining({ user_verification: "required", password: "master" }));
+    expect(tabs.send).toHaveBeenLastCalledWith(3, { kind: "close-menu" });
+    expect(passkeys.verifying(3)).toBe(false);
+    expect(await passkeys.verify(3, "master")).toBe(false);
+  });
+
+
   it("leaves pages to the browser without an account or a passkey for the site", async () => {
     expect(await setup({ initialized: false }).passkeys.request(1, "https://example.com", "create", createOptions)).toEqual({ fallback: true });
     expect(await setup({ choices: [] }).passkeys.request(1, "https://example.com", "get", getOptions)).toEqual({ fallback: true });
@@ -47,8 +75,9 @@ describe("background passkeys", () => {
       type: "passkey_register",
       page_url: "https://example.com/a",
       title: "Example",
-      request: { rp_id: "example.com", user_id: "AQ", user_name: "ana", challenge: "Ag", algorithms: [-7] },
+      request: { rp_id: "example.com", user_id: "AQ", user_name: "ana", challenge: "Ag", algorithms: [-7], user_verification: "preferred" },
       exclude: ["Bw"],
+      password: undefined,
     });
     expect(tabs.send).toHaveBeenLastCalledWith(7, { kind: "close-menu" });
     expect(await passkeys.prompt(7)).toBeNull();
@@ -63,7 +92,7 @@ describe("background passkeys", () => {
     expect(await passkeys.choose(2, "someone-else")).toBe(false);
     expect(await passkeys.choose(2, "i1")).toBe(true);
     expect(await reply).toEqual({ result: { credential_id: "AQ", signature: "sig" } });
-    expect(bridge.request).toHaveBeenCalledWith({ type: "passkey_assert", item_id: "i1", page_url: "https://example.com/a", challenge: "Aw" });
+    expect(bridge.request).toHaveBeenCalledWith({ type: "passkey_assert", item_id: "i1", page_url: "https://example.com/a", challenge: "Aw", user_verification: "preferred", password: undefined });
   });
 
   it("offers a conditional request's passkeys in the menu until one is picked or the page gives up", async () => {
@@ -75,7 +104,7 @@ describe("background passkeys", () => {
     expect(await passkeys.autofill(5, "nope")).toBe(false);
     expect(await passkeys.autofill(5, "i1")).toBe(true);
     expect(await reply).toMatchObject({ result: { credential_id: "AQ" } });
-    expect(bridge.request).toHaveBeenCalledWith({ type: "passkey_assert", item_id: "i1", page_url: "https://example.com/login", challenge: "Aw" });
+    expect(bridge.request).toHaveBeenCalledWith({ type: "passkey_assert", item_id: "i1", page_url: "https://example.com/login", challenge: "Aw", user_verification: "preferred", password: undefined });
     expect(tabs.send).toHaveBeenCalledWith(5, { kind: "passkey-fields", active: false });
     expect(passkeys.offeredChoices(5)).toBeUndefined();
 

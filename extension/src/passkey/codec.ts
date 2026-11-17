@@ -28,6 +28,14 @@ export interface CreateOptions {
   challenge: string;
   algorithms: number[];
   exclude: string[];
+  user_verification: UserVerification;
+}
+
+/** The page's `userVerification` (absent: "preferred"). */
+export type UserVerification = "required" | "preferred" | "discouraged";
+
+function verificationOf(value: string | undefined): UserVerification {
+  return value === "required" || value === "discouraged" ? value : "preferred";
 }
 
 /** What `get` asks, as text. */
@@ -35,6 +43,7 @@ export interface GetOptions {
   rp_id: string;
   challenge: string;
   allow: string[];
+  user_verification: UserVerification;
 }
 
 export function createOptions(options: PublicKeyCredentialCreationOptions, host: string): CreateOptions {
@@ -46,6 +55,7 @@ export function createOptions(options: PublicKeyCredentialCreationOptions, host:
     challenge: toB64url(options.challenge),
     algorithms: (options.pubKeyCredParams ?? []).map((p) => p.alg),
     exclude: (options.excludeCredentials ?? []).map((c) => toB64url(c.id)),
+    user_verification: verificationOf(options.authenticatorSelection?.userVerification),
   };
 }
 
@@ -54,6 +64,7 @@ export function getOptions(options: PublicKeyCredentialRequestOptions, host: str
     rp_id: options.rpId ?? host,
     challenge: toB64url(options.challenge),
     allow: (options.allowCredentials ?? []).map((c) => toB64url(c.id)),
+    user_verification: verificationOf(options.userVerification),
   };
 }
 

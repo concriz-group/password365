@@ -49,6 +49,19 @@ impl std::fmt::Debug for Passkey {
     }
 }
 
+/// The page's `userVerification` wish (absent means "preferred").
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
+pub enum UserVerification {
+    /// The sign-in must fail without a verified user.
+    Required,
+    /// Verify when possible; the site accepts an unverified answer.
+    #[default]
+    Preferred,
+    /// The site does not want verification.
+    Discouraged,
+}
+
 /// What `navigator.credentials.create` asks for (the parts used here).
 #[derive(Debug, Clone, Default, PartialEq, Eq, Deserialize, Serialize)]
 pub struct CreateRequest {
@@ -62,6 +75,9 @@ pub struct CreateRequest {
     pub challenge: String,
     /// COSE algorithms the site accepts, in its order of preference.
     pub algorithms: Vec<i64>,
+    /// Whether the site wants the user verified.
+    #[serde(default)]
+    pub user_verification: UserVerification,
 }
 
 /// The answer to `create`, ready for the page (binary values base64url).
@@ -109,6 +125,13 @@ fn client_data(kind: &str, challenge: &[u8], origin: &str) -> Vec<u8> {
     .into_bytes()
 }
 
+/// The flags of every answer: the user is present, and verified only when
+/// `verified` (the master password or biometrics proved it was them).
+const fn flags(verified: bool) -> u8 {
+    let base = USER_PRESENT | BACKUP_ELIGIBLE | BACKED_UP;
+    if verified { base | USER_VERIFIED } else { base }
+}
+
 fn auth_data(rp_id: &str, flags: u8, attested: Option<&[u8]>) -> Vec<u8> {
     let mut out = Sha256::digest(rp_id.as_bytes()).to_vec();
     out.push(flags);
@@ -131,7 +154,13 @@ fn cose_key(x: &[u8; 32], y: &[u8; 32]) -> Vec<u8> {
 }
 
 /// Creates a passkey for `page_url` (the tab's real address).
-pub fn register(page_url: &str, request: &CreateRequest) -> Result<(Passkey, Registration)> {
+/// `verified`: the user proved who they are (master password or biometrics);
+/// only then does the answer say so.
+pub fn register(
+    page_url: &str,
+    request: &CreateRequest,
+    verified: bool,
+) -> Result<(Passkey, Registration)> {
     let origin = rp::check(page_url, &request.rp_id)?;
     if !request.algorithms.is_empty() && !request.algorithms.contains(&ES256) {
         return Err(WebAuthnError::UnsupportedAlgorithm);
@@ -142,7 +171,7 @@ pub fn register(page_url: &str, request: &CreateRequest) -> Result<(Passkey, Reg
         return Err(WebAuthnError::Invalid("user id"));
     }
     let rp_id = request.rp_id.trim().to_ascii_lowercase();
-    let made = new_credential(&rp_id, &user_handle, &request.user_name)?;
+    let made = new_credential(&rp_id, &user_handle, &request.user_name, verified)?;
     let registration = Registration {
         credential_id: made.passkey.credential_id.clone(),
         client_data_json: b64url(&client_data("webauthn.create", &challenge, &origin)),
@@ -162,7 +191,12 @@ struct NewCredential {
     spki: Vec<u8>,
 }
 
-fn new_credential(rp_id: &str, user_handle: &[u8], user_name: &str) -> Result<NewCredential> {
+fn new_credential(
+    rp_id: &str,
+    user_handle: &[u8],
+    user_name: &str,
+    verified: bool,
+) -> Result<NewCredential> {
     let key = PasskeyKey::generate()?;
     let id = random::bytes::<16>()?;
     let (x, y) = key.public_xy();
@@ -171,8 +205,7 @@ fn new_credential(rp_id: &str, user_handle: &[u8], user_name: &str) -> Result<Ne
     attested.extend_from_slice(&u16::try_from(id.len()).unwrap_or(16).to_be_bytes());
     attested.extend_from_slice(&id);
     attested.extend_from_slice(&cose_key(&x, &y));
-    let flags = USER_PRESENT | USER_VERIFIED | BACKUP_ELIGIBLE | BACKED_UP | ATTESTED_DATA;
-    let data = auth_data(rp_id, flags, Some(&attested));
+    let data = auth_data(rp_id, flags(verified) | ATTESTED_DATA, Some(&attested));
     let attestation = Cbor::Map(vec![
         (Cbor::Text("fmt".into()), Cbor::Text("none".into())),
         (Cbor::Text("attStmt".into()), Cbor::Map(vec![])),
@@ -200,14 +233,10 @@ fn new_credential(rp_id: &str, user_handle: &[u8], user_name: &str) -> Result<Ne
 }
 
 /// Authenticator data and signature over it and `client_data_hash`.
-fn sign(passkey: &Passkey, client_data_hash: &[u8]) -> Result<(Vec<u8>, Vec<u8>)> {
+fn sign(passkey: &Passkey, client_data_hash: &[u8], verified: bool) -> Result<(Vec<u8>, Vec<u8>)> {
     let secret = Zeroizing::new(from_b64url(&passkey.key)?);
     let key = PasskeyKey::from_secret_bytes(&secret)?;
-    let data = auth_data(
-        &passkey.rp_id,
-        USER_PRESENT | USER_VERIFIED | BACKUP_ELIGIBLE | BACKED_UP,
-        None,
-    );
+    let data = auth_data(&passkey.rp_id, flags(verified), None);
     let mut signed = data.clone();
     signed.extend_from_slice(client_data_hash);
     let signature = key.sign(&signed);
@@ -244,6 +273,7 @@ pub fn register_for_platform(
     user_handle: &[u8],
     user_name: &str,
     algorithms: &[i64],
+    verified: bool,
 ) -> Result<(Passkey, PlatformRegistration)> {
     if !algorithms.is_empty() && !algorithms.contains(&ES256) {
         return Err(WebAuthnError::UnsupportedAlgorithm);
@@ -251,7 +281,12 @@ pub fn register_for_platform(
     if user_handle.is_empty() || user_handle.len() > 64 {
         return Err(WebAuthnError::Invalid("user id"));
     }
-    let made = new_credential(&rp_id.trim().to_ascii_lowercase(), user_handle, user_name)?;
+    let made = new_credential(
+        &rp_id.trim().to_ascii_lowercase(),
+        user_handle,
+        user_name,
+        verified,
+    )?;
     let credential_id = from_b64url(&made.passkey.credential_id)?;
     Ok((
         made.passkey,
@@ -267,11 +302,12 @@ pub fn register_for_platform(
 pub fn assert_for_platform(
     passkey: &Passkey,
     client_data_hash: &[u8],
+    verified: bool,
 ) -> Result<PlatformAssertion> {
     if client_data_hash.len() != 32 {
         return Err(WebAuthnError::Invalid("client data hash"));
     }
-    let (authenticator_data, signature) = sign(passkey, client_data_hash)?;
+    let (authenticator_data, signature) = sign(passkey, client_data_hash, verified)?;
     Ok(PlatformAssertion {
         credential_id: from_b64url(&passkey.credential_id)?,
         authenticator_data,
@@ -281,11 +317,16 @@ pub fn assert_for_platform(
 }
 
 /// Signs in to `page_url` with `passkey`, answering `challenge` (base64url).
-pub fn assert(page_url: &str, passkey: &Passkey, challenge: &str) -> Result<Assertion> {
+pub fn assert(
+    page_url: &str,
+    passkey: &Passkey,
+    challenge: &str,
+    verified: bool,
+) -> Result<Assertion> {
     let origin = rp::check(page_url, &passkey.rp_id)?;
     let challenge = from_b64url(challenge)?;
     let client = client_data("webauthn.get", &challenge, &origin);
-    let (data, signature) = sign(passkey, &Sha256::digest(&client))?;
+    let (data, signature) = sign(passkey, &Sha256::digest(&client), verified)?;
     Ok(Assertion {
         credential_id: passkey.credential_id.clone(),
         client_data_json: b64url(&client),
@@ -308,12 +349,43 @@ mod tests {
             user_name: "ana@example.com".into(),
             challenge: b64url(b"challenge-1"),
             algorithms: vec![-8, -7, -257],
+            user_verification: UserVerification::Preferred,
         }
     }
 
     #[test]
+    fn user_verified_is_claimed_only_when_it_happened() {
+        let (passkey, reg) = register("https://example.com", &request(), false).unwrap();
+        let attestation = from_b64url(&reg.attestation_object).unwrap();
+        let pos = attestation
+            .windows(32)
+            .position(|w| w == Sha256::digest(b"example.com").as_slice())
+            .unwrap();
+        assert_eq!(attestation[pos + 32] & USER_VERIFIED, 0);
+        let answer = assert("https://example.com", &passkey, "AA", false).unwrap();
+        assert_eq!(
+            from_b64url(&answer.authenticator_data).unwrap()[32] & USER_VERIFIED,
+            0
+        );
+        let answer = assert("https://example.com", &passkey, "AA", true).unwrap();
+        assert_eq!(
+            from_b64url(&answer.authenticator_data).unwrap()[32] & USER_VERIFIED,
+            USER_VERIFIED
+        );
+        let hash = [1u8; 32];
+        assert_eq!(
+            assert_for_platform(&passkey, &hash, false)
+                .unwrap()
+                .authenticator_data[32]
+                & USER_VERIFIED,
+            0
+        );
+    }
+
+    #[test]
     fn registration_has_the_shape_relying_parties_verify() {
-        let (passkey, reg) = register("https://login.example.com/signup", &request()).unwrap();
+        let (passkey, reg) =
+            register("https://login.example.com/signup", &request(), true).unwrap();
         assert_eq!(
             (passkey.rp_id.as_str(), passkey.user_name.as_str()),
             ("example.com", "ana@example.com")
@@ -356,11 +428,12 @@ mod tests {
 
     #[test]
     fn sign_in_answers_are_signed_by_the_stored_key() {
-        let (passkey, reg) = register("https://example.com", &request()).unwrap();
+        let (passkey, reg) = register("https://example.com", &request(), true).unwrap();
         let answer = assert(
             "https://www.example.com/login",
             &passkey,
             &b64url(b"challenge-2"),
+            true,
         )
         .unwrap();
         assert_eq!(
@@ -389,7 +462,8 @@ mod tests {
 
     #[test]
     fn platform_autofill_signs_over_the_systems_client_data_hash() {
-        let (passkey, reg) = register_for_platform("Example.com", b"user-7", "ana", &[-7]).unwrap();
+        let (passkey, reg) =
+            register_for_platform("Example.com", b"user-7", "ana", &[-7], true).unwrap();
         assert_eq!(passkey.rp_id, "example.com");
         assert_eq!(
             reg.credential_id,
@@ -400,7 +474,7 @@ mod tests {
                 .starts_with(&hex::decode("a363666d74646e6f6e65").unwrap())
         );
         let hash = Sha256::digest(b"{\"type\":\"webauthn.get\"}");
-        let answer = assert_for_platform(&passkey, &hash).unwrap();
+        let answer = assert_for_platform(&passkey, &hash, true).unwrap();
         assert_eq!(
             (
                 answer.user_handle.as_slice(),
@@ -413,18 +487,18 @@ mod tests {
         let mut signed = answer.authenticator_data.clone();
         signed.extend_from_slice(&hash);
         assert!(verify(&x, &y, &signed, &answer.signature));
-        assert!(assert_for_platform(&passkey, b"short").is_err());
+        assert!(assert_for_platform(&passkey, b"short", true).is_err());
         assert_eq!(
-            register_for_platform("a.com", b"u", "", &[-257]).unwrap_err(),
+            register_for_platform("a.com", b"u", "", &[-257], true).unwrap_err(),
             WebAuthnError::UnsupportedAlgorithm
         );
-        assert!(register_for_platform("a.com", b"", "", &[]).is_err());
+        assert!(register_for_platform("a.com", b"", "", &[], true).is_err());
     }
 
     #[test]
     fn wrong_sites_algorithms_and_data_are_refused() {
         assert!(matches!(
-            register("https://evil.com", &request()),
+            register("https://evil.com", &request(), true),
             Err(WebAuthnError::WrongSite(_))
         ));
         let rsa_only = CreateRequest {
@@ -432,29 +506,29 @@ mod tests {
             ..request()
         };
         assert_eq!(
-            register("https://example.com", &rsa_only).unwrap_err(),
+            register("https://example.com", &rsa_only, true).unwrap_err(),
             WebAuthnError::UnsupportedAlgorithm
         );
         let no_user = CreateRequest {
             user_id: String::new(),
             ..request()
         };
-        assert!(register("https://example.com", &no_user).is_err());
+        assert!(register("https://example.com", &no_user, true).is_err());
         let bad = CreateRequest {
             challenge: "%%%".into(),
             ..request()
         };
-        assert!(register("https://example.com", &bad).is_err());
-        let (passkey, _) = register("https://example.com", &request()).unwrap();
+        assert!(register("https://example.com", &bad, true).is_err());
+        let (passkey, _) = register("https://example.com", &request(), true).unwrap();
         assert!(matches!(
-            assert("https://evil.com", &passkey, "AA"),
+            assert("https://evil.com", &passkey, "AA", true),
             Err(WebAuthnError::WrongSite(_))
         ));
         let broken = Passkey {
             key: "AA".into(),
             ..passkey.clone()
         };
-        assert!(assert("https://example.com", &broken, "AA").is_err());
+        assert!(assert("https://example.com", &broken, "AA", true).is_err());
         assert!(
             !format!("{passkey:?}").contains(&passkey.key),
             "the key is never printed"

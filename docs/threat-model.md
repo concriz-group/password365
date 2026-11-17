@@ -40,9 +40,6 @@ Passwords, notes, TOTP secrets and also **metadata** (which sites you use, usern
 - Windows: file ACLs not restricted yet (the profile folder is private by default).
 - Installers are not code-signed yet (macOS Developer ID + notarization, Windows Authenticode).
 - No clipboard integration yet (auto-clear will be required when added).
-- Passkeys report user verification (UV) whenever the vault is unlocked: the
-  unlock (master password or biometrics) is the verification. There is no
-  fresh prompt per sign-in yet, even when a site asks for UV "required".
 - Android AutoFill trusts the page domain reported by the apps on its browser
   list by package name only; the browsers' signing certificates are not
   checked yet. Other apps are always matched as `androidapp://<package>`.
@@ -53,4 +50,7 @@ id or key of a paired one; password changes and clock stamps dated far ahead
 are refused and the clock counter cannot wrap; the SSH prompt focuses Deny;
 the browser helper never resends a request that may have reached the app; the
 save-login prompt names the site and only works on the origin where the login
-was submitted.
+was submitted. Passkeys claim user verification (UV) only when it happened: an
+unlock or the master password within the last 5 minutes. A site that requires
+it otherwise gets the master password asked in the extension's popup (never in
+the page); "preferred" answers without UV, "discouraged" never claims it.

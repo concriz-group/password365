@@ -277,9 +277,10 @@ mod tests {
             user_name: "ana".into(),
             challenge: b64url(b"c"),
             algorithms: vec![-7],
+            user_verification: password365_webauthn::authenticator::UserVerification::Preferred,
         };
         fx.app
-            .passkey_register("https://example.com", "Example", &request, &[], None)
+            .passkey_register("https://example.com", "Example", &request, &[], None, None)
             .unwrap();
         let (_dir, path, items) = export(&mut fx);
         let credentials = items[0]["credentials"].as_array().unwrap();
@@ -399,10 +400,11 @@ mod tests {
             user_name: "ana".into(),
             challenge: b64url(b"c"),
             algorithms: vec![-7],
+            user_verification: password365_webauthn::authenticator::UserVerification::Preferred,
         };
         let (_, registration) = from
             .app
-            .passkey_register("https://example.com", "Example", &request, &[], None)
+            .passkey_register("https://example.com", "Example", &request, &[], None, None)
             .unwrap();
         let (dir, path, _) = export(&mut from);
 
@@ -425,7 +427,13 @@ mod tests {
         // The imported key is the registered one: its signature verifies.
         let answer = to
             .app
-            .passkey_assert("https://example.com", &example, &b64url(b"c2"))
+            .passkey_assert(
+                "https://example.com",
+                &example,
+                &b64url(b"c2"),
+                password365_webauthn::authenticator::UserVerification::Preferred,
+                None,
+            )
             .unwrap();
         assert_eq!(answer.credential_id, registration.credential_id);
         let spki = from_b64url(&registration.public_key).unwrap();

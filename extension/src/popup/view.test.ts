@@ -41,6 +41,30 @@ describe("popup", () => {
     expect(deps.close).toHaveBeenCalled();
   });
 
+  it("confirms it is you for a passkey that needs it, then closes", async () => {
+    const { root, deps, render } = setup({ status: unlocked, "passkey-verifying": ok(true) });
+    deps.send.mockImplementation(async (m: PopupMessage) => {
+      if (m.kind === "status") return unlocked;
+      if (m.kind === "passkey-verifying") return ok(true);
+      if (m.kind === "passkey-verify") return m.password === "master" ? ok(true) : fail("wrong_credentials");
+      return ok(null);
+    });
+    await render();
+    expect(root.textContent).toContain("Confirm it is you to use the passkey");
+    const input = root.querySelector<HTMLInputElement>("input[type=password]")!;
+    const form = root.querySelector("form")!;
+    input.value = "nope";
+    form.dispatchEvent(new Event("submit", { cancelable: true }));
+    await flush();
+    expect(root.querySelector(".error")!.textContent).not.toBe("");
+    expect(deps.close).not.toHaveBeenCalled();
+    input.value = "master";
+    form.dispatchEvent(new Event("submit", { cancelable: true }));
+    await flush();
+    expect(deps.send).toHaveBeenCalledWith({ kind: "passkey-verify", tabId: 1, password: "master" });
+    expect(deps.close).toHaveBeenCalled();
+  });
+
   it("unlocks with the master password, like the 1Password popup", async () => {
     let unlockedNow = false;
     const { root, deps, render } = setup({});

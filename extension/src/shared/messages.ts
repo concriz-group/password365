@@ -9,7 +9,9 @@ export type PopupMessage =
   | { kind: "logins"; tabId: number }
   | { kind: "fill"; tabId: number; itemId: string }
   | { kind: "generate" }
-  | { kind: "passkey-waiting"; tabId: number };
+  | { kind: "passkey-waiting"; tabId: number }
+  | { kind: "passkey-verifying"; tabId: number }
+  | { kind: "passkey-verify"; tabId: number; password: string };
 
 /** Sent by the content script; the page URL is taken from the sender, never from the message. */
 export type ContentMessage =
@@ -58,7 +60,9 @@ export interface PasskeyChoice {
 export type PasskeyPrompt =
   | { kind: "create"; site: string; user_name: string }
   | { kind: "get"; site: string; choices: PasskeyChoice[] }
-  | { kind: "locked"; site: string };
+  | { kind: "locked"; site: string }
+  /** The site requires the user verified: the master password is typed in the popup. */
+  | { kind: "verify"; site: string };
 
 /** What the inline menu shows. */
 export type MenuState =
@@ -88,7 +92,7 @@ export interface PendingPrompt {
   site: string;
 }
 
-export const POPUP_KINDS = new Set(["status", "unlock", "logins", "fill", "generate", "passkey-waiting"]);
+export const POPUP_KINDS = new Set(["status", "unlock", "logins", "fill", "generate", "passkey-waiting", "passkey-verifying", "passkey-verify"]);
 export const MENU_KINDS = new Set([
   "menu-state",
   "menu-fill",

@@ -44,5 +44,9 @@
   "passkeyGone": "Esta solicitud de llave de acceso terminó. Inténtalo de nuevo en la página.",
   "passkeyLocked": "Desbloquea Password365 para usar una llave de acceso en {site}",
   "passkeysForSite": "Llaves de acceso",
-  "passkeyAccount": "Llave de acceso · {user}"
+  "passkeyAccount": "Llave de acceso · {user}",
+  "passkeyVerify": "{site} pide confirmar que eres tú: escribe tu contraseña maestra en la ventana de Password365",
+  "confirmIdentity": "Confirmar que eres tú",
+  "confirmPasskey": "Confirma que eres tú para usar la passkey",
+  "confirm": "Confirmar"
 }

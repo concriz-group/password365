@@ -10,5 +10,6 @@
   "internal": "Something went wrong: {detail}",
   "too_many_attempts": "Too many wrong passwords. Wait a moment and try again.",
   "secret_key_required": "Enter your Secret Key (from the Emergency Kit) with your master password.",
-  "password_required": "Enter your master password."
+  "password_required": "Enter your master password.",
+  "verification_needed": "Confirm it is you: type your master password."
 }

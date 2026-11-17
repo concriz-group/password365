@@ -10,5 +10,6 @@
   "internal": "Algo salió mal: {detail}",
   "too_many_attempts": "Demasiadas contraseñas incorrectas. Espera un momento y vuelve a intentarlo.",
   "secret_key_required": "Escribe tu Secret Key (del Emergency Kit) junto con la contraseña maestra.",
-  "password_required": "Escribe tu contraseña maestra."
+  "password_required": "Escribe tu contraseña maestra.",
+  "verification_needed": "Confirma que eres tú: escribe tu contraseña maestra."
 }

@@ -44,5 +44,9 @@
   "passkeyGone": "This passkey request has ended. Try again on the page.",
   "passkeyLocked": "Unlock Password365 to use a passkey on {site}",
   "passkeysForSite": "Passkeys",
-  "passkeyAccount": "Passkey · {user}"
+  "passkeyAccount": "Passkey · {user}",
+  "passkeyVerify": "{site} asks to confirm it is you: type your master password in the Password365 popup",
+  "confirmIdentity": "Confirm it is you",
+  "confirmPasskey": "Confirm it is you to use the passkey",
+  "confirm": "Confirm"
 }

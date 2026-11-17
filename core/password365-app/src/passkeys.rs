@@ -3,8 +3,9 @@
 //! item format). Its private key never leaves this process; the browser gets
 //! only the signed answers.
 
+use password365_crypto::secret::SecretString;
 use password365_model::{CustomField, Item, ItemId, ItemKind, ItemOverview, Timestamp};
-use password365_webauthn::authenticator::{self, CreateRequest};
+use password365_webauthn::authenticator::{self, CreateRequest, UserVerification};
 use password365_webauthn::{Assertion, Passkey, Registration, WebAuthnError};
 use serde::Serialize;
 
@@ -111,7 +112,9 @@ impl AppService {
         request: &CreateRequest,
         exclude: &[String],
         vault_id: Option<&str>,
+        password: Option<SecretString>,
     ) -> Result<(String, Registration)> {
+        let verified = self.passkey_verification(request.user_verification, password)?;
         let existing = self.passkeys()?;
         let rp_id = request.rp_id.trim().to_ascii_lowercase();
         if existing
@@ -122,7 +125,7 @@ impl AppService {
                 "This account already has a passkey in Password365.".into(),
             ));
         }
-        let (passkey, registration) = authenticator::register(page_url, request)?;
+        let (passkey, registration) = authenticator::register(page_url, request, verified)?;
         let id = self.keep_new_passkey(page_url, title, &passkey, &existing, vault_id)?;
         Ok((id, registration))
     }
@@ -185,8 +188,13 @@ impl AppService {
         algorithms: &[i64],
     ) -> Result<authenticator::PlatformRegistration> {
         let existing = self.passkeys()?;
-        let (passkey, registration) =
-            authenticator::register_for_platform(rp_id, user_handle, user_name, algorithms)?;
+        let (passkey, registration) = authenticator::register_for_platform(
+            rp_id,
+            user_handle,
+            user_name,
+            algorithms,
+            self.verified_recently(),
+        )?;
         let page = format!("https://{}", passkey.rp_id);
         self.keep_new_passkey(&page, "", &passkey, &existing, None)?;
         Ok(registration)
@@ -210,6 +218,7 @@ impl AppService {
         Ok(authenticator::assert_for_platform(
             &passkey,
             client_data_hash,
+            self.verified_recently(),
         )?)
     }
 
@@ -257,16 +266,41 @@ impl AppService {
     }
 
     /// Signs in to the page with the passkey of item `id`.
+    /// `wanted` is the page's `userVerification`; `password`, when given,
+    /// is the master password typed to verify the user.
     pub fn passkey_assert(
         &mut self,
         page_url: &str,
         id: &str,
         challenge: &str,
+        wanted: UserVerification,
+        password: Option<SecretString>,
     ) -> Result<Assertion> {
         let item = self.load_item(id)?;
         let passkey =
             passkey_of(&item.details.custom_fields).ok_or(AppError::NotFound("passkey"))?;
-        Ok(authenticator::assert(page_url, &passkey, challenge)?)
+        let verified = self.passkey_verification(wanted, password)?;
+        Ok(authenticator::assert(
+            page_url, &passkey, challenge, verified,
+        )?)
+    }
+
+    /// Whether this passkey answer may say the user was verified: a master
+    /// password typed now, or an unlock within [`crate::service::VERIFIED_FOR`].
+    /// A site that requires verification gets `VerificationNeeded` otherwise.
+    fn passkey_verification(
+        &mut self,
+        wanted: UserVerification,
+        password: Option<SecretString>,
+    ) -> Result<bool> {
+        if let Some(password) = password {
+            self.confirm_master_password(password)?;
+        }
+        let verified = self.verified_recently();
+        if wanted == UserVerification::Required && !verified {
+            return Err(AppError::VerificationNeeded);
+        }
+        Ok(verified && wanted != UserVerification::Discouraged)
     }
 
     /// Gives login `id` an imported passkey (its key as PKCS#8 DER).
@@ -310,7 +344,8 @@ mod tests {
 
     use super::*;
     use crate::item_input::ItemInput;
-    use crate::service::tests::with_account;
+    use crate::service::tests::{PW, with_account};
+    use password365_webauthn::from_b64url;
 
     fn request(user: &str) -> CreateRequest {
         CreateRequest {
@@ -319,7 +354,85 @@ mod tests {
             user_name: user.into(),
             challenge: b64url(b"c1"),
             algorithms: vec![-7],
+            user_verification: UserVerification::Preferred,
         }
+    }
+
+    #[test]
+    fn a_site_that_requires_verification_gets_it_only_when_it_happened() {
+        let mut fx = with_account();
+        let (id, _) = fx
+            .app
+            .passkey_register("https://example.com", "", &request("ana"), &[], None, None)
+            .unwrap();
+        let uv = |a: &Assertion| from_b64url(&a.authenticator_data).unwrap()[32] & 0x04;
+        // Just unlocked: verified.
+        let answer = fx
+            .app
+            .passkey_assert(
+                "https://example.com",
+                &id,
+                "AA",
+                UserVerification::Required,
+                None,
+            )
+            .unwrap();
+        assert_eq!(uv(&answer), 0x04);
+        // Long after the unlock: a required check needs the master password.
+        fx.app.verified_at = None;
+        assert!(matches!(
+            fx.app.passkey_assert(
+                "https://example.com",
+                &id,
+                "AA",
+                UserVerification::Required,
+                None
+            ),
+            Err(AppError::VerificationNeeded)
+        ));
+        let answer = fx
+            .app
+            .passkey_assert(
+                "https://example.com",
+                &id,
+                "AA",
+                UserVerification::Preferred,
+                None,
+            )
+            .unwrap();
+        assert_eq!(uv(&answer), 0, "not claimed when it did not happen");
+        assert!(matches!(
+            fx.app.passkey_assert(
+                "https://example.com",
+                &id,
+                "AA",
+                UserVerification::Required,
+                Some(SecretString::from("wrong"))
+            ),
+            Err(AppError::WrongCredentials)
+        ));
+        let answer = fx
+            .app
+            .passkey_assert(
+                "https://example.com",
+                &id,
+                "AA",
+                UserVerification::Required,
+                Some(SecretString::from(PW)),
+            )
+            .unwrap();
+        assert_eq!(uv(&answer), 0x04);
+        let answer = fx
+            .app
+            .passkey_assert(
+                "https://example.com",
+                &id,
+                "AA",
+                UserVerification::Discouraged,
+                None,
+            )
+            .unwrap();
+        assert_eq!(uv(&answer), 0);
     }
 
     #[test]
@@ -332,6 +445,7 @@ mod tests {
                 "Example",
                 &request("ana"),
                 &[],
+                None,
                 None,
             )
             .unwrap();
@@ -379,7 +493,13 @@ mod tests {
 
         let answer = fx
             .app
-            .passkey_assert("https://example.com", &id, &b64url(b"c2"))
+            .passkey_assert(
+                "https://example.com",
+                &id,
+                &b64url(b"c2"),
+                UserVerification::Preferred,
+                None,
+            )
             .unwrap();
         assert_eq!(answer.credential_id, reg.credential_id);
 
@@ -388,6 +508,7 @@ mod tests {
             "",
             &request("ana"),
             std::slice::from_ref(&reg.credential_id),
+            None,
             None,
         );
         assert!(
@@ -399,7 +520,13 @@ mod tests {
         assert_eq!(fx.app.item(&id).unwrap().passkey, None);
         assert!(
             fx.app
-                .passkey_assert("https://example.com", &id, "AA")
+                .passkey_assert(
+                    "https://example.com",
+                    &id,
+                    "AA",
+                    UserVerification::Preferred,
+                    None
+                )
                 .is_err()
         );
     }
@@ -461,12 +588,12 @@ mod tests {
             .unwrap();
         let (id, _) = fx
             .app
-            .passkey_register("https://example.com", "", &request("bob"), &[], None)
+            .passkey_register("https://example.com", "", &request("bob"), &[], None, None)
             .unwrap();
         assert_eq!(id, login.summary.id);
         let (other, _) = fx
             .app
-            .passkey_register("https://example.com", "", &request("bob"), &[], None)
+            .passkey_register("https://example.com", "", &request("bob"), &[], None, None)
             .unwrap();
         assert_ne!(
             other, id,

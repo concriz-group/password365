@@ -44,5 +44,9 @@
   "passkeyGone": "Este pedido de passkey terminou. Tente de novo na página.",
   "passkeyLocked": "Destranque o Password365 para usar uma passkey em {site}",
   "passkeysForSite": "Passkeys",
-  "passkeyAccount": "Passkey · {user}"
+  "passkeyAccount": "Passkey · {user}",
+  "passkeyVerify": "{site} pede para confirmar que é você: digite sua senha mestra no popup do Password365",
+  "confirmIdentity": "Confirmar que é você",
+  "confirmPasskey": "Confirme que é você para usar a passkey",
+  "confirm": "Confirmar"
 }

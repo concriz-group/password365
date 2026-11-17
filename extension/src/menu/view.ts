@@ -105,13 +105,26 @@ async function renderPasskey(root: HTMLElement, send: MenuDeps["send"], pollMs: 
     root.append(row(doc, t("unlockApp"), t("enterMasterPassword"), () => send({ kind: "menu-passkey-unlock" })));
     // Carry on by itself once the app is unlocked (in the popup or the app).
     setTimeout(() => void renderPasskey(root, send, pollMs), pollMs);
-  } else if (prompt.kind === "create") {
-    root.append(el(doc, "p", t("passkeySaveFor", { site: prompt.site }), "heading"));
-    root.append(row(doc, t("passkeySave"), prompt.user_name, () => send({ kind: "menu-passkey-choose" })));
+  } else if (prompt.kind === "verify") {
+    // The site requires the user verified: the master password is typed in the popup.
+    root.append(el(doc, "p", t("passkeyVerify", { site: prompt.site }), "heading"));
+    root.append(row(doc, t("confirmIdentity"), t("enterMasterPassword"), () => send({ kind: "menu-passkey-unlock" })));
+    setTimeout(() => void renderPasskey(root, send, pollMs), pollMs);
   } else {
-    root.append(el(doc, "p", t("passkeySignInTo", { site: prompt.site }), "heading"));
-    for (const choice of prompt.choices) {
-      root.append(row(doc, choice.title, choice.user_name, () => send({ kind: "menu-passkey-choose", itemId: choice.item_id })));
+    // After a choice the site may want the user verified first: show that.
+    const choose = async (itemId?: string) => {
+      const reply = await send({ kind: "menu-passkey-choose", itemId });
+      if (reply.ok && reply.result === "verify") await renderPasskey(root, send, pollMs);
+      return reply;
+    };
+    if (prompt.kind === "create") {
+      root.append(el(doc, "p", t("passkeySaveFor", { site: prompt.site }), "heading"));
+      root.append(row(doc, t("passkeySave"), prompt.user_name, () => choose()));
+    } else {
+      root.append(el(doc, "p", t("passkeySignInTo", { site: prompt.site }), "heading"));
+      for (const choice of prompt.choices) {
+        root.append(row(doc, choice.title, choice.user_name, () => choose(choice.item_id)));
+      }
     }
   }
   root.append(row(doc, t("passkeyOther"), t("passkeyOtherHint"), () => send({ kind: "menu-passkey-other" })));

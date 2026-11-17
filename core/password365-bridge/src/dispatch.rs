@@ -41,9 +41,10 @@ pub fn handle(service: &mut AppService, request: Request) -> Response {
             title,
             request,
             exclude,
+            password,
         } => to_value(
             service
-                .passkey_register(&page_url, &title, &request, &exclude, None)
+                .passkey_register(&page_url, &title, &request, &exclude, None, password)
                 .map(|(item_id, registration)| serde_json::json!({"item_id": item_id, "registration": registration})),
         ),
         RequestBody::PasskeyOptions {
@@ -55,7 +56,15 @@ pub fn handle(service: &mut AppService, request: Request) -> Response {
             item_id,
             page_url,
             challenge,
-        } => to_value(service.passkey_assert(&page_url, &item_id, &challenge)),
+            user_verification,
+            password,
+        } => to_value(service.passkey_assert(
+            &page_url,
+            &item_id,
+            &challenge,
+            user_verification,
+            password,
+        )),
     };
     match result {
         Ok(value) => Response::success(id, value),

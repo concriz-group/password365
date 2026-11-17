@@ -10,5 +10,6 @@
   "internal": "Algo deu errado: {detail}",
   "too_many_attempts": "Muitas senhas erradas. Espere um pouco e tente de novo.",
   "secret_key_required": "Digite sua Secret Key (do Emergency Kit) junto com a senha mestra.",
-  "password_required": "Digite sua senha mestra."
+  "password_required": "Digite sua senha mestra.",
+  "verification_needed": "Confirme que é você: digite sua senha mestra."
 }

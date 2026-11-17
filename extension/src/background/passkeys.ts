@@ -5,7 +5,7 @@
 import type { CreateOptions, GetOptions } from "../passkey/codec";
 import type { PageReply } from "../passkey/page";
 import type { PasskeyChoice, PasskeyPrompt } from "../shared/messages";
-import type { AppStatus } from "../shared/protocol";
+import { Password365Error, type AppStatus } from "../shared/protocol";
 import type { TabsApi } from "./actions";
 import type { Bridge } from "./bridge";
 
@@ -42,11 +42,43 @@ export function createPasskeys({ bridge, tabs, openPopup = async () => {}, timeo
    * passkeys are offered in the inline menu of the username field.
    */
   const offered = new Map<number, { pageUrl: string; options: GetOptions; choices: PasskeyChoice[]; resolve: (reply: PageReply) => void }>();
+  /**
+   * Answers waiting for the user to be verified (the site requires it and the
+   * app was not unlocked recently): retried with the master password typed in
+   * the toolbar popup, never in the page.
+   */
+  const verifying = new Map<number, (password: string) => Promise<void>>();
+
+  /**
+   * Runs `answer`; when the app needs the user verified, keeps it for
+   * [`verify`], opens the popup and returns `"verify"`.
+   */
+  async function verified(tabId: number, answer: (password?: string) => Promise<void>): Promise<true | "verify"> {
+    try {
+      await answer();
+      return true;
+    } catch (error) {
+      if (!(error instanceof Password365Error) || error.code !== "verification_needed") throw error;
+      verifying.set(tabId, answer);
+      await openPopup();
+      return "verify";
+    }
+  }
+
+  /** The master password typed in the popup: answers the waiting request. */
+  async function verify(tabId: number, password: string): Promise<boolean> {
+    const answer = verifying.get(tabId);
+    if (!answer) return false;
+    await answer(password);
+    verifying.delete(tabId);
+    return true;
+  }
 
   function stopOffering(tabId: number, reply: PageReply | null) {
     const current = offered.get(tabId);
     if (!current) return;
     offered.delete(tabId);
+    verifying.delete(tabId);
     if (reply) current.resolve(reply);
     void tabs.send(tabId, { kind: "passkey-fields", active: false }).catch(() => undefined);
   }
@@ -69,19 +101,28 @@ export function createPasskeys({ bridge, tabs, openPopup = async () => {}, timeo
   }
 
   /** The user picked a passkey in the inline menu. */
-  async function autofill(tabId: number, itemId: string): Promise<boolean> {
+  async function autofill(tabId: number, itemId: string): Promise<boolean | "verify"> {
     const current = offered.get(tabId);
     if (!current?.choices.some((c) => c.item_id === itemId)) return false;
-    const assertion = await bridge.request({ type: "passkey_assert", item_id: itemId, page_url: current.pageUrl, challenge: current.options.challenge });
-    stopOffering(tabId, { result: assertion as never });
     await tabs.send(tabId, { kind: "close-menu" }).catch(() => undefined);
-    return true;
+    return verified(tabId, async (password) => {
+      const assertion = await bridge.request({
+        type: "passkey_assert",
+        item_id: itemId,
+        page_url: current.pageUrl,
+        challenge: current.options.challenge,
+        user_verification: current.options.user_verification,
+        password,
+      });
+      stopOffering(tabId, { result: assertion as never });
+    });
   }
 
   function finish(tabId: number, reply: PageReply) {
     const current = pending.get(tabId);
     if (!current) return;
     pending.delete(tabId);
+    verifying.delete(tabId);
     clearTimeout(current.timer);
     current.resolve(reply);
   }
@@ -127,6 +168,7 @@ export function createPasskeys({ bridge, tabs, openPopup = async () => {}, timeo
     const site = siteOf(current.pageUrl);
     const status = await bridge.request<AppStatus>({ type: "status" }).catch(() => null);
     if (!status?.unlocked) return { kind: "locked", site };
+    if (verifying.has(tabId)) return { kind: "verify", site };
     const { request } = current;
     if (request.kind === "create") return { kind: "create", site, user_name: request.options.user_name };
     if (request.choices === null) {
@@ -147,7 +189,7 @@ export function createPasskeys({ bridge, tabs, openPopup = async () => {}, timeo
   }
 
   /** The user chose: save the passkey, or sign in with `itemId`'s. */
-  async function choose(tabId: number, itemId?: string): Promise<boolean> {
+  async function choose(tabId: number, itemId?: string): Promise<boolean | "verify"> {
     const current = pending.get(tabId);
     if (!current) return false;
     // The tab must still be on the site that asked. Without the "tabs"
@@ -160,23 +202,33 @@ export function createPasskeys({ bridge, tabs, openPopup = async () => {}, timeo
       return false;
     }
     const { request, pageUrl } = current;
-    if (request.kind === "create") {
-      const { rp_name, exclude, ...wanted } = request.options;
-      const { registration } = await bridge.request<{ registration: PageReply & object }>({
-        type: "passkey_register",
-        page_url: pageUrl,
-        title: rp_name,
-        request: wanted,
-        exclude,
-      });
-      finish(tabId, { result: registration as never });
-    } else {
-      if (!request.choices?.some((c) => c.item_id === itemId)) return false;
-      const assertion = await bridge.request({ type: "passkey_assert", item_id: itemId!, page_url: pageUrl, challenge: request.options.challenge });
-      finish(tabId, { result: assertion as never });
-    }
-    await tabs.send(tabId, { kind: "close-menu" }).catch(() => undefined);
-    return true;
+    if (request.kind === "get" && !request.choices?.some((c) => c.item_id === itemId)) return false;
+    const answered = await verified(tabId, async (password) => {
+      if (request.kind === "create") {
+        const { rp_name, exclude, ...wanted } = request.options;
+        const { registration } = await bridge.request<{ registration: PageReply & object }>({
+          type: "passkey_register",
+          page_url: pageUrl,
+          title: rp_name,
+          request: wanted,
+          exclude,
+          password,
+        });
+        finish(tabId, { result: registration as never });
+      } else {
+        const assertion = await bridge.request({
+          type: "passkey_assert",
+          item_id: itemId!,
+          page_url: pageUrl,
+          challenge: request.options.challenge,
+          user_verification: request.options.user_verification,
+          password,
+        });
+        finish(tabId, { result: assertion as never });
+      }
+      await tabs.send(tabId, { kind: "close-menu" }).catch(() => undefined);
+    });
+    return answered;
   }
 
   /** "Use another device or method": the browser takes over. */
@@ -192,6 +244,9 @@ export function createPasskeys({ bridge, tabs, openPopup = async () => {}, timeo
     choose,
     other,
     unlock,
+    verify,
+    /** Whether the tab's passkey answer waits for the master password. */
+    verifying: (tabId: number) => verifying.has(tabId),
     cancel: (tabId: number) => finish(tabId, CANCELLED),
     /** Whether the tab's page waits for an answer in the passkey prompt. */
     waiting: (tabId: number) => pending.has(tabId),

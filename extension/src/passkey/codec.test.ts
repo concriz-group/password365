@@ -25,13 +25,22 @@ describe("passkey codec", () => {
       },
       "login.example.com",
     );
-    expect(create).toEqual({ rp_id: "login.example.com", rp_name: "Example", user_id: "AQ", user_name: "ana", challenge: "Ag", algorithms: [-8, -7], exclude: ["Aw"] });
+    expect(create).toEqual({ rp_id: "login.example.com", rp_name: "Example", user_id: "AQ", user_name: "ana", challenge: "Ag", algorithms: [-8, -7], exclude: ["Aw"], user_verification: "preferred" });
     expect(getOptions({ challenge: bytes(4), rpId: "example.com", allowCredentials: [{ type: "public-key", id: bytes(5) }] }, "x")).toEqual({
       rp_id: "example.com",
       challenge: "BA",
       allow: ["BQ"],
+      user_verification: "preferred",
     });
-    expect(getOptions({ challenge: bytes(4) }, "host.test")).toEqual({ rp_id: "host.test", challenge: "BA", allow: [] });
+    expect(getOptions({ challenge: bytes(4) }, "host.test")).toEqual({ rp_id: "host.test", challenge: "BA", allow: [], user_verification: "preferred" });
+    expect(getOptions({ challenge: bytes(4), userVerification: "required" }, "h").user_verification).toBe("required");
+    expect(getOptions({ challenge: bytes(4), userVerification: "discouraged" }, "h").user_verification).toBe("discouraged");
+    expect(
+      createOptions(
+        { rp: { name: "E" }, user: { id: bytes(1), name: "a", displayName: "a" }, challenge: bytes(2), pubKeyCredParams: [], authenticatorSelection: { userVerification: "required" } },
+        "h",
+      ).user_verification,
+    ).toBe("required");
   });
 
   it("builds credentials pages can read, with the browser's prototypes", () => {

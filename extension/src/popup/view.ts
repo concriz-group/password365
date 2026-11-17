@@ -31,6 +31,10 @@ export async function renderPopup(root: HTMLElement, deps: PopupDeps): Promise<v
   const app = status.result as AppStatus;
   if (!app.initialized) return message(t("createAccountFirst"));
   if (!app.unlocked) return renderUnlock(root, deps);
+  if (deps.tabId !== undefined) {
+    const verifying = await deps.send({ kind: "passkey-verifying", tabId: deps.tabId });
+    if (verifying.ok && verifying.result === true) return renderVerify(root, deps, deps.tabId);
+  }
 
   root.append(el(doc, "h1", t("loginsForSite")));
   const list = el(doc, "ul", undefined, "logins");
@@ -39,8 +43,36 @@ export async function renderPopup(root: HTMLElement, deps: PopupDeps): Promise<v
   renderGenerator(root, deps);
 }
 
+/** The page's passkey needs the user verified: the master password, typed here. */
+function renderVerify(root: HTMLElement, deps: PopupDeps, tabId: number) {
+  passwordForm(root, t("confirmPasskey"), t("confirm"), async (password) => {
+    const reply = await deps.send({ kind: "passkey-verify", tabId, password });
+    if (reply.ok) deps.close();
+    return reply;
+  });
+}
+
 /** Master password form (the Secret Key is already on this device). */
 function renderUnlock(root: HTMLElement, deps: PopupDeps) {
+  passwordForm(root, t("locked"), t("unlock"), async (password) => {
+    const reply = await deps.send({ kind: "unlock", password });
+    if (reply.ok) {
+      // A page's passkey prompt waited for this unlock: get out of its way.
+      if (deps.tabId !== undefined) {
+        const waiting = await deps.send({ kind: "passkey-waiting", tabId: deps.tabId });
+        if (waiting.ok && waiting.result === true) {
+          deps.close();
+          return reply;
+        }
+      }
+      await renderPopup(root, deps);
+    }
+    return reply;
+  });
+}
+
+/** A master password form; `submit` reports how it went (errors are shown here). */
+function passwordForm(root: HTMLElement, heading: string, label: string, submit: (password: string) => Promise<Reply>) {
   const doc = root.ownerDocument;
   const form = el(doc, "form", undefined, "unlock");
   const input = el(doc, "input");
@@ -49,29 +81,22 @@ function renderUnlock(root: HTMLElement, deps: PopupDeps) {
   input.placeholder = t("masterPassword");
   input.setAttribute("aria-label", t("masterPassword"));
   input.autofocus = true;
-  const button = el(doc, "button", t("unlock"), "primary");
+  const button = el(doc, "button", label, "primary");
   button.type = "submit";
   const error = el(doc, "p", undefined, "error");
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (!input.value) return;
     button.disabled = true;
-    const reply = await deps.send({ kind: "unlock", password: input.value });
+    const reply = await submit(input.value);
     input.value = "";
     button.disabled = false;
-    if (reply.ok) {
-      // A page's passkey prompt waited for this unlock: get out of its way.
-      if (deps.tabId !== undefined) {
-        const waiting = await deps.send({ kind: "passkey-waiting", tabId: deps.tabId });
-        if (waiting.ok && waiting.result === true) return deps.close();
-      }
-      return renderPopup(root, deps);
-    }
+    if (reply.ok) return;
     error.textContent = helpFor(reply.error);
     input.focus();
   });
   form.append(input, button, error);
-  root.append(el(doc, "h1", t("locked")), form);
+  root.append(el(doc, "h1", heading), form);
   input.focus();
 }
 

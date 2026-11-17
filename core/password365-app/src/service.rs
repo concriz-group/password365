@@ -57,6 +57,10 @@ impl AppConfig {
     }
 }
 
+/// How long an unlock or a typed master password counts as user
+/// verification (passkeys).
+pub const VERIFIED_FOR: std::time::Duration = std::time::Duration::from_secs(5 * 60);
+
 /// Holds the (optional) unlocked session and implements every operation.
 pub struct AppService {
     pub(crate) config: AppConfig,
@@ -69,6 +73,8 @@ pub struct AppService {
     attempts: crate::attempts::Attempts,
     /// Unlocks so far (permissions given "until the vault locks" belong to one).
     unlocks: u64,
+    /// When the user last proved who they are (unlock or master password).
+    pub(crate) verified_at: Option<std::time::Instant>,
 }
 
 impl AppService {
@@ -99,6 +105,7 @@ impl AppService {
             settings,
             attempts: crate::attempts::load(config_settings_path.as_deref()),
             unlocks: 0,
+            verified_at: None,
         }
     }
 
@@ -620,8 +627,19 @@ impl AppService {
     pub(crate) fn confirm_master_password(&mut self, password: SecretString) -> Result<()> {
         self.guarded(|s| {
             s.session()?;
-            s.verify_master_password(password).map(|_| ())
+            s.verify_master_password(password)?;
+            s.verified_at = Some(std::time::Instant::now());
+            Ok(())
         })
+    }
+
+    /// Whether the user proved who they are (unlock, biometrics or master
+    /// password) within [`VERIFIED_FOR`].
+    pub(crate) fn verified_recently(&self) -> bool {
+        self.session.is_some()
+            && self
+                .verified_at
+                .is_some_and(|at| at.elapsed() < VERIFIED_FOR)
     }
 
     /// Exports logins to a new owner-only Chrome CSV file (PLAINTEXT), once
@@ -648,6 +666,7 @@ impl AppService {
     pub(crate) fn start_session(&mut self, session: Session) {
         self.session = Some(session);
         self.unlocks += 1;
+        self.verified_at = Some(std::time::Instant::now());
         self.adopt_sealed_settings();
         self.auto_lock = AutoLock::new(self.config.auto_lock_ms, Timestamp::now());
     }

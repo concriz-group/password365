@@ -24,11 +24,28 @@ export type BridgeBody =
       type: "passkey_register";
       page_url: string;
       title: string;
-      request: { rp_id: string; user_id: string; user_name: string; challenge: string; algorithms: number[] };
+      request: {
+        rp_id: string;
+        user_id: string;
+        user_name: string;
+        challenge: string;
+        algorithms: number[];
+        user_verification: "required" | "preferred" | "discouraged";
+      };
       exclude: string[];
+      /** The master password, when the site requires the user verified. */
+      password?: string;
     }
   | { type: "passkey_options"; page_url: string; rp_id: string; allow: string[] }
-  | { type: "passkey_assert"; item_id: string; page_url: string; challenge: string };
+  | {
+      type: "passkey_assert";
+      item_id: string;
+      page_url: string;
+      challenge: string;
+      user_verification: "required" | "preferred" | "discouraged";
+      /** The master password, when the site requires the user verified. */
+      password?: string;
+    };
 
 export type ProfileKind = "identity" | "card";
 

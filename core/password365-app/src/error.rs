@@ -46,6 +46,10 @@ pub enum AppError {
     /// Quick unlock (Face ID) is not possible any more: type the master password.
     #[error("enter your master password")]
     PasswordRequired,
+    /// The site wants the user verified and the vault was not unlocked
+    /// recently: type the master password to go on.
+    #[error("confirm it is you: type your master password")]
+    VerificationNeeded,
     /// Too many wrong master passwords: wait this many seconds.
     #[error("too many wrong passwords — try again in {0} s")]
     TooManyAttempts(u64),
@@ -68,6 +72,7 @@ impl AppError {
             Self::TooManyAttempts(_) => "too_many_attempts",
             Self::SecretKeyRequired => "secret_key_required",
             Self::PasswordRequired => "password_required",
+            Self::VerificationNeeded => "verification_needed",
         }
     }
 }
@@ -164,6 +169,7 @@ mod tests {
             AppError::AlreadyInitialized,
             AppError::WrongCredentials,
             AppError::NotFound("item"),
+            AppError::VerificationNeeded,
             AppError::Conflict,
             AppError::Validation("v".into()),
             AppError::Io("i".into()),

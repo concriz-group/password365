@@ -99,6 +99,10 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
         return generate();
       case "passkey-waiting":
         return passkeys.waiting(message.tabId);
+      case "passkey-verifying":
+        return passkeys.verifying(message.tabId);
+      case "passkey-verify":
+        return passkeys.verify(message.tabId, message.password);
     }
   }
 

@@ -83,6 +83,9 @@ pub enum RequestBody {
         /// Credential ids the site already has for this account.
         #[serde(default)]
         exclude: Vec<String>,
+        /// The master password, typed when the site requires verification.
+        #[serde(default)]
+        password: Option<SecretString>,
     },
     /// Logins whose passkey the page may use (no secrets).
     PasskeyOptions {
@@ -102,6 +105,12 @@ pub enum RequestBody {
         page_url: String,
         /// The page's challenge (base64url).
         challenge: String,
+        /// The page's `userVerification`.
+        #[serde(default)]
+        user_verification: password365_webauthn::authenticator::UserVerification,
+        /// The master password, typed when the site requires verification.
+        #[serde(default)]
+        password: Option<SecretString>,
     },
 }
 
