@@ -239,13 +239,11 @@ impl Password365 {
         Self::with_kdf(&data_dir, keeper, KdfParams::MOBILE)
     }
 
-    /// Account and lock state.
+    /// Account and lock state. A vault left open longer than the lock
+    /// setting is locked first: what asks (the app coming back, autofill)
+    /// never sees it open past its time.
     pub fn status(&self) -> Status {
-        let s = self.app().status();
-        Status {
-            initialized: s.initialized,
-            unlocked: s.unlocked,
-        }
+        self.status_at(password365_model::Timestamp::now())
     }
 
     /// Creates the account; returns the Secret Key for the Emergency Kit.

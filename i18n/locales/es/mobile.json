@@ -21,6 +21,7 @@
   "autofillNeedsFaceId": "Abre Password365 y activa Face ID en Ajustes para rellenar desde aquí.",
   "autofillChoose": "Elige un inicio de sesión",
   "autofillAll": "Todos los inicios de sesión",
+  "autofillAllWarning": "Estos inicios de sesión no se guardaron para {site}. Rellena uno solo si tienes la certeza de que este es el lugar correcto.",
   "autofillNoMatch": "Todavía no hay un inicio de sesión para este sitio.",
   "allTags": "Todas las etiquetas",
   "filterByTag": "Filtrar por etiqueta",

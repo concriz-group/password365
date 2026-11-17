@@ -670,3 +670,50 @@ fn autofill_lists_and_fills_logins_codes_and_passkeys() {
         .unwrap();
     assert_eq!(signed.user_handle, b"u");
 }
+
+#[test]
+fn the_vault_locks_after_the_setting_unless_the_app_says_the_user_is_there() {
+    use password365_model::Timestamp;
+    let dir = tempfile::tempdir().unwrap();
+    let p = vault(&dir, Arc::new(MemoryKeeper::default()));
+    p.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+    let start = Timestamp::now().as_millis();
+    let at = |seconds: i64| Timestamp::from_millis(start + seconds * 1000);
+    // In use: every report starts the minute again; other calls do not.
+    assert!(p.status_at(at(50)).unlocked);
+    p.user_active_at(at(50));
+    p.items(String::new()).unwrap();
+    assert!(p.status_at(at(100)).unlocked, "50 s after the last report");
+    // Away for more than the minute: asking the status locks it…
+    assert!(!p.status_at(at(111)).unlocked);
+    assert!(!p.status().unlocked);
+    // …and so does coming back late, instead of starting the time again.
+    p.unlock(PASSWORD.into(), None).unwrap();
+    let later = Timestamp::now().as_millis() + 10 * 60 * 1000;
+    p.user_active_at(Timestamp::from_millis(later));
+    assert!(!p.status().unlocked);
+}
+
+#[test]
+fn locking_as_soon_as_the_app_leaves_is_a_setting_that_is_kept() {
+    let dir = tempfile::tempdir().unwrap();
+    let p = vault(&dir, Arc::new(MemoryKeeper::default()));
+    let at_once = MobileSettings {
+        auto_lock_minutes: 0,
+        clipboard_clear_seconds: 90,
+        region: String::new(),
+    };
+    p.set_mobile_settings(at_once.clone()).unwrap();
+    assert_eq!(p.mobile_settings(), at_once);
+    // Still chosen after the app starts again.
+    let again = vault(&dir, Arc::new(MemoryKeeper::default()));
+    assert_eq!(again.mobile_settings().auto_lock_minutes, 0);
+    // Back to minutes.
+    again
+        .set_mobile_settings(MobileSettings {
+            auto_lock_minutes: 5,
+            ..at_once
+        })
+        .unwrap();
+    assert_eq!(again.mobile_settings().auto_lock_minutes, 5);
+}

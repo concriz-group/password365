@@ -21,6 +21,7 @@
   "autofillNeedsFaceId": "Abra o Password365 e ligue o Face ID em Ajustes para preencher daqui.",
   "autofillChoose": "Escolha um login",
   "autofillAll": "Todos os logins",
+  "autofillAllWarning": "Estes logins não foram salvos para {site}. Preencha apenas se tiver certeza de que este é o lugar certo.",
   "autofillNoMatch": "Ainda não há login para este site.",
   "allTags": "Todas as etiquetas",
   "filterByTag": "Filtrar por etiqueta",

@@ -39,10 +39,16 @@ Passwords, notes, TOTP secrets and also **metadata** (which sites you use, usern
 - No memory locking (`mlock`) yet.
 - Windows: file ACLs not restricted yet (the profile folder is private by default).
 - Installers are not code-signed yet (macOS Developer ID + notarization, Windows Authenticode).
-- No clipboard integration yet (auto-clear will be required when added).
-- Android AutoFill trusts the page domain reported by the apps on its browser
-  list by package name only; the browsers' signing certificates are not
-  checked yet. Other apps are always matched as `androidapp://<package>`.
+- Android Autofill takes a page's address only from a browser on its list that came with the phone
+  or from an app store (Google Play, Galaxy Store, Amazon, AppGallery, GetApps), which give a
+  package name to its real developer only; the browsers' signing certificates are not pinned.
+  A browser installed from a file or from F-Droid is matched as `androidapp://<package>` like any
+  other app (its pages get no suggestions, only the whole list, with a warning).
+- Phones: a copied secret is cleared from the clipboard after the setting's delay even if the app
+  was ended (a system alarm), but not after "Force stop", which cancels alarms (Android 13+ clears
+  the clipboard itself after about an hour). On iOS the copy carries its own expiry date.
+- Phones: while the app is suspended in the background its keys stay in memory until it comes back
+  or is ended, unless "lock immediately" is chosen.
 
 Closed after the second security review: a sync file or peer with only some
 vaults can no longer remove other devices; a new device cannot take over the
@@ -54,3 +60,10 @@ was submitted. Passkeys claim user verification (UV) only when it happened: an
 unlock or the master password within the last 5 minutes. A site that requires
 it otherwise gets the master password asked in the extension's popup (never in
 the page); "preferred" answers without UV, "discouraged" never claims it.
+
+Closed after the review of the phone apps: only the app on screen postpones the automatic lock
+(Autofill, syncing and other calls never do), and a vault left open past its time is locked before
+anything is answered; "lock immediately" is kept across restarts (it was silently dropped);
+Android Autofill offers a form the logins of the page its own fields are on (not of the page
+around a frame), treats a page the browser calls `http` as not the secure site, and no longer
+believes a browser's package name alone.

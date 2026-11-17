@@ -81,6 +81,9 @@ pub struct Settings {
     pub language: String,
     /// Lock when the computer sleeps.
     pub lock_on_sleep: bool,
+    /// Phones: lock as soon as the app leaves the screen (the idle minutes
+    /// still apply while it is in front).
+    pub lock_when_leaving: bool,
     /// Clear copied secrets after this many seconds (0: never).
     pub clipboard_clear_seconds: u32,
     /// Light, dark or the system's.
@@ -137,6 +140,7 @@ impl Default for Settings {
             auto_lock_minutes: DEFAULT_AUTO_LOCK_MINUTES,
             language: String::new(),
             lock_on_sleep: true,
+            lock_when_leaving: false,
             clipboard_clear_seconds: 90,
             theme: Theme::System,
             density: Density::Comfortable,
@@ -372,10 +376,15 @@ mod tests {
 /// The settings that protect the vault. A copy is kept sealed in the vault
 /// (this device only) and wins over the settings file on unlock, so a
 /// program that edits the file cannot loosen them unnoticed.
+// Independent on/off choices, like `Settings`.
+#[allow(clippy::struct_excessive_bools)]
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct SecuritySettings {
     auto_lock_minutes: u32,
     lock_on_sleep: bool,
+    /// (Absent in copies sealed before it existed: off.)
+    #[serde(default)]
+    lock_when_leaving: bool,
     clipboard_clear_seconds: u32,
     ssh_agent: bool,
     check_breached_passwords: bool,
@@ -389,6 +398,7 @@ impl SecuritySettings {
         Self {
             auto_lock_minutes: settings.auto_lock_minutes,
             lock_on_sleep: settings.lock_on_sleep,
+            lock_when_leaving: settings.lock_when_leaving,
             clipboard_clear_seconds: settings.clipboard_clear_seconds,
             ssh_agent: settings.ssh_agent,
             check_breached_passwords: settings.check_breached_passwords,
@@ -402,6 +412,7 @@ impl SecuritySettings {
         Settings {
             auto_lock_minutes: self.auto_lock_minutes,
             lock_on_sleep: self.lock_on_sleep,
+            lock_when_leaving: self.lock_when_leaving,
             clipboard_clear_seconds: self.clipboard_clear_seconds,
             ssh_agent: self.ssh_agent,
             check_breached_passwords: self.check_breached_passwords,

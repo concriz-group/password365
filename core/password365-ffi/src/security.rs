@@ -16,8 +16,35 @@ pub struct MobileSettings {
 /// A phone locks sooner than a computer (PLAN §3.4: 1 minute on mobile).
 pub(crate) const MOBILE_AUTO_LOCK_MINUTES: u32 = 1;
 
+impl Password365 {
+    /// [`Self::status`] at `now`.
+    pub(crate) fn status_at(&self, now: password365_model::Timestamp) -> crate::Status {
+        let mut app = self.app();
+        app.check_auto_lock(now);
+        let s = app.status();
+        crate::Status {
+            initialized: s.initialized,
+            unlocked: s.unlocked,
+        }
+    }
+
+    /// [`Self::user_active`] at `now`.
+    pub(crate) fn user_active_at(&self, now: password365_model::Timestamp) {
+        self.app().user_active(now);
+    }
+}
+
 #[uniffi::export]
 impl Password365 {
+    /// The app is on screen, in the user's hands: the time to the automatic
+    /// lock starts again (or the vault locks now, if that time is over).
+    /// Nothing else postpones the lock: not autofill, not syncing, not any
+    /// other call. The app says so while it is in front and when it comes
+    /// back; once it is away, the vault locks after the setting's minutes.
+    pub fn user_active(&self) {
+        self.user_active_at(password365_model::Timestamp::now());
+    }
+
     /// Whether Face ID / Touch ID unlock is set up here.
     pub fn quick_unlock_ready(&self) -> bool {
         self.app().quick_unlock_ready()
@@ -45,7 +72,12 @@ impl Password365 {
     pub fn mobile_settings(&self) -> MobileSettings {
         let s = self.app().settings();
         MobileSettings {
-            auto_lock_minutes: s.auto_lock_minutes,
+            // 0: "at once", kept as its own setting (the core's minutes start at one).
+            auto_lock_minutes: if s.lock_when_leaving {
+                0
+            } else {
+                s.auto_lock_minutes
+            },
             clipboard_clear_seconds: s.clipboard_clear_seconds,
             region: s.region,
         }
@@ -55,7 +87,10 @@ impl Password365 {
     pub fn set_mobile_settings(&self, settings: MobileSettings) -> Result<()> {
         let mut app = self.app();
         let mut all = app.settings();
-        all.auto_lock_minutes = settings.auto_lock_minutes;
+        all.lock_when_leaving = settings.auto_lock_minutes == 0;
+        all.auto_lock_minutes = settings
+            .auto_lock_minutes
+            .max(password365_app::settings::MIN_AUTO_LOCK_MINUTES);
         all.clipboard_clear_seconds = settings.clipboard_clear_seconds;
         all.region = settings.region;
         Ok(app.update_settings(all)?)
