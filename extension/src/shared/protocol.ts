@@ -17,6 +17,7 @@ export type BridgeBody =
   | { type: "fill"; item_id: string; page_url: string }
   | { type: "check_submitted"; login: SubmittedLogin }
   | { type: "save_submitted"; login: SubmittedLogin; vault_id?: string }
+  | { type: "same_site"; submitted_on: string; page_url: string }
   | { type: "generate"; request: GenerateRequest }
   | { type: "profile" }
   | { type: "profile_fill"; profile: ProfileKind; item_id: string | null; page_url: string }

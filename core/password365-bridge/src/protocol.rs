@@ -23,6 +23,14 @@ pub struct Request {
 pub enum RequestBody {
     /// Is the app set up / unlocked?
     Status,
+    /// Whether a login submitted on `submitted_on` may be saved from `page_url`
+    /// (same site; no secrets involved).
+    SameSite {
+        /// Where the login was submitted.
+        submitted_on: String,
+        /// The page that asks to save it.
+        page_url: String,
+    },
     /// Unlock with the master password (the Secret Key comes from this device).
     Unlock {
         /// Master password (zeroized on drop, redacted in Debug).

@@ -55,8 +55,8 @@ vaults can no longer remove other devices; a new device cannot take over the
 id or key of a paired one; password changes and clock stamps dated far ahead
 are refused and the clock counter cannot wrap; the SSH prompt focuses Deny;
 the browser helper never resends a request that may have reached the app; the
-save-login prompt names the site and only works on the origin where the login
-was submitted. Passkeys claim user verification (UV) only when it happened: an
+save-login prompt names the site and only works on the site (registrable
+domain, never http for https) where the login was submitted. Passkeys claim user verification (UV) only when it happened: an
 unlock or the master password within the last 5 minutes. A site that requires
 it otherwise gets the master password asked in the extension's popup (never in
 the page); "preferred" answers without UV, "discouraged" never claims it.

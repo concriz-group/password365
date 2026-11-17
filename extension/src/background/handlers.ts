@@ -231,13 +231,22 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
   }
 
   /** The tab's pending prompt, only while it has not expired and only on the
-   *  origin where the login was submitted: after the tab moves to another
-   *  site, that site can neither show nor save it. */
+   *  site where the login was submitted (its registrable domain, as the app
+   *  decides: sign-in on login.example.com, landing on www.example.com):
+   *  after the tab moves to another site, that site can neither show nor save it. */
   async function livePrompt(tabId: number, pageUrl: string) {
     const prompt = await prompts.get(tabId);
-    if (prompt && prompt.expires > now()) return sameOrigin(prompt.login.page_url, pageUrl) ? prompt : undefined;
+    if (prompt && prompt.expires > now()) return (await sameSite(prompt.login.page_url, pageUrl)) ? prompt : undefined;
     if (prompt) await prompts.delete(tabId);
     return undefined;
+  }
+
+  async function sameSite(submittedOn: string, pageUrl: string): Promise<boolean> {
+    if (sameOrigin(submittedOn, pageUrl)) return true;
+    return bridge
+      .request<boolean>({ type: "same_site", submitted_on: submittedOn, page_url: pageUrl })
+      .then((same) => same === true)
+      .catch(() => false);
   }
 
 

@@ -20,6 +20,10 @@ pub fn handle(service: &mut AppService, request: Request) -> Response {
     let id = request.id;
     let result = match request.body {
         RequestBody::Status => to_value(Ok(service.status())),
+        RequestBody::SameSite {
+            submitted_on,
+            page_url,
+        } => to_value(Ok(AppService::same_site(&submitted_on, &page_url))),
         RequestBody::Unlock { password } => to_value(service.unlock(password, None)),
         RequestBody::LoginsForUrl { page_url } => to_value(service.logins_for_url(&page_url)),
         RequestBody::Fill { item_id, page_url } => {
@@ -83,6 +87,36 @@ fn to_value<T: Serialize>(result: Result<T, AppError>) -> Result<Value, ErrorBod
         code: "internal".into(),
         message: e.to_string(),
     })
+}
+
+#[cfg(test)]
+mod same_site_tests {
+    use password365_app::AppService;
+
+    #[test]
+    fn a_login_can_be_saved_from_another_page_of_the_same_site_only() {
+        assert!(AppService::same_site(
+            "https://login.example.com/x",
+            "https://www.example.com/"
+        ));
+        assert!(AppService::same_site(
+            "https://a.example.co.uk",
+            "https://b.example.co.uk"
+        ));
+        assert!(!AppService::same_site(
+            "https://a.github.io",
+            "https://b.github.io"
+        ));
+        assert!(!AppService::same_site(
+            "https://example.com",
+            "https://evil.com"
+        ));
+        assert!(!AppService::same_site(
+            "https://example.com",
+            "http://example.com"
+        ));
+        assert!(!AppService::same_site("not a url", "https://example.com"));
+    }
 }
 
 #[cfg(test)]

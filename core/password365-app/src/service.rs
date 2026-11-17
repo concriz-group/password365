@@ -111,6 +111,20 @@ impl AppService {
 
     // ---------------------------------------------------------------- account
 
+    /// Whether a login submitted on `submitted_on` may be saved from `page`:
+    /// the same site (registrable domain, like filling) and never from an
+    /// `http` page for an `https` one.
+    #[must_use]
+    pub fn same_site(submitted_on: &str, page: &str) -> bool {
+        match (
+            password365_match::Site::parse(submitted_on),
+            password365_match::Site::parse(page),
+        ) {
+            (Some(saved), Some(page)) => password365_match::fill_allowed(&page, &saved),
+            _ => false,
+        }
+    }
+
     /// Whether an account exists and whether it is unlocked.
     #[must_use]
     pub fn status(&self) -> AppStatus {

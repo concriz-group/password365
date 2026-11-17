@@ -106,8 +106,8 @@ describe("save prompts", () => {
     await expect(handle({ kind: "pending" }, tab())).resolves.toEqual({ status: "new", username: "me", site: "github.com" });
   });
 
-  it("keeps the prompt to the origin where the login was submitted", async () => {
-    const { handle, request, store } = setup({ check_submitted: { status: "new" }, save_submitted: {} });
+  it("keeps the prompt to the site where the login was submitted", async () => {
+    const { handle, request, store } = setup({ check_submitted: { status: "new" }, save_submitted: {}, same_site: false });
     await handle({ kind: "submitted", username: "me", password: "pw" }, tab());
     const elsewhere = tab("https://evil.example/");
     await expect(handle({ kind: "pending" }, elsewhere)).resolves.toBeNull();
@@ -115,6 +115,13 @@ describe("save prompts", () => {
     expect(request).not.toHaveBeenCalledWith(expect.objectContaining({ type: "save_submitted" }));
     expect(store.size).toBe(1);
     await expect(handle({ kind: "save-pending" }, tab("https://github.com/home"))).resolves.toBe(true);
+  });
+
+  it("follows a sign-in that lands on another host of the same site, as the app decides", async () => {
+    const { handle, request } = setup({ check_submitted: { status: "new" }, save_submitted: {}, same_site: true });
+    await handle({ kind: "submitted", username: "me", password: "pw" }, tab("https://login.github.com/session"));
+    await expect(handle({ kind: "pending" }, tab("https://www.github.com/"))).resolves.toMatchObject({ site: "login.github.com" });
+    expect(request).toHaveBeenCalledWith({ type: "same_site", submitted_on: "https://login.github.com/session", page_url: "https://www.github.com/" });
   });
 
   it("does not prompt for known logins or empty passwords", async () => {
