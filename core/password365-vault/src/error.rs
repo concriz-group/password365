@@ -41,6 +41,9 @@ pub enum VaultError {
     /// The device on the other end is not paired with this one.
     #[error("this device is not paired with the other one")]
     UnknownDevice,
+    /// A new device claimed the id or key of a device already paired.
+    #[error("a device with this identity is already paired; remove it first")]
+    AlreadyPaired,
     /// The device was removed from this account.
     #[error("this device was removed from the account")]
     RevokedDevice,

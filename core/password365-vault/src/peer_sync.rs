@@ -142,7 +142,7 @@ impl PeerSync {
                 if ids.contains(&self.peer) {
                     return Err(VaultError::RevokedDevice);
                 }
-                session.merge_revoked(&ids)?;
+                session.merge_revoked_from(self.peer, &ids)?;
                 Ok(Vec::new())
             }
             Message::Password(change) => {

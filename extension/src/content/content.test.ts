@@ -129,11 +129,11 @@ describe("showSavePrompt", () => {
   it("renders in a closed shadow root and handles save", () => {
     page("");
     const onSave = vi.fn();
-    const { root } = showSavePrompt(document, { status: "new", username: "me" }, { onSave, onDismiss: vi.fn() });
+    const { root } = showSavePrompt(document, { status: "new", username: "me", site: "github.com" }, { onSave, onDismiss: vi.fn() });
     const host = document.getElementById(PROMPT_HOST_ID)!;
     expect(host.shadowRoot).toBeNull(); // closed: invisible to the page
     expect(root.textContent).toContain("Save this login in Password365?");
-    expect(root.textContent).toContain("me");
+    expect(root.textContent).toContain("github.com · me");
     root.querySelector<HTMLButtonElement>("button.primary")!.click();
     expect(onSave).toHaveBeenCalled();
     expect(document.getElementById(PROMPT_HOST_ID)).toBeNull();
@@ -142,8 +142,8 @@ describe("showSavePrompt", () => {
   it("offers update for changed passwords, dismisses, and replaces an old prompt", () => {
     page("");
     const onDismiss = vi.fn();
-    showSavePrompt(document, { status: "new" }, { onSave: vi.fn(), onDismiss: vi.fn() });
-    const { root } = showSavePrompt(document, { status: "password_changed" }, { onSave: vi.fn(), onDismiss });
+    showSavePrompt(document, { status: "new", site: "a.example" }, { onSave: vi.fn(), onDismiss: vi.fn() });
+    const { root } = showSavePrompt(document, { status: "password_changed", site: "a.example" }, { onSave: vi.fn(), onDismiss });
     expect(document.querySelectorAll(`#${PROMPT_HOST_ID}`)).toHaveLength(1);
     expect(root.textContent).toContain("Update the password");
     const [, notNow] = root.querySelectorAll("button");

@@ -97,6 +97,7 @@ impl From<VaultError> for AppError {
             | VaultError::NotASyncFile
             | VaultError::ClockAhead
             | VaultError::Tampered
+            | VaultError::AlreadyPaired
             | VaultError::RevokedDevice => Self::Validation(e.to_string()),
             VaultError::Io(io) => Self::Io(io.to_string()),
             other => Self::Internal(other.to_string()),

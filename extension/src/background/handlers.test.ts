@@ -103,7 +103,18 @@ describe("save prompts", () => {
       login: { page_url: "https://github.com/login", username: "me", password: "pw", title: "Hub" },
     });
     expect(store.get(7)?.status).toBe("new");
-    await expect(handle({ kind: "pending" }, tab())).resolves.toEqual({ status: "new", username: "me" });
+    await expect(handle({ kind: "pending" }, tab())).resolves.toEqual({ status: "new", username: "me", site: "github.com" });
+  });
+
+  it("keeps the prompt to the origin where the login was submitted", async () => {
+    const { handle, request, store } = setup({ check_submitted: { status: "new" }, save_submitted: {} });
+    await handle({ kind: "submitted", username: "me", password: "pw" }, tab());
+    const elsewhere = tab("https://evil.example/");
+    await expect(handle({ kind: "pending" }, elsewhere)).resolves.toBeNull();
+    await expect(handle({ kind: "save-pending" }, elsewhere)).resolves.toBeNull();
+    expect(request).not.toHaveBeenCalledWith(expect.objectContaining({ type: "save_submitted" }));
+    expect(store.size).toBe(1);
+    await expect(handle({ kind: "save-pending" }, tab("https://github.com/home"))).resolves.toBe(true);
   });
 
   it("does not prompt for known logins or empty passwords", async () => {

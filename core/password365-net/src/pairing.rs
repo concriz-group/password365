@@ -118,7 +118,7 @@ impl HostPairing {
     /// The codes matched: sends the account and the chosen vaults, then pins
     /// the new device (reachable on `sync_port` at the address it came from)
     /// and returns it. Convenience for [`Self::send_bundle`] +
-    /// [`Self::wait_joined`] + `Session::add_peer`.
+    /// [`Self::wait_joined`] + `Session::pair_peer`.
     pub fn approve(
         mut self,
         session: &mut Session,
@@ -128,7 +128,7 @@ impl HostPairing {
     ) -> Result<Peer> {
         self.send_bundle(session, secret_key, vaults)?;
         let peer = self.wait_joined(sync_port)?;
-        session.add_peer(peer.clone())?;
+        session.pair_peer(peer.clone())?;
         Ok(peer)
     }
 
@@ -146,7 +146,7 @@ impl HostPairing {
 
     /// Waits (without the session: the user is typing their master password
     /// on the new device) until the new device reports who it is. The caller
-    /// pins the returned peer with `Session::add_peer`.
+    /// pins the returned peer with `Session::pair_peer`.
     pub fn wait_joined(mut self, sync_port: u16) -> Result<Peer> {
         match self.receive()? {
             PairMessage::Joined {

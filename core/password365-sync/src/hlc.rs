@@ -86,10 +86,12 @@ impl Clock {
     }
 
     fn advance(&mut self, wall_ms: i64) -> Hlc {
-        let counter = if wall_ms == self.last.wall_ms {
-            self.last.counter + 1
-        } else {
-            0
+        // A full counter (only reachable from a peer's stamp) moves on to the
+        // next millisecond instead of wrapping back before earlier stamps.
+        let (wall_ms, counter) = match self.last.counter.checked_add(1) {
+            Some(next) if wall_ms == self.last.wall_ms => (wall_ms, next),
+            None if wall_ms == self.last.wall_ms => (wall_ms.saturating_add(1), 0),
+            _ => (wall_ms, 0),
         };
         self.last = Hlc {
             wall_ms,
@@ -116,6 +118,20 @@ mod tests {
         assert_eq!((a.wall_ms, a.counter), (100, 0));
         assert_eq!((b.wall_ms, b.counter), (200, 0));
         assert_eq!(c.device(), dev(1));
+    }
+
+    #[test]
+    fn a_full_counter_moves_to_the_next_millisecond() {
+        let mut c = Clock::new(dev(1));
+        let peer = Hlc {
+            wall_ms: 1_000,
+            counter: u32::MAX,
+            device: dev(2),
+        };
+        c.observe(peer, 1_000);
+        let next = c.tick(1_000);
+        assert_eq!((next.wall_ms, next.counter), (1_001, 0));
+        assert!(next > peer);
     }
 
     #[test]

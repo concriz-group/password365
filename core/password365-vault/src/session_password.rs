@@ -18,7 +18,7 @@ use crate::db::RecordId;
 use crate::header::Header;
 use crate::records::{PasswordRecord, RecordBody};
 use crate::session::Session;
-use crate::{Credentials, Result};
+use crate::{Credentials, Result, VaultError};
 
 /// Fixed record id (version nibble 0xf: never a `UUIDv4`).
 pub(crate) const PASSWORD_RECORD_ID: RecordId = {
@@ -80,6 +80,11 @@ impl Session {
     /// Keeps `incoming` if it is newer than what is known here; it is then
     /// pending until [`Self::adopt_password_change`]. Returns `true` if so.
     pub fn merge_password_change(&mut self, incoming: PasswordChange) -> Result<bool> {
+        // Dated far ahead, it would beat every later change of password.
+        let now = Timestamp::now().as_millis();
+        if incoming.stamp.wall_ms > now.saturating_add(crate::session_sync::MAX_FUTURE_MS) {
+            return Err(VaultError::ClockAhead);
+        }
         if self
             .password_change()
             .is_some_and(|known| known.stamp >= incoming.stamp)
@@ -180,6 +185,21 @@ mod tests {
             .unlock(&credentials("new"))
             .unwrap();
         assert!(b.pending_password_change().is_none(), "survives reopening");
+    }
+
+    #[test]
+    fn a_change_dated_far_ahead_is_refused() {
+        let (_da, mut a) = new_session();
+        let (_db, mut b) = new_session();
+        a.change_master_password(&credentials("new"), fast())
+            .unwrap();
+        let mut change = a.password_change().unwrap().clone();
+        change.stamp.wall_ms += 2 * crate::session_sync::MAX_FUTURE_MS;
+        assert!(matches!(
+            b.merge_password_change(change),
+            Err(VaultError::ClockAhead)
+        ));
+        assert!(b.pending_password_change().is_none());
     }
 
     #[test]

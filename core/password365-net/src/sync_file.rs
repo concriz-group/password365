@@ -155,7 +155,7 @@ pub fn import(session: &mut Session, bytes: &[u8]) -> Result<SyncOutcome> {
             report.files += 1;
         }
     }
-    session.merge_revoked(&revoked)?;
+    session.merge_revoked_from(sender, &revoked)?;
     if let Some(change) = password {
         report.password_changed = session.merge_password_change(change)?;
     }

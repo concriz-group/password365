@@ -70,4 +70,9 @@ describe("SshApprovalPrompt", () => {
     );
     expect(screen.getByRole("alertdialog")).toHaveTextContent("“git” wants to use the SSH key “GitHub”");
   });
+
+  it("starts with Deny focused, so a stray Enter never allows", () => {
+    renderWithClient(<SshApprovalPrompt request={{ id: 9, title: "GitHub", fingerprint: "SHA256:abc" }} onDone={vi.fn()} />, fakeClient());
+    expect(screen.getByRole("button", { name: "Deny" })).toHaveFocus();
+  });
 });

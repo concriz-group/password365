@@ -199,11 +199,13 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
         return check.status;
       }
       case "pending": {
-        const prompt = await livePrompt(tabId);
-        return prompt ? ({ status: prompt.status, username: prompt.login.username } satisfies PendingPrompt) : null;
+        const prompt = await livePrompt(tabId, pageUrl);
+        return prompt
+          ? ({ status: prompt.status, username: prompt.login.username, site: siteOf(prompt.login.page_url) } satisfies PendingPrompt)
+          : null;
       }
       case "save-pending": {
-        const prompt = await livePrompt(tabId);
+        const prompt = await livePrompt(tabId, pageUrl);
         if (!prompt) return null;
         await prompts.delete(tabId);
         await bridge.request({ type: "save_submitted", login: prompt.login });
@@ -224,9 +226,12 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
     }
   }
 
-  async function livePrompt(tabId: number) {
+  /** The tab's pending prompt, only while it has not expired and only on the
+   *  origin where the login was submitted: after the tab moves to another
+   *  site, that site can neither show nor save it. */
+  async function livePrompt(tabId: number, pageUrl: string) {
     const prompt = await prompts.get(tabId);
-    if (prompt && prompt.expires > now()) return prompt;
+    if (prompt && prompt.expires > now()) return sameOrigin(prompt.login.page_url, pageUrl) ? prompt : undefined;
     if (prompt) await prompts.delete(tabId);
     return undefined;
   }
@@ -253,4 +258,26 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
     }
     return fromContent(message as unknown as ContentMessage, tabId, sender.url);
   };
+}
+
+function originOf(url: string): string | null {
+  try {
+    return new URL(url).origin;
+  } catch {
+    return null;
+  }
+}
+
+function sameOrigin(a: string, b: string): boolean {
+  const origin = originOf(a);
+  return origin !== null && origin !== "null" && origin === originOf(b);
+}
+
+/** The host shown in the save prompt. */
+function siteOf(url: string): string {
+  try {
+    return new URL(url).host;
+  } catch {
+    return "";
+  }
 }

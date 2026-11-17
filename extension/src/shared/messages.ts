@@ -84,6 +84,8 @@ export type Reply<T = unknown> = { ok: true; result: T } | { ok: false; error: {
 export interface PendingPrompt {
   status: "new" | "password_changed";
   username?: string;
+  /** The site the login will be saved for. */
+  site: string;
 }
 
 export const POPUP_KINDS = new Set(["status", "unlock", "logins", "fill", "generate", "passkey-waiting"]);

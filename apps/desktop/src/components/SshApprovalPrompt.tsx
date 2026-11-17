@@ -22,10 +22,11 @@ export function SshApprovalPrompt({ request, onDone }: { request: SshApproval; o
           <code className="muted">{request.fingerprint}</code>
         </p>
         <div className="editor-actions">
-          <button type="button" className="ghost" onClick={() => answer(false)}>
+          {/* Focus on Deny: a keypress meant for another window must never allow. */}
+          <button type="button" className="ghost" autoFocus onClick={() => answer(false)}>
             {t("developer.deny")}
           </button>
-          <button type="button" className="primary inline" autoFocus onClick={() => answer(true)}>
+          <button type="button" className="primary inline" onClick={() => answer(true)}>
             {t("developer.allow")}
           </button>
         </div>

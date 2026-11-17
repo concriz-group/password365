@@ -44,6 +44,20 @@ impl Session {
         self.merge_revoked(&[id]).map(|_| ())
     }
 
+    /// Revocations told by the paired device `from` during a sync. Only a
+    /// device with every vault may remove others: a device that was given
+    /// some vaults only cannot cut the owner's other devices off.
+    pub fn merge_revoked_from(
+        &mut self,
+        from: DeviceId,
+        ids: &[DeviceId],
+    ) -> Result<Vec<DeviceId>> {
+        if self.peer(from)?.vaults.is_some() {
+            return Ok(Vec::new());
+        }
+        self.merge_revoked(ids)
+    }
+
     /// Adds revocations learnt from a peer; forgets those devices if paired.
     /// This device's own id is ignored (others refuse it anyway). Returns
     /// the newly revoked ids.
@@ -123,6 +137,29 @@ mod tests {
         assert!(!s.is_revoked(own));
         assert!(s.peers().is_empty(), "a revoked peer is forgotten");
         assert!(s.merge_revoked(&[a.device_id]).unwrap().is_empty());
+    }
+
+    #[test]
+    fn a_device_with_some_vaults_only_cannot_remove_others() {
+        let (_d, mut s) = new_session();
+        let mut limited = peer("Shared tablet");
+        limited.vaults = Some(Vec::new());
+        let full = peer("Laptop");
+        let victim = peer("Phone");
+        for p in [&limited, &full, &victim] {
+            s.add_peer(p.clone()).unwrap();
+        }
+        assert!(
+            s.merge_revoked_from(limited.device_id, &[victim.device_id])
+                .unwrap()
+                .is_empty()
+        );
+        assert!(!s.is_revoked(victim.device_id));
+        assert_eq!(
+            s.merge_revoked_from(full.device_id, &[victim.device_id])
+                .unwrap(),
+            vec![victim.device_id]
+        );
     }
 
     #[test]

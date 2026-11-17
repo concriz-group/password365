@@ -5,15 +5,26 @@ use std::io::{self, Read, Write};
 use password365_bridge::framing::{read_frame, write_frame};
 use password365_bridge::protocol::Response;
 
+/// Why an exchange failed: whether the app may have received the request.
+#[derive(Debug, PartialEq, Eq)]
+pub enum Failure {
+    /// The request never reached the app (sending failed): safe to send again.
+    NotSent,
+    /// The request was sent but no answer came back: it may have been acted
+    /// on, so it is never sent a second time.
+    Lost,
+}
+
 /// Something that can answer one raw request (the app connection).
 pub trait Exchange {
     /// Sends a request and returns the response.
-    fn exchange(&mut self, request: &[u8]) -> io::Result<Vec<u8>>;
+    fn exchange(&mut self, request: &[u8]) -> Result<Vec<u8>, Failure>;
 }
 
 impl Exchange for password365_bridge::client::BridgeClient {
-    fn exchange(&mut self, request: &[u8]) -> io::Result<Vec<u8>> {
-        password365_bridge::client::BridgeClient::exchange(self, request)
+    fn exchange(&mut self, request: &[u8]) -> Result<Vec<u8>, Failure> {
+        self.send(request).map_err(|_| Failure::NotSent)?;
+        self.receive().map_err(|_| Failure::Lost)
     }
 }
 
@@ -36,7 +47,9 @@ pub fn relay<C: Exchange>(
     Ok(())
 }
 
-/// Tries the existing connection, then one fresh connection.
+/// Tries the existing connection, then one fresh connection — but only when
+/// the request was not delivered: a request that may have reached the app
+/// (fill, save, approve…) is never repeated.
 fn forward<C: Exchange>(
     connection: &mut Option<C>,
     connect: &mut impl FnMut() -> io::Result<C>,
@@ -49,7 +62,11 @@ fn forward<C: Exchange>(
         let conn = connection.as_mut()?;
         match conn.exchange(request) {
             Ok(response) => return Some(response),
-            Err(_) => *connection = None,
+            Err(Failure::NotSent) => *connection = None,
+            Err(Failure::Lost) => {
+                *connection = None;
+                return None;
+            }
         }
     }
     None
@@ -76,18 +93,18 @@ mod tests {
 
     struct Echo;
     impl Exchange for Echo {
-        fn exchange(&mut self, request: &[u8]) -> io::Result<Vec<u8>> {
+        fn exchange(&mut self, request: &[u8]) -> Result<Vec<u8>, Failure> {
             Ok([b"re:", request].concat())
         }
     }
 
-    struct FailsOnce(bool);
+    struct FailsOnce(Option<Failure>);
     impl Exchange for FailsOnce {
-        fn exchange(&mut self, request: &[u8]) -> io::Result<Vec<u8>> {
-            if std::mem::replace(&mut self.0, false) {
-                return Err(io::Error::other("broken pipe"));
+        fn exchange(&mut self, request: &[u8]) -> Result<Vec<u8>, Failure> {
+            match self.0.take() {
+                Some(failure) => Err(failure),
+                None => Ok(request.to_vec()),
             }
-            Ok(request.to_vec())
         }
     }
 
@@ -118,15 +135,29 @@ mod tests {
     }
 
     #[test]
-    fn reconnects_after_a_broken_connection() {
+    fn reconnects_when_the_request_was_not_sent() {
         let mut out = Vec::new();
         let mut first = true;
         relay(&mut frames(&[b"x"]), &mut out, || {
-            let fail = std::mem::replace(&mut first, false);
+            let fail = std::mem::replace(&mut first, false).then_some(Failure::NotSent);
             Ok(FailsOnce(fail))
         })
         .unwrap();
         assert_eq!(read_all(out), vec![b"x".to_vec()]);
+    }
+
+    #[test]
+    fn never_resends_a_request_that_may_have_arrived() {
+        let mut out = Vec::new();
+        let mut connects = 0;
+        relay(&mut frames(&[br#"{"id":7}"#]), &mut out, || {
+            connects += 1;
+            Ok(FailsOnce((connects == 1).then_some(Failure::Lost)))
+        })
+        .unwrap();
+        let response: serde_json::Value = serde_json::from_slice(&read_all(out)[0]).unwrap();
+        assert_eq!(response["error"]["code"], APP_NOT_RUNNING);
+        assert_eq!(connects, 1);
     }
 
     #[test]

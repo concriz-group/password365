@@ -141,6 +141,22 @@ impl Session {
         Ok(())
     }
 
+    /// Pins a device that has just paired. Unlike [`Self::add_peer`] it never
+    /// replaces anything: a new device cannot take over the id or the key of a
+    /// device already paired, nor this device's own.
+    pub fn pair_peer(&mut self, peer: Peer) -> Result<()> {
+        let taken = peer.device_id == self.device_id()
+            || peer.static_public == self.device_keys.static_public
+            || self
+                .peers
+                .values()
+                .any(|p| p.device_id == peer.device_id || p.static_public == peer.static_public);
+        if taken {
+            return Err(VaultError::AlreadyPaired);
+        }
+        self.add_peer(peer)
+    }
+
     /// Forgets a paired device (it can no longer sync with this one).
     pub fn remove_peer(&mut self, id: DeviceId) -> Result<()> {
         self.peer(id)?;
@@ -235,6 +251,20 @@ mod tests {
 
     fn peer(name: &str) -> Peer {
         Peer::new(DeviceId::new(), name, [3; 32], Timestamp::from_millis(5))
+    }
+
+    #[test]
+    fn a_new_device_cannot_take_over_a_paired_one() {
+        let (_d, mut s) = new_session();
+        let phone = Peer::new(DeviceId::new(), "Phone", [4; 32], Timestamp::from_millis(5));
+        s.pair_peer(phone.clone()).unwrap();
+        let same_id = Peer::new(phone.device_id, "Evil", [9; 32], Timestamp::from_millis(6));
+        let same_key = Peer::new(DeviceId::new(), "Evil", [4; 32], Timestamp::from_millis(6));
+        let as_me = Peer::new(s.device_id(), "Evil", [8; 32], Timestamp::from_millis(6));
+        for evil in [same_id, same_key, as_me] {
+            assert!(matches!(s.pair_peer(evil), Err(VaultError::AlreadyPaired)));
+        }
+        assert_eq!(s.peer(phone.device_id).unwrap().name, "Phone");
     }
 
     #[test]

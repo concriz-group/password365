@@ -241,7 +241,7 @@ impl AppService {
     pub fn pin_device(&mut self, peer: Peer) -> Result<DeviceDto> {
         let session = self.session()?;
         let id = peer.device_id;
-        session.add_peer(peer)?;
+        session.pair_peer(peer)?;
         Ok(device_dto(
             session.peer(id)?,
             session.changes_pending_for(id)?,

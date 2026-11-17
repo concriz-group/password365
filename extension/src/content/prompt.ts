@@ -41,7 +41,7 @@ export function showSavePrompt(
   title.textContent = prompt.status === "new" ? t("saveLogin") : t("updatePassword");
   const sub = doc.createElement("div");
   sub.className = "sub";
-  sub.textContent = prompt.username ?? "";
+  sub.textContent = [prompt.site, prompt.username].filter(Boolean).join(" · ");
 
   const save = doc.createElement("button");
   save.className = "primary";

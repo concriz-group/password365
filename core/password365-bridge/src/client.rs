@@ -24,7 +24,17 @@ impl BridgeClient {
 
     /// Sends a raw JSON request and returns the raw JSON response.
     pub fn exchange(&mut self, request: &[u8]) -> io::Result<Vec<u8>> {
-        write_frame(&mut self.stream, request)?;
+        self.send(request)?;
+        self.receive()
+    }
+
+    /// Sends one request.
+    pub fn send(&mut self, request: &[u8]) -> io::Result<()> {
+        write_frame(&mut self.stream, request)
+    }
+
+    /// Reads one response.
+    pub fn receive(&mut self) -> io::Result<Vec<u8>> {
         read_frame(&mut self.stream)?.ok_or_else(|| io::Error::from(io::ErrorKind::UnexpectedEof))
     }
 }
