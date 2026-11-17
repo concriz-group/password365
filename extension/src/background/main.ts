@@ -27,6 +27,7 @@ const menus: MenuTokens = {
     return (await chrome.storage.session.get(key))[key] as string | undefined;
   },
   set: (tabId, token) => chrome.storage.session.set({ [`menu:${tabId}`]: token }),
+  delete: (tabId) => chrome.storage.session.remove(`menu:${tabId}`),
 };
 
 const openPopup = () => chrome.action.openPopup();
@@ -65,7 +66,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse: (reply: Rep
 
 chrome.tabs.onRemoved.addListener((tabId) => {
   void prompts.delete(tabId);
-  void chrome.storage.session.remove(`menu:${tabId}`);
+  void menus.delete(tabId);
 });
 
 chrome.runtime.onInstalled.addListener(() => {

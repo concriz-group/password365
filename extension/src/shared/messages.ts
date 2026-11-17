@@ -22,7 +22,9 @@ export type ContentMessage =
   | { kind: "passkey-conditional"; options: GetOptions }
   | { kind: "passkey-abort" }
   /** The content script opened its inline menu with this one-time `token` in the menu's URL. */
-  | { kind: "menu-opened"; token: string };
+  | { kind: "menu-opened"; token: string }
+  /** The menu opened with `token` closed: the token stops working. */
+  | { kind: "menu-closed"; token: string };
 
 /**
  * Sent by the inline menu (an extension page in an iframe the content script
@@ -99,4 +101,4 @@ export const MENU_KINDS = new Set([
   "menu-passkey-unlock",
   "menu-passkey-autofill",
 ]);
-export const CONTENT_KINDS = new Set(["menu-opened", "submitted", "pending", "save-pending", "dismiss-pending", "passkey-create", "passkey-get", "passkey-conditional", "passkey-abort"]);
+export const CONTENT_KINDS = new Set(["menu-opened", "menu-closed", "submitted", "pending", "save-pending", "dismiss-pending", "passkey-create", "passkey-get", "passkey-conditional", "passkey-abort"]);

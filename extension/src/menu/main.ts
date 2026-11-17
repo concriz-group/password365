@@ -1,11 +1,14 @@
 // Inline menu entry point: runs in an extension iframe placed under a login field.
 import type { FromMenu, MenuMessage, Reply } from "../shared/messages";
+import { receiveToken } from "./token";
 import { applyFilter, type MenuMode, moveFocus, renderMenu } from "./view";
 
-// The one-time token the content script put in our URL: proves this frame is the
-// menu it opened, not a copy of menu.html framed by the page.
-const token = new URLSearchParams(location.search).get("t") ?? "";
-const send = (message: MenuMessage) => chrome.runtime.sendMessage<FromMenu, Reply>({ ...message, token });
+// The one-time token the content script hands us: proves this frame is the menu
+// it opened, not a copy of menu.html framed by the page. Nothing is asked of
+// the background before it arrives.
+const token = receiveToken(window);
+const send = async (message: MenuMessage) =>
+  chrome.runtime.sendMessage<FromMenu, Reply>({ ...message, token: await token });
 const MODES: MenuMode[] = ["login", "signup", "identity", "card", "passkey"];
 const asked = new URLSearchParams(location.search).get("mode") as MenuMode;
 const mode: MenuMode = MODES.includes(asked) ? asked : "login";

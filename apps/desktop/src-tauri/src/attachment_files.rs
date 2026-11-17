@@ -4,7 +4,8 @@
 //! starts.
 //!
 //! Attachments can come from imported files, so they are treated like
-//! downloads: programs and scripts are never opened (only saved), and the copy
+//! downloads: only documents, pictures, sound and video are opened (anything
+//! else is only saved, see [`OPENABLE`]), and the copy
 //! is marked as coming from the internet (macOS quarantine, Windows
 //! Mark-of-the-Web) so the system warns before running anything in it. The
 //! file is handed to the system without a shell: its name is never parsed as
@@ -73,80 +74,31 @@ pub(crate) fn open_with_system(path: &std::ffi::OsStr) -> std::io::Result<()> {
     Command::new(program).arg(path).spawn().map(|_| ())
 }
 
-/// File types that run code when opened: never opened from the app.
-const PROGRAMS: &[&str] = &[
-    "app",
-    "appimage",
-    "applescript",
-    "bash",
-    "bat",
-    "cmd",
-    "com",
-    "command",
-    "cpl",
-    "csh",
-    "deb",
-    "desktop",
-    "dmg",
-    "exe",
-    "fish",
-    "gadget",
-    "hta",
-    "inf",
-    "ins",
-    "isp",
-    "jar",
-    "js",
-    "jse",
-    "ksh",
-    "lnk",
-    "mpkg",
-    "msc",
-    "msi",
-    "msp",
-    "mst",
-    "pif",
-    "pkg",
-    "pl",
-    "ps1",
-    "ps1xml",
-    "ps2",
-    "psc1",
-    "psm1",
-    "py",
-    "pyw",
-    "rb",
-    "reg",
-    "rpm",
-    "run",
-    "scf",
-    "scpt",
-    "scr",
-    "sct",
-    "sh",
-    "shb",
-    "terminal",
-    "tool",
-    "url",
-    "vb",
-    "vbe",
-    "vbs",
-    "webloc",
-    "workflow",
-    "ws",
-    "wsc",
-    "wsf",
-    "wsh",
-    "zsh",
+/// The only file types opened from the app: ones that are just shown or
+/// played. A list of what is allowed, not of what is dangerous: every system
+/// has more kinds of programs, scripts, shortcuts, installers and disk images
+/// than a list could name, and new ones appear. Left out on purpose: web
+/// pages and SVG (scripts), CSV (spreadsheet formulas), archives, and office
+/// formats that can carry macros (`.doc`, `.docm`, `.xls`, `.xlsm`, …).
+/// Anything else can still be saved and opened by the user.
+const OPENABLE: &[&str] = &[
+    // Text
+    "log", "md", "txt", // Documents (formats without macros)
+    "docx", "key", "numbers", "odp", "ods", "odt", "pages", "pdf", "pptx", "xlsx",
+    // Pictures
+    "avif", "bmp", "gif", "heic", "heif", "jpeg", "jpg", "png", "tif", "tiff", "webp",
+    // Sound and video
+    "aac", "flac", "m4a", "m4v", "mov", "mp3", "mp4", "ogg", "wav", "webm",
 ];
 
-/// Whether `name` is a program or script (by its last extension).
-pub(crate) fn is_program(name: &str) -> bool {
+/// Whether `name` is of a type the app opens (by its last extension; dots
+/// and spaces at the end do not count, as Windows ignores them).
+pub(crate) fn may_open(name: &str) -> bool {
     let trimmed = name.trim_end_matches(['.', ' ']);
     std::path::Path::new(trimmed)
         .extension()
         .and_then(|e| e.to_str())
-        .is_some_and(|e| PROGRAMS.contains(&e.to_ascii_lowercase().as_str()))
+        .is_some_and(|e| OPENABLE.contains(&e.to_ascii_lowercase().as_str()))
 }
 
 /// Marks `path` as downloaded from the internet, so the system checks it
@@ -173,9 +125,9 @@ fn mark_as_downloaded(path: &std::path::Path) {
 /// Writes `bytes` as `name` in a fresh private folder and opens it.
 pub fn open<R: Runtime>(app: &AppHandle<R>, name: &str, bytes: &[u8]) -> Result<(), AppError> {
     use std::io::Write as _;
-    if is_program(name) {
+    if !may_open(name) {
         return Err(AppError::Validation(
-            "Password365 does not open programs or scripts. Save the file instead, and check it before running it.".into(),
+            "Password365 opens only documents, pictures, sound and video. Save this file instead, and check it before opening it.".into(),
         ));
     }
     clean(app, false);
@@ -208,33 +160,61 @@ mod tests {
     use super::*;
 
     #[test]
-    fn programs_and_scripts_are_recognised_whatever_the_case() {
+    fn only_files_that_are_just_shown_or_played_are_opened() {
         for name in [
+            "report.pdf",
+            "photo.JPG",
+            "notes.txt",
+            "a&calc.pdf",
+            "scan.tiff",
+            "letter.docx",
+            "voice.m4a",
+            "clip.MP4",
+        ] {
+            assert!(may_open(name), "{name}");
+        }
+        for name in [
+            // Programs, scripts, installers.
             "setup.exe",
             "run.BAT",
             "x.cmd",
-            "a.lnk",
             "tool.jar",
             "s.ps1",
             "m.vbs",
             "Installer.pkg",
             "Install.app",
             "evil.sh",
+            "app.msix",
+            "x.appref-ms",
+            // Shortcuts and links.
+            "a.lnk",
+            "site.url",
+            "site.webloc",
+            "site.inetloc",
+            "file.fileloc",
+            // Disk images and archives.
+            "disk.iso",
+            "disk.dmg",
+            "files.zip",
+            // Help files, pages and pictures with scripts, formulas, macros.
+            "help.chm",
+            "page.html",
+            "drawing.svg",
+            "table.csv",
+            "old.doc",
+            "macro.docm",
+            "macro.xlsm",
+            // A harmless-looking name before the real type; trailing dots and spaces.
             "doc.pdf.exe",
             "trick.bat.",
             "trick.cmd ",
-        ] {
-            assert!(is_program(name), "{name}");
-        }
-        for name in [
-            "report.pdf",
-            "photo.JPG",
-            "notes.txt",
-            "a&calc.pdf",
+            "photo.jpg.lnk  ",
+            // Nothing to go by.
             "no-extension",
-            "exe",
+            "pdf",
+            "",
         ] {
-            assert!(!is_program(name), "{name}");
+            assert!(!may_open(name), "{name}");
         }
     }
 

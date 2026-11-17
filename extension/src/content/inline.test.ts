@@ -1,6 +1,7 @@
 import { BADGE_ID_PREFIX, createInline, MENU_ARMING_MS, MENU_HOST_ID, MENU_WIDTH } from "./inline";
 
-const menuSrc = (mode: string) => new RegExp(`^chrome-extension://abc/menu\\.html\\?mode=${mode}&t=[0-9a-f]{32}$`);
+// The address names the mode only: the menu's token never appears in it.
+const menuSrc = (mode: string) => new RegExp(`^chrome-extension://abc/menu\\.html\\?mode=${mode}$`);
 const OPTS = { menuUrl: "chrome-extension://abc/menu.html", iconUrl: "chrome-extension://abc/icons/32.png" };
 
 function page(html: string) {
@@ -243,7 +244,41 @@ describe("menu protection", () => {
     expect(token).toMatch(/^[0-9a-f]{32}$/);
     release();
     await new Promise((r) => setTimeout(r, 0));
-    expect(frame.src).toBe(`${OPTS.menuUrl}?mode=login&t=${token}`);
+    expect(frame.src).toBe(`${OPTS.menuUrl}?mode=login`);
+    inline.destroy();
+  });
+
+  it("hands the token to the loaded menu by a message for the extension only, never in the address", async () => {
+    page(`<input name="user"><input type="password">`);
+    const registerMenu = vi.fn(async () => {});
+    const createElement = vi.spyOn(document, "createElement");
+    const inline = createInline(document, { ...OPTS, registerMenu });
+    inline.open(inline.anchors()[0]!);
+    const frame = createElement.mock.results.map((r) => r.value).find((e) => e instanceof HTMLIFrameElement)!;
+    createElement.mockRestore();
+    await new Promise((r) => setTimeout(r, 0));
+    const token = (registerMenu.mock.calls[0] as unknown as [string])[0];
+    expect(frame.src).not.toContain(token);
+    const postMessage = vi.fn();
+    Object.defineProperty(frame, "contentWindow", { value: { postMessage }, configurable: true });
+    frame.dispatchEvent(new Event("load"));
+    expect(postMessage).toHaveBeenCalledWith({ password365Token: token }, "chrome-extension://abc");
+    inline.destroy();
+  });
+
+  it("makes a menu's token worthless when the menu closes", () => {
+    page(`<input name="user"><input type="password">`);
+    const registerMenu = vi.fn(async () => {});
+    const unregisterMenu = vi.fn();
+    const inline = createInline(document, { ...OPTS, registerMenu, unregisterMenu });
+    inline.open(inline.anchors()[0]!);
+    const first = (registerMenu.mock.calls[0] as unknown as [string])[0];
+    expect(unregisterMenu).not.toHaveBeenCalled();
+    inline.close();
+    expect(unregisterMenu).toHaveBeenCalledWith(first);
+    // Every menu gets its own token.
+    inline.open(inline.anchors()[1]!);
+    expect((registerMenu.mock.calls[1] as unknown as [string])[0]).not.toBe(first);
     inline.destroy();
   });
 

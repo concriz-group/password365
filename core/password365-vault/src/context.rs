@@ -18,6 +18,24 @@ pub(crate) fn keyset(store_id: &StoreId, salt: &[u8], params: KdfParams) -> Aad 
         .u64(params.parallelism.into())
 }
 
+/// AAD for the wrapped keyset of a store that keeps a sealed integrity sum
+/// (see `integrity`). The label is the store's promise, made with the unlock
+/// key: such a store is never opened without its sum, so nobody without the
+/// master password can make it look like an older store that has none.
+pub(crate) fn keyset_with_sum(store_id: &StoreId, salt: &[u8], params: KdfParams) -> Aad {
+    Aad::new("password365/v2/keyset")
+        .bytes(store_id)
+        .bytes(salt)
+        .u64(params.memory_kib.into())
+        .u64(params.iterations.into())
+        .u64(params.parallelism.into())
+}
+
+/// AAD for the sealed integrity sum.
+pub(crate) fn integrity_sum() -> Aad {
+    Aad::new("password365/v1/integrity-sum")
+}
+
 /// AAD for one record row.
 pub(crate) fn record(store_id: &StoreId, record_id: &[u8; 16]) -> Aad {
     Aad::new("quillock/v1/record")

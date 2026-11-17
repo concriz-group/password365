@@ -23,6 +23,7 @@ export function startContent(
   const inline = createInline(doc, {
     ...inlineOptions,
     registerMenu: (token) => send({ kind: "menu-opened", token }),
+    unregisterMenu: (token) => void send({ kind: "menu-closed", token }).catch(() => {}),
   });
   // The field the user last right-clicked (target of Password365 › Suggest password).
   let contextTarget: HTMLInputElement | null = null;

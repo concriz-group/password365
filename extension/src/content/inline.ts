@@ -28,6 +28,8 @@ export interface InlineOptions {
   iconUrl: string;
   /** Tells the background the token of a menu about to open (the menu proves itself with it). */
   registerMenu?: (token: string) => Promise<unknown>;
+  /** Tells the background that the menu with this token closed (the token stops working). */
+  unregisterMenu?: (token: string) => unknown;
 }
 
 /** How long the menu must have been on screen before a click in it fills anything. */
@@ -45,13 +47,13 @@ function newToken(): string {
  * is clicked). The menu itself is an extension page in an iframe, so the site
  * can't read the saved logins or click on them.
  */
-export function createInline(doc: Document, { menuUrl, iconUrl, registerMenu }: InlineOptions) {
+export function createInline(doc: Document, { menuUrl, iconUrl, registerMenu, unregisterMenu }: InlineOptions) {
   const win = doc.defaultView!;
   let login: LoginFields | null = null;
   let profile: Record<ProfileKind, ProfileField[]> = { identity: [], card: [] };
   const badges = new Map<FormField, Overlay>();
   /** The open menu; `anchor` is `null` for the passkey prompt (top right, no field). */
-  let menu: { overlay: Overlay; frame: HTMLIFrameElement; anchor: FormField | null; openedAt: number } | null = null;
+  let menu: { overlay: Overlay; frame: HTMLIFrameElement; anchor: FormField | null; openedAt: number; token: string } | null = null;
   /** Set while we move focus back to the field ourselves, so it doesn't reopen the menu. */
   let refocusing = false;
   // `URL.origin` is "null" for non-web schemes in some runtimes; build it explicitly.
@@ -132,10 +134,18 @@ export function createInline(doc: Document, { menuUrl, iconUrl, registerMenu }: 
     return null;
   }
 
-  /** Loads the menu page in `frame` once the background knows its token. */
-  function load(frame: HTMLIFrameElement, mode: string) {
-    const token = newToken();
-    const src = `${menuUrl}?mode=${mode}&t=${token}`;
+  /**
+   * Loads the menu page in `frame` once the background knows its token, then
+   * hands the token to the page. Never in the URL: the web page can see the
+   * addresses of the frames it holds (resource timing) and could then open
+   * its own copy of the menu with it. A message addressed to the extension's
+   * origin reaches only our menu page, whatever the frame shows by then.
+   */
+  function load(frame: HTMLIFrameElement, mode: string, token: string) {
+    const src = `${menuUrl}?mode=${mode}`;
+    frame.addEventListener("load", () => {
+      frame.contentWindow?.postMessage({ password365Token: token }, menuOrigin);
+    });
     if (!registerMenu) {
       frame.src = src;
       return;
@@ -153,8 +163,9 @@ export function createInline(doc: Document, { menuUrl, iconUrl, registerMenu }: 
     const mode = profileKind(anchor) ?? (login?.isSignup ? "signup" : "login");
     frame.title = "Password365";
     overlay.root.append(frame);
-    menu = { overlay, frame, anchor, openedAt: Date.now() };
-    load(frame, mode);
+    const token = newToken();
+    menu = { overlay, frame, anchor, openedAt: Date.now(), token };
+    load(frame, mode, token);
     reposition();
   }
 
@@ -182,7 +193,9 @@ export function createInline(doc: Document, { menuUrl, iconUrl, registerMenu }: 
 
   function close() {
     if (!menu) return;
-    const { overlay, anchor } = menu;
+    const { overlay, anchor, token } = menu;
+    // A closed menu's token is worth nothing any more.
+    unregisterMenu?.(token);
     // Keyboard users who were inside the menu go back to the field (like 1Password).
     const focusWasInMenu = doc.activeElement === overlay.host;
     overlay.remove();
@@ -201,8 +214,9 @@ export function createInline(doc: Document, { menuUrl, iconUrl, registerMenu }: 
     const frame = doc.createElement("iframe");
     frame.title = "Password365";
     overlay.root.append(frame);
-    menu = { overlay, frame, anchor: null, openedAt: Date.now() };
-    load(frame, "passkey");
+    const token = newToken();
+    menu = { overlay, frame, anchor: null, openedAt: Date.now(), token };
+    load(frame, "passkey", token);
     reposition();
     frame.focus();
   }

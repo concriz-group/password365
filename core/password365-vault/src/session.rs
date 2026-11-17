@@ -49,6 +49,9 @@ pub struct Session {
     pub(crate) db: Database,
     pub(crate) header: Header,
     pub(crate) storage_key: SymmetricKey,
+    /// Whether the header promises the integrity sum (stores written before
+    /// it existed do not, until their first unlock with the master password).
+    pub(crate) sums: crate::header::Sums,
     pub(crate) vaults: BTreeMap<VaultId, VaultEntry>,
     pub(crate) items: BTreeMap<ItemId, ItemEntry>,
     /// Purged items: only their deletion markers remain.
@@ -71,11 +74,17 @@ impl Session {
     ///
     /// Records that do not decrypt are left untouched: they may belong to a
     /// future format or another space (see `docs/ideas`), so they are never deleted.
-    pub(crate) fn load(db: Database, header: Header, storage_key: SymmetricKey) -> Result<Self> {
+    pub(crate) fn load(
+        db: Database,
+        header: Header,
+        storage_key: SymmetricKey,
+        sums: crate::header::Sums,
+    ) -> Result<Self> {
         let mut session = Self {
             db,
             header,
             storage_key,
+            sums,
             vaults: BTreeMap::new(),
             items: BTreeMap::new(),
             purged: BTreeMap::new(),
@@ -87,11 +96,23 @@ impl Session {
             password: None,
             app_data: None,
         };
+        // A header without the sum's promise that opens none of the records
+        // is not this store's (an older header put back after the store got
+        // a new key): refuse, rather than show an empty store and adopt it.
+        if sums == crate::header::Sums::Adopt {
+            let all = session.db.records()?;
+            let opens = |(id, blob): &(crate::db::RecordId, Vec<u8>)| {
+                records::open(&session.storage_key, &session.header.store_id, id, blob).is_ok()
+            };
+            if !all.is_empty() && !all.iter().any(opens) {
+                return Err(VaultError::Tampered);
+            }
+        }
         // Before anything is read or written: nothing rolled back or removed.
-        session.db.check_integrity(crate::integrity::key(
-            &session.storage_key,
-            &session.header.store_id,
-        )?)?;
+        session.db.check_integrity(
+            crate::integrity::key(&session.storage_key, &session.header.store_id)?,
+            sums,
+        )?;
         let mut item_records = Vec::new();
         let mut sync_records = BTreeMap::new();
         let mut device = None;
@@ -192,6 +213,8 @@ impl Session {
         self.db.use_integrity_key(new_integrity);
         self.header = header;
         self.storage_key = new_key;
+        // The new header promises the sum (and the sum was sealed with it).
+        self.sums = crate::header::Sums::Required;
         Ok(())
     }
 

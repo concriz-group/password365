@@ -7,7 +7,7 @@ use password365_crypto::secret::SecretString;
 use password365_crypto::secret_key::AccountSecretKey;
 
 use crate::db::Database;
-use crate::header::Header;
+use crate::header::{Header, Sums};
 use crate::session::Session;
 use crate::{Result, VaultError};
 
@@ -46,7 +46,10 @@ impl Store {
         let (header, storage_key) = Header::create(credentials, kdf)?;
         let db = Database::create(path)?;
         db.write_header(&header)?;
-        Session::load(db, header, storage_key)
+        // Brand new: nothing to check yet, the sum starts here.
+        let mut session = Session::load(db, header, storage_key, Sums::Adopt)?;
+        session.sums = Sums::Required;
+        Ok(session)
     }
 
     /// Opens an existing (locked) store.
@@ -64,8 +67,9 @@ impl Store {
 
     /// Unlocks the store.
     pub fn unlock(self, credentials: &Credentials) -> Result<Session> {
-        let storage_key = self.header.unlock(credentials)?;
-        Session::load(self.db, self.header, storage_key)
+        let (storage_key, sums) = self.header.unlock_with_sums(credentials)?;
+        let session = Session::load(self.db, self.header, storage_key, sums)?;
+        promise_sum(session, credentials)
     }
 
     /// Restores a backup to `dest` and returns it unlocked. The credentials are
@@ -79,15 +83,27 @@ impl Store {
             VaultError::Database(_) | VaultError::Corrupt(_) => VaultError::NotABackup,
             other => other,
         })?;
-        let storage_key = source.header.unlock(credentials)?;
+        let (storage_key, sums) = source.header.unlock_with_sums(credentials)?;
         source.db.backup_to(dest)?;
         drop(source);
         let db = Database::open(dest)?;
         let header = db.read_header()?;
-        let mut session = Session::load(db, header, storage_key)?;
+        let mut session = promise_sum(Session::load(db, header, storage_key, sums)?, credentials)?;
         session.reset_device_identity()?;
         Ok(session)
     }
+}
+
+/// A store written before the integrity sum existed gets, on its first
+/// unlock with the master password, a header that promises the sum. It also
+/// gets a new storage key: its old header (in a backup, say) opens nothing
+/// any more, so it cannot be put back to make the store look old again and
+/// skip the check.
+fn promise_sum(mut session: Session, credentials: &Credentials) -> Result<Session> {
+    if session.sums == Sums::Adopt {
+        session.change_credentials(credentials, session.header.kdf)?;
+    }
+    Ok(session)
 }
 
 /// Helpers shared by unit tests in this crate.
@@ -301,32 +317,178 @@ mod tests {
         ));
     }
 
-    #[test]
-    fn a_store_made_before_the_sum_existed_gets_one_on_unlock() {
-        let dir = tempfile::tempdir().unwrap();
-        let s = Store::create(
-            &path(&dir),
+    /// A store with one item, locked.
+    fn locked_store_with_an_item(dir: &tempfile::TempDir) {
+        let mut s = Store::create(
+            &path(dir),
             &credentials("pw"),
             KdfParams::insecure_for_tests(),
         )
         .unwrap();
+        let v = s.vault_by_name("Personal").unwrap().id;
+        s.add_item(
+            v,
+            password365_model::ItemKind::Login,
+            password365_model::ItemOverview::new("Bank").unwrap(),
+            password365_model::ItemDetails::with_password("p".into()),
+        )
+        .unwrap();
         s.lock();
+    }
+
+    fn unlock(dir: &tempfile::TempDir) -> Result<Session> {
+        Store::open(&path(dir)).unwrap().unlock(&credentials("pw"))
+    }
+
+    /// Rewrites the store as the version before the integrity sum left it:
+    /// the header without the promise, and no sum.
+    fn make_older(dir: &tempfile::TempDir) -> Header {
+        let store = Store::open(&path(dir)).unwrap();
+        let old = store.header.before_sums(&credentials("pw"));
+        store.db.write_header(&old).unwrap();
+        drop(store);
+        raw(dir).execute("DROP TABLE integrity", []).unwrap();
+        old
+    }
+
+    #[test]
+    fn deleting_the_sum_does_not_hide_removed_records() {
+        // The sum's row deleted (with or without a record): refused.
+        for also_remove_a_record in [false, true] {
+            let dir = tempfile::tempdir().unwrap();
+            locked_store_with_an_item(&dir);
+            let conn = raw(&dir);
+            if also_remove_a_record {
+                conn.execute(
+                    "DELETE FROM records WHERE id = (SELECT id FROM records LIMIT 1)",
+                    [],
+                )
+                .unwrap();
+            }
+            conn.execute("DELETE FROM integrity", []).unwrap();
+            drop(conn);
+            assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
+        }
+        // The whole table dropped: refused too.
+        let dir = tempfile::tempdir().unwrap();
+        locked_store_with_an_item(&dir);
         raw(&dir).execute("DROP TABLE integrity", []).unwrap();
-        let s = Store::open(&path(&dir))
-            .unwrap()
-            .unlock(&credentials("pw"))
+        assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
+    }
+
+    #[test]
+    fn the_sum_is_sealed_so_it_cannot_be_adjusted_or_replaced() {
+        let dir = tempfile::tempdir().unwrap();
+        locked_store_with_an_item(&dir);
+        let stored: Vec<u8> = raw(&dir)
+            .query_row("SELECT sum FROM integrity", [], |r| r.get(0))
             .unwrap();
-        s.lock();
-        let rows: i64 = raw(&dir)
-            .query_row("SELECT count(*) FROM integrity", [], |r| r.get(0))
+        assert!(stored.len() > 32, "not the bare sum");
+        // Any 32 bytes in the clear (what an earlier version kept): refused,
+        // even the right sum would be (it is only accepted sealed).
+        raw(&dir)
+            .execute("UPDATE integrity SET sum = ?1", [vec![0u8; 32]])
             .unwrap();
-        assert_eq!(rows, 1);
-        assert!(
-            Store::open(&path(&dir))
+        assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
+        // A changed sealed sum: refused.
+        let mut changed = stored;
+        *changed.last_mut().unwrap() ^= 1;
+        raw(&dir)
+            .execute("UPDATE integrity SET sum = ?1", [changed])
+            .unwrap();
+        assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
+    }
+
+    #[test]
+    fn two_unlocks_seal_the_same_sum_differently() {
+        let dir = tempfile::tempdir().unwrap();
+        locked_store_with_an_item(&dir);
+        let read = || -> Vec<u8> {
+            raw(&dir)
+                .query_row("SELECT sum FROM integrity", [], |r| r.get(0))
                 .unwrap()
-                .unlock(&credentials("pw"))
-                .is_ok()
-        );
+        };
+        let before = read();
+        let mut s = unlock(&dir).unwrap();
+        s.create_vault("Work").unwrap();
+        s.lock();
+        assert_ne!(before, read());
+        assert!(unlock(&dir).is_ok());
+    }
+
+    #[test]
+    fn a_store_made_before_the_sum_existed_gets_one_and_then_must_keep_it() {
+        let dir = tempfile::tempdir().unwrap();
+        locked_store_with_an_item(&dir);
+        let old_header = make_older(&dir);
+        let s = unlock(&dir).unwrap();
+        assert_eq!(s.items().len(), 1, "still opens");
+        assert_eq!(s.sums, Sums::Required);
+        s.lock();
+        assert!(unlock(&dir).is_ok());
+        // From now on the sum is required.
+        let kept: Vec<u8> = raw(&dir)
+            .query_row("SELECT sum FROM integrity", [], |r| r.get(0))
+            .unwrap();
+        raw(&dir).execute("DELETE FROM integrity", []).unwrap();
+        assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
+        // Putting the old header back (it made no promise) does not help:
+        // the store has a new key since, the old one opens none of its records.
+        let store = Store::open(&path(&dir)).unwrap();
+        store.db.write_header(&old_header).unwrap();
+        drop(store);
+        let old_key = old_header.unlock(&credentials("pw")).unwrap();
+        let db = Database::open(&path(&dir)).unwrap();
+        for (id, blob) in db.records().unwrap() {
+            assert!(crate::records::open(&old_key, &old_header.store_id, &id, &blob).is_err());
+        }
+        drop(db);
+        // … and the store is refused, not shown empty (sum deleted or kept).
+        assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
+        raw(&dir)
+            .execute("INSERT INTO integrity (id, sum) VALUES (1, ?1)", [kept])
+            .unwrap();
+        assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
+    }
+
+    #[test]
+    fn a_sum_kept_in_the_clear_by_an_older_store_is_checked_then_sealed() {
+        let set_sum = |dir: &tempfile::TempDir, sum: Vec<u8>| {
+            raw(dir)
+                .execute("UPDATE integrity SET sum = ?1", [sum])
+                .unwrap();
+        };
+        // The older version's store: no promise in the header, the sum in the clear.
+        let older = |dir: &tempfile::TempDir| -> Vec<u8> {
+            locked_store_with_an_item(dir);
+            let store = Store::open(&path(dir)).unwrap();
+            let old = store.header.before_sums(&credentials("pw"));
+            store.db.write_header(&old).unwrap();
+            let key = old.unlock(&credentials("pw")).unwrap();
+            let mac = crate::integrity::key(&key, &old.store_id).unwrap();
+            store
+                .db
+                .records()
+                .unwrap()
+                .iter()
+                .fold([0u8; 32], |sum, (id, blob)| {
+                    crate::integrity::add(&sum, &crate::integrity::element(&mac, id, blob))
+                })
+                .to_vec()
+        };
+        let dir = tempfile::tempdir().unwrap();
+        let right = older(&dir);
+        set_sum(&dir, right);
+        assert_eq!(unlock(&dir).unwrap().items().len(), 1);
+        let stored: Vec<u8> = raw(&dir)
+            .query_row("SELECT sum FROM integrity", [], |r| r.get(0))
+            .unwrap();
+        assert!(stored.len() > 32, "sealed now");
+        // A wrong one is noticed.
+        let dir = tempfile::tempdir().unwrap();
+        older(&dir);
+        set_sum(&dir, vec![9u8; 32]);
+        assert!(matches!(unlock(&dir), Err(VaultError::Tampered)));
     }
 
     #[test]

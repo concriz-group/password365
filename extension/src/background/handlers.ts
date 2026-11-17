@@ -47,6 +47,7 @@ export interface PromptStore {
 export interface MenuTokens {
   get(tabId: number): Promise<string | undefined>;
   set(tabId: number, token: string): Promise<void>;
+  delete(tabId: number): Promise<void>;
 }
 
 export const PROMPT_TTL_MS = 5 * 60_000;
@@ -74,8 +75,8 @@ interface Deps {
  *   supplied in the message, and only from the top frame;
  * - inline-menu actions (fill, suggest) are accepted only from this
  *   extension's own `menu.html` frame carrying the one-time token the content
- *   script put in the URL of the menu it opened (a page can frame `menu.html`
- *   itself, but cannot know the token); the page URL comes from the browser's
+ *   script handed to the menu it opened, for as long as that menu is open (a
+ *   page can frame `menu.html` itself, but cannot know the token); the page URL comes from the browser's
  *   record of the tab;
  * - fills asked by the menu are marked `fromMenu`: the content script applies
  *   them only while its menu is really visible (no clickjacking).
@@ -177,6 +178,11 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
       case "menu-opened":
         if (typeof message.token !== "string" || message.token.length < 16) return false;
         await menus.set(tabId, message.token);
+        return true;
+      case "menu-closed":
+        // Only the menu that is closing (a newer one may already be open).
+        if ((await menus.get(tabId)) !== message.token) return false;
+        await menus.delete(tabId);
         return true;
       case "submitted": {
         if (!message.password) return null;

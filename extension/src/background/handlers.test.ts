@@ -27,7 +27,11 @@ function setup(responses: Record<string, unknown> = {}) {
       set: async (id, p) => void store.set(id, p),
       delete: async (id) => void store.delete(id),
     },
-    menus: { get: async (id) => menus.get(id), set: async (id, t) => void menus.set(id, t) },
+    menus: {
+      get: async (id) => menus.get(id),
+      set: async (id, t) => void menus.set(id, t),
+      delete: async (id) => void menus.delete(id),
+    },
     now: () => time,
   });
   // Menu messages carry the token of the menu the content script opened in tab 7.
@@ -141,6 +145,19 @@ describe("inline menu", () => {
     url: `chrome-extension://${host}${path}`,
     frameId: 4,
     tab: { id: 7 },
+  });
+
+  it("stops accepting a menu's token once that menu closed", async () => {
+    const { raw, menus } = setup();
+    const top = { ...tab(), tab: { id: 7 } };
+    // An older menu closing does not end the one open now.
+    await expect(raw({ kind: "menu-closed", token: "0123456789abcdef-older" }, top)).resolves.toBe(false);
+    expect(menus.get(7)).toBe(MENU_TOKEN);
+    await expect(raw({ kind: "menu-closed", token: MENU_TOKEN }, top)).resolves.toBe(true);
+    expect(menus.has(7)).toBe(false);
+    await expect(raw({ kind: "menu-state", token: MENU_TOKEN }, menu())).rejects.toMatchObject({ code: "forbidden" });
+    // The menu page itself cannot say a menu closed or opened: only the top frame's content script.
+    await expect(raw({ kind: "menu-closed", token: MENU_TOKEN }, menu())).rejects.toMatchObject({ code: "forbidden" });
   });
 
   it("only accepts menu messages carrying the token of the menu the content script opened", async () => {

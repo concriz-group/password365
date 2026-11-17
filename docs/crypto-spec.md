@@ -48,6 +48,8 @@ AUK  = HKDF(ikm = k_pw ‖ k_sk, salt = salt,    info = "quillock/v1/auk")
 | Context | Domain | Fields |
 |---|---|---|
 | Keyset | `quillock/v1/keyset` | store_id, salt, memory_kib, iterations, parallelism |
+| Keyset (store with an integrity sum) | `password365/v2/keyset` | store_id, salt, memory_kib, iterations, parallelism |
+| Integrity sum | `password365/v1/integrity-sum` | — |
 | Record | `quillock/v1/record` | store_id, record_id |
 | Item head | `quillock/v1/item-head` | vault_id, item_id, version |
 | Item details | `quillock/v1/item-details` | vault_id, item_id, version |
@@ -88,6 +90,25 @@ records(id BLOB PRIMARY KEY, blob BLOB)          -- id = vault/item UUID bytes
 
 Records that fail to decrypt are ignored and **never deleted** (forward compatibility and future
 hidden spaces, see `docs/ideas/secure-storage-and-unlock.md`).
+
+### 7.1 Integrity sum
+
+```
+k_int = HKDF(ikm = storage key, salt = store_id, info = "password365/v1/record-integrity")
+sum   = Σ HMAC-SHA-256(k_int, u32_be(len(id)) ‖ id ‖ blob)   mod 2^256, over every row of records
+integrity(id=1, sum = SealedBox(k_int, sum, AAD: integrity sum))
+```
+
+Updated in the same write as each record and checked on unlock: records put back, removed or
+added without the key are refused. The sum is sealed because it is linear: in the clear, two copies
+of the file would tell how to undo exactly the changes between them.
+
+A keyset wrapped with the `password365/v2/keyset` label **promises** the sum: such a store is
+refused when the sum is missing or not sealed. A keyset with the original `quillock/v1/keyset`
+label (written before the sum existed) still opens; on that unlock the store gets a sealed sum, a
+**new storage key** (every record re-sealed) and a v2 keyset, so the old header cannot be put back
+to skip the check. A v1 header that opens none of the store's records is refused. Quick-unlock
+copies carry the same promise in their version byte (2, label `password365/v2/quick-unlock`).
 
 ## 8. Changing the master password
 

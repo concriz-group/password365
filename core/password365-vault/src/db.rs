@@ -6,7 +6,7 @@ use password365_crypto::kdf::KdfParams;
 use rusqlite::config::DbConfig;
 use rusqlite::{Connection, OptionalExtension, params};
 
-use crate::header::Header;
+use crate::header::{Header, Sums};
 use crate::{Result, VaultError};
 
 /// Opaque record identifier.
@@ -327,7 +327,10 @@ impl Database {
         };
         self.conn.execute_batch("SAVEPOINT record_write")?;
         let result = (|| {
-            let mut sum = self.stored_sum()?.unwrap_or_default();
+            let mut sum = self
+                .stored_sum(&key)?
+                .map(|(sum, _)| sum)
+                .unwrap_or_default();
             if let Some(old) = self.record(id)? {
                 sum = crate::integrity::sub(&sum, &crate::integrity::element(&key, id, &old));
             }
@@ -335,7 +338,7 @@ impl Database {
             if let Some(new) = new {
                 sum = crate::integrity::add(&sum, &crate::integrity::element(&key, id, new));
             }
-            self.store_sum(&sum)
+            self.store_sum(&key, &sum)
         })();
         if result.is_ok() {
             self.conn.execute_batch("RELEASE record_write")?;
@@ -347,22 +350,44 @@ impl Database {
         result
     }
 
-    fn stored_sum(&self) -> Result<Option<crate::integrity::Sum>> {
+    /// The stored sum and whether it is sealed. Sealed with the MAC key, the
+    /// sum cannot be adjusted by someone comparing copies of the file (the
+    /// sum is linear: in the clear, the difference between two copies would
+    /// tell how to undo exactly the changes between them). A sum that does
+    /// not open was not written by this store: tampered.
+    fn stored_sum(
+        &self,
+        key: &password365_crypto::key::SymmetricKey,
+    ) -> Result<Option<(crate::integrity::Sum, bool)>> {
         self.conn.execute_batch(INTEGRITY)?;
         let blob: Option<Vec<u8>> = self
             .conn
             .query_row("SELECT sum FROM integrity WHERE id = 1", [], |r| r.get(0))
             .optional()?;
-        blob.map(|b| <crate::integrity::Sum>::try_from(b.as_slice()))
-            .transpose()
-            .map_err(|_| VaultError::Corrupt("integrity sum"))
+        let Some(blob) = blob else {
+            return Ok(None);
+        };
+        // Written in the clear by the first version that kept a sum.
+        if let Ok(plain) = <crate::integrity::Sum>::try_from(blob.as_slice()) {
+            return Ok(Some((plain, false)));
+        }
+        let opened = password365_crypto::aead::open(key, &blob, &crate::context::integrity_sum())
+            .map_err(|_| VaultError::Tampered)?;
+        <crate::integrity::Sum>::try_from(opened.as_slice())
+            .map(|sum| Some((sum, true)))
+            .map_err(|_| VaultError::Tampered)
     }
 
-    fn store_sum(&self, sum: &crate::integrity::Sum) -> Result<()> {
+    fn store_sum(
+        &self,
+        key: &password365_crypto::key::SymmetricKey,
+        sum: &crate::integrity::Sum,
+    ) -> Result<()> {
         self.conn.execute_batch(INTEGRITY)?;
+        let sealed = password365_crypto::aead::seal(key, sum, &crate::context::integrity_sum())?;
         self.conn.execute(
             "INSERT OR REPLACE INTO integrity (id, sum) VALUES (1, ?1)",
-            params![sum.as_slice()],
+            params![sealed],
         )?;
         Ok(())
     }
@@ -377,14 +402,23 @@ impl Database {
         }))
     }
 
-    /// After unlocking: checks the records against the stored sum (a store
-    /// without one gets it now) and keeps the sum from then on.
-    pub(crate) fn check_integrity(&self, key: password365_crypto::key::SymmetricKey) -> Result<()> {
+    /// After unlocking: checks the records against the stored sum and keeps
+    /// the sum from then on. A store that promises a sum
+    /// ([`Sums::Required`]) must hold a sealed one: without it, records could
+    /// be put back or removed and the sum simply deleted. Only a store written
+    /// before the sum existed ([`Sums::Adopt`]) gets one now (and one kept in
+    /// the clear is sealed).
+    pub(crate) fn check_integrity(
+        &self,
+        key: password365_crypto::key::SymmetricKey,
+        sums: Sums,
+    ) -> Result<()> {
         let now = self.current_sum(&key)?;
-        match self.stored_sum()? {
-            Some(stored) if stored != now => return Err(VaultError::Tampered),
-            Some(_) => {}
-            None => self.store_sum(&now)?,
+        match (self.stored_sum(&key)?, sums) {
+            (Some((stored, _)), _) if stored != now => return Err(VaultError::Tampered),
+            (Some((_, true)), _) => {}
+            (None | Some((_, false)), Sums::Required) => return Err(VaultError::Tampered),
+            (None | Some((_, false)), Sums::Adopt) => self.store_sum(&key, &now)?,
         }
         *self.integrity.borrow_mut() = Some(key);
         Ok(())
@@ -397,7 +431,7 @@ impl Database {
         &self,
         key: &password365_crypto::key::SymmetricKey,
     ) -> Result<()> {
-        self.store_sum(&self.current_sum(key)?)
+        self.store_sum(key, &self.current_sum(key)?)
     }
 
     /// The storage key changed (committed): later writes use `key`.

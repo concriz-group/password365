@@ -46,7 +46,7 @@ extension ──native messaging──▶ password365-host ──local socket─
 ## Security rules
 - Fill only on a user action (click in the popup or the inline menu); top frame only.
 - The inline menu is an extension page in an iframe inside a closed shadow root: the site can't
-  read the listed logins, and the background accepts menu actions only from that `menu.html`.
+  read the listed logins, and the background accepts menu actions only from that `menu.html`, carrying the one-time token the content script hands it by a message for the extension only (never in the frame's address) while that menu is open.
 - The page URL always comes from the browser (`sender.url` / `tabs.get`), never from the page.
 - Web pages (content scripts) cannot request fills; only the extension popup can.
 - The app re-checks the website match before releasing a password.

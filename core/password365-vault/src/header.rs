@@ -15,6 +15,16 @@ pub(crate) const FORMAT_VERSION: u32 = 1;
 /// Salt length in bytes.
 pub(crate) const SALT_LEN: usize = 32;
 
+/// Whether a store must already hold its integrity sum (see `integrity`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum Sums {
+    /// Written by a version that keeps the sum: a store without it, or with
+    /// one that is not sealed, was tampered with.
+    Required,
+    /// Written before the sum existed (or brand new): it gets one now.
+    Adopt,
+}
+
 /// Plaintext header row (the keyset inside is encrypted).
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub(crate) struct Header {
@@ -40,15 +50,35 @@ impl Header {
 
     /// Recovers the storage key with the given credentials.
     pub(crate) fn unlock(&self, credentials: &Credentials) -> Result<SymmetricKey> {
+        self.unlock_with_sums(credentials).map(|(key, _)| key)
+    }
+
+    /// [`Self::unlock`], also telling whether this store promises a sealed
+    /// integrity sum ([`Sums::Required`]) or was written before that
+    /// ([`Sums::Adopt`]). The promise is in the keyset's associated data, so
+    /// only someone with the master password and Secret Key can make or
+    /// remove it.
+    pub(crate) fn unlock_with_sums(
+        &self,
+        credentials: &Credentials,
+    ) -> Result<(SymmetricKey, Sums)> {
         if self.format_version != FORMAT_VERSION {
             return Err(VaultError::UnsupportedFormat(self.format_version));
         }
         let auk = derive_auk(&self.store_id, &self.salt, self.kdf, credentials)?;
-        let aad = context::keyset(&self.store_id, &self.salt, self.kdf);
-        unwrap_key(&auk, &self.wrapped_keyset, &aad).map_err(|e| match e {
-            CryptoError::Decrypt => VaultError::WrongCredentials,
-            other => VaultError::Crypto(other),
-        })
+        let current = context::keyset_with_sum(&self.store_id, &self.salt, self.kdf);
+        match unwrap_key(&auk, &self.wrapped_keyset, &current) {
+            Ok(key) => return Ok((key, Sums::Required)),
+            Err(CryptoError::Decrypt) => {}
+            Err(other) => return Err(VaultError::Crypto(other)),
+        }
+        let original = context::keyset(&self.store_id, &self.salt, self.kdf);
+        unwrap_key(&auk, &self.wrapped_keyset, &original)
+            .map(|key| (key, Sums::Adopt))
+            .map_err(|e| match e {
+                CryptoError::Decrypt => VaultError::WrongCredentials,
+                other => VaultError::Crypto(other),
+            })
     }
 
     /// Re-wraps the storage key under new credentials (fresh salt).
@@ -69,7 +99,11 @@ impl Header {
     ) -> Result<Self> {
         let salt: [u8; SALT_LEN] = random::bytes()?;
         let auk = derive_auk(&store_id, &salt, kdf, credentials)?;
-        let wrapped_keyset = wrap_key(&auk, storage_key, &context::keyset(&store_id, &salt, kdf))?;
+        let wrapped_keyset = wrap_key(
+            &auk,
+            storage_key,
+            &context::keyset_with_sum(&store_id, &salt, kdf),
+        )?;
         Ok(Self {
             format_version: FORMAT_VERSION,
             store_id,
@@ -77,6 +111,20 @@ impl Header {
             salt,
             wrapped_keyset,
         })
+    }
+}
+
+#[cfg(test)]
+impl Header {
+    /// This header as written before the integrity sum existed (no promise).
+    pub(crate) fn before_sums(&self, credentials: &Credentials) -> Self {
+        let key = self.unlock(credentials).unwrap();
+        let auk = derive_auk(&self.store_id, &self.salt, self.kdf, credentials).unwrap();
+        let aad = context::keyset(&self.store_id, &self.salt, self.kdf);
+        Self {
+            wrapped_keyset: wrap_key(&auk, &key, &aad).unwrap(),
+            ..self.clone()
+        }
     }
 }
 
@@ -116,6 +164,25 @@ mod tests {
     fn create_then_unlock_returns_same_key() {
         let (header, key) = Header::create(&creds("pw"), fast()).unwrap();
         assert_eq!(header.unlock(&creds("pw")).unwrap(), key);
+    }
+
+    #[test]
+    fn a_header_says_whether_the_store_promises_its_integrity_sum() {
+        let (header, key) = Header::create(&creds("pw"), fast()).unwrap();
+        assert_eq!(
+            header.unlock_with_sums(&creds("pw")).unwrap(),
+            (key.clone(), Sums::Required)
+        );
+        // One written before the sum existed still opens, without the promise.
+        let old = header.before_sums(&creds("pw"));
+        assert_eq!(
+            old.unlock_with_sums(&creds("pw")).unwrap(),
+            (key, Sums::Adopt)
+        );
+        assert!(matches!(
+            old.unlock_with_sums(&creds("nope")),
+            Err(VaultError::WrongCredentials)
+        ));
     }
 
     #[test]
