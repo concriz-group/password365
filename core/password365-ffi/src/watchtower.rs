@@ -99,6 +99,22 @@ impl From<WatchtowerDto> for WatchtowerReport {
 
 #[uniffi::export]
 impl Password365 {
+    /// Logins with no website: AutoFill never suggests them by themselves (only by picking
+    /// from the list), so the app asks the person to add the site.
+    pub fn logins_without_site(&self) -> Result<Vec<WatchItem>> {
+        Ok(self
+            .app()
+            .items("", None)?
+            .into_iter()
+            .filter(|s| s.kind == "login" && s.urls.iter().all(|u| u.trim().is_empty()))
+            .map(|s| WatchItem {
+                id: s.id,
+                title: s.title,
+                kind: s.kind,
+            })
+            .collect())
+    }
+
     /// The Watchtower report for every item outside the Archive (computed on this device).
     pub fn watchtower(&self) -> Result<WatchtowerReport> {
         Ok(self.app().watchtower()?.into())
@@ -136,5 +152,29 @@ mod tests {
             (Some(640), "good", 1)
         );
         assert_eq!((r.weak[0].id.as_str(), r.reused[0].items.len()), ("a", 2));
+    }
+
+    #[test]
+    fn logins_without_a_website_are_listed() {
+        use crate::tests::{MemoryKeeper, PASSWORD, vault};
+        use password365_app::item_input::ItemInput;
+        use std::sync::Arc;
+        let dir = tempfile::tempdir().unwrap();
+        let p = vault(&dir, Arc::new(MemoryKeeper::default()));
+        p.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+        let add = |title: &str, url: Option<&str>| {
+            p.app()
+                .create_item(&ItemInput {
+                    title: title.into(),
+                    urls: url.map(|u| vec![u.to_owned()]).unwrap_or_default(),
+                    ..ItemInput::default()
+                })
+                .unwrap();
+        };
+        add("No site", None);
+        add("Has site", Some("https://a.com"));
+        let found = p.logins_without_site().unwrap();
+        assert_eq!(found.len(), 1);
+        assert_eq!(found[0].title, "No site");
     }
 }
