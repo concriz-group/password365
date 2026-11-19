@@ -99,7 +99,7 @@ impl From<WatchtowerDto> for WatchtowerReport {
 
 #[uniffi::export]
 impl Password365 {
-    /// Logins with no website: AutoFill never suggests them by themselves (only by picking
+    /// Logins with no website: `AutoFill` never suggests them by themselves (only by picking
     /// from the list), so the app asks the person to add the site.
     pub fn logins_without_site(&self) -> Result<Vec<WatchItem>> {
         Ok(self
