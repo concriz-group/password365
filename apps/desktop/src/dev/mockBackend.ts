@@ -205,6 +205,8 @@ export function createMockBackend(): Invoke {
         return null;
       case "adopt_master_password":
         return null;
+      case "save_emergency_kit":
+        return a.password === "demo" ? "kit-demo" : fail("wrong_credentials", "wrong master password (demo: demo)");
       case "reveal_secret_key":
         return a.password === "demo" ? "P365-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO-DEMO" : fail("wrong_credentials", "wrong master password (demo: demo)");
       case "change_master_password":

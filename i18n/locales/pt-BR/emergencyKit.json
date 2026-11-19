@@ -3,5 +3,7 @@
   "hint": "Imprima uma nova cópia da folha com a sua Secret Key, por exemplo se a antiga se perdeu. Digite antes a sua senha mestra.",
   "form": "Imprimir Emergency Kit",
   "masterPassword": "Senha mestra",
-  "print": "Imprimir Emergency Kit"
+  "print": "Imprimir Emergency Kit",
+  "keepInVault": "Salvar no cofre",
+  "kept": "Salvo no cofre como documento."
 }

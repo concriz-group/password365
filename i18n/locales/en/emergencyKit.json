@@ -3,5 +3,7 @@
   "hint": "Print a new copy of the sheet with your Secret Key, for example if the old one was lost. Enter your master password first.",
   "form": "Print Emergency Kit",
   "masterPassword": "Master password",
-  "print": "Print Emergency Kit"
+  "print": "Print Emergency Kit",
+  "keepInVault": "Save in the vault",
+  "kept": "Saved in your vault as a document."
 }

@@ -87,6 +87,16 @@ pub fn adopt_master_password(state: State<'_, SharedState>, password: SecretStri
     state.with(|s| s.adopt_master_password(password))
 }
 
+/// Keeps the Emergency Kit PDF in the vault as a Document (once); needs the master password.
+#[tauri::command]
+pub fn save_emergency_kit(
+    state: State<'_, SharedState>,
+    password: SecretString,
+    text: password365_app::emergency_kit::KitText,
+) -> Result<String> {
+    state.with(|s| s.save_emergency_kit(password, &text))
+}
+
 #[tauri::command]
 pub fn reveal_secret_key(state: State<'_, SharedState>, password: SecretString) -> Result<String> {
     state.with(|s| s.reveal_secret_key(password))

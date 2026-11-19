@@ -173,9 +173,23 @@ export function createClient(invoke: Invoke) {
     updateSettings: (settings: Settings) => call<void>("update_settings", { settings }),
     printPage: () => call<void>("print_page"),
     revealSecretKey: (password: string) => call<string>("reveal_secret_key", { password }),
+    /** Keeps the Emergency Kit PDF in the vault (once) and returns the item's id. */
+    saveEmergencyKit: (password: string, text: KitText) => call<string>("save_emergency_kit", { password, text }),
     pendingPasswordChange: () => call<PasswordUpdate | null>("pending_password_change"),
     adoptMasterPassword: (password: string) => call<void>("adopt_master_password", { password }),
   };
 }
 
 export type Client = ReturnType<typeof createClient>;
+
+/** The Emergency Kit sheet's words, already translated. */
+export interface KitText {
+  title: string;
+  created: string;
+  keep: string;
+  secret_key_label: string;
+  master_password_label: string;
+  write_here: string;
+  how_to: string;
+  steps: string[];
+}

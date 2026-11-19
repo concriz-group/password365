@@ -12,6 +12,7 @@ import { JoinDevice } from "./JoinDevice";
 import { Restore } from "./Restore";
 import { usePasswordStrength } from "../hooks/usePasswordStrength";
 import { useT } from "../i18n";
+import { emergencyKitText } from "../lib/emergencyKitText";
 
 /** First run: choose a master password, then save the Secret Key. */
 export function Onboarding({ onDone, files }: { onDone: () => void; files?: FilePicker }) {
@@ -34,6 +35,8 @@ export function Onboarding({ onDone, files }: { onDone: () => void; files?: File
     e.preventDefault();
     const key = await create.run(password, confirmation);
     if (key) {
+      // The Secret Key also goes into the vault as the Emergency Kit PDF (best effort).
+      await client.saveEmergencyKit(password, emergencyKitText(t, Date.now())).catch(() => undefined);
       setSecretKey(key);
       setCreatedAt(Date.now());
       setPassword("");

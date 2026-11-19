@@ -3,6 +3,7 @@ import { useState, type FormEvent } from "react";
 import { useClient } from "../api/context";
 import { useAction } from "../hooks/useAction";
 import { useT } from "../i18n";
+import { emergencyKitText } from "../lib/emergencyKitText";
 import { EmergencyKit } from "./EmergencyKit";
 import { ErrorMessage } from "./ErrorMessage";
 import { PasswordInput } from "./PasswordInput";
@@ -29,6 +30,13 @@ export function EmergencyKitSection() {
     }
   });
 
+  const [kept, setKept] = useState(false);
+  const keep = useAction(async () => {
+    await client.saveEmergencyKit(password, emergencyKitText(t, Date.now()));
+    setPassword("");
+    setKept(true);
+  });
+
   function submit(e: FormEvent) {
     e.preventDefault();
     void print.run();
@@ -40,10 +48,14 @@ export function EmergencyKitSection() {
       <p className="hint">{t("emergencyKit.hint")}</p>
       <form onSubmit={submit} aria-label={t("emergencyKit.form")}>
         <PasswordInput label={t("emergencyKit.masterPassword")} value={password} onChange={setPassword} />
-        <ErrorMessage error={print.error} />
+        <ErrorMessage error={print.error ?? keep.error} />
         <button type="submit" disabled={!password || print.busy}>
           {t("emergencyKit.print")}
         </button>
+        <button type="button" disabled={!password || keep.busy} onClick={() => void keep.run()}>
+          {t("emergencyKit.keepInVault")}
+        </button>
+        {kept && <p className="hint">{t("emergencyKit.kept")}</p>}
       </form>
       {secretKey && <EmergencyKit secretKey={secretKey} createdAt={Date.now()} />}
     </>

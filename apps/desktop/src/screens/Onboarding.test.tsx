@@ -36,7 +36,8 @@ describe("Onboarding", () => {
     const user = userEvent.setup();
     const onDone = vi.fn();
     const createAccount = vi.fn().mockResolvedValue("P365-AAAA-BBBB");
-    renderWithClient(<Onboarding onDone={onDone} />, fakeClient({ createAccount }));
+    const saveEmergencyKit = vi.fn().mockResolvedValue("item-1");
+    renderWithClient(<Onboarding onDone={onDone} />, fakeClient({ createAccount, saveEmergencyKit }));
 
     await user.type(screen.getByLabelText("Master password"), PW);
     await user.type(screen.getByLabelText("Repeat master password"), PW);
@@ -44,6 +45,8 @@ describe("Onboarding", () => {
 
     expect(createAccount).toHaveBeenCalledWith(PW, PW);
     expect(await screen.findByLabelText("Secret Key")).toHaveTextContent("P365-AAAA-BBBB");
+    // The Emergency Kit PDF is also kept in the new vault.
+    expect(saveEmergencyKit).toHaveBeenCalledWith(PW, expect.objectContaining({ title: "Password365 Emergency Kit" }));
     const open = screen.getByRole("button", { name: "Open my vault" });
     expect(open).toBeDisabled();
     await user.click(screen.getByLabelText("I have saved my Secret Key"));

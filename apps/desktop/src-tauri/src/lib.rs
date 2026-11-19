@@ -150,6 +150,7 @@ pub fn run() {
             commands::reveal,
             commands::totp_code,
             commands::reveal_secret_key,
+            commands::save_emergency_kit,
             commands::pending_password_change,
             commands::adopt_master_password,
             commands::create_item,
