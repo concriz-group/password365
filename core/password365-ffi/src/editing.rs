@@ -310,6 +310,12 @@ impl Password365 {
         Ok(self.app().set_archived(&id, archived)?)
     }
 
+    /// Moves logins stored twice (same site, username and password) to Recently Deleted;
+    /// returns how many moved.
+    pub fn remove_duplicate_logins(&self) -> Result<u64> {
+        Ok(self.app().remove_duplicate_logins()? as u64)
+    }
+
     /// Moves an item to Recently Deleted.
     pub fn delete_item(&self, id: String) -> Result<()> {
         Ok(self.app().delete_item(&id)?)

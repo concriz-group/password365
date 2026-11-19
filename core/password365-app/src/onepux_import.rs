@@ -8,6 +8,7 @@ use std::path::Path;
 use password365_crypto::secret::SecretString;
 use password365_import::item::ImportedItem;
 use password365_import::{bitwarden, cxf, kdbx, onepux};
+use password365_model::ItemKind;
 use password365_model::item_template::FieldInput;
 
 use crate::dto::ImportSummary;
@@ -84,6 +85,16 @@ fn to_input(item: &ImportedItem, vault: &str) -> ItemInput {
         fields: (!fields.is_empty()).then_some(fields),
         ..ItemInput::default()
     }
+}
+
+/// What identifies a login: each of its sites (origin) with the lowercase username.
+pub(crate) fn login_keys(urls: &[String], username: Option<&str>) -> Vec<(String, String)> {
+    let user = username.unwrap_or_default().trim().to_lowercase();
+    urls.iter()
+        .map(|u| password365_import::url_key::origin_key(u))
+        .filter(|o| !o.is_empty())
+        .map(|o| (o, user.clone()))
+        .collect()
 }
 
 impl AppService {
@@ -186,18 +197,26 @@ impl AppService {
         vault_id: Option<&str>,
     ) -> Result<(ImportSummary, Vec<Option<String>>)> {
         let vault = self.vault_or_default(vault_id)?.to_string();
-        let existing: Vec<(String, String, Option<String>)> = self
-            .session()?
-            .items()
-            .into_iter()
-            .map(|s| {
-                (
-                    s.kind.as_str().to_owned(),
-                    s.overview.title.clone(),
-                    s.overview.username.clone(),
-                )
-            })
-            .collect();
+        let (existing, mut known_logins) = {
+            let session = self.session()?;
+            let items = session.items();
+            let existing: Vec<(String, String, Option<String>)> = items
+                .iter()
+                .map(|s| {
+                    (
+                        s.kind.as_str().to_owned(),
+                        s.overview.title.clone(),
+                        s.overview.username.clone(),
+                    )
+                })
+                .collect();
+            let logins: std::collections::HashSet<(String, String)> = items
+                .iter()
+                .filter(|s| s.kind == ItemKind::Login)
+                .flat_map(|s| login_keys(&s.overview.urls, s.overview.username.as_deref()))
+                .collect();
+            (existing, logins)
+        };
         let mut summary = ImportSummary::default();
         let mut created_ids = vec![None; items.len()];
         for (index, item) in items.iter().enumerate() {
@@ -207,10 +226,18 @@ impl AppService {
                 input.title.clone(),
                 item.username.clone(),
             );
-            if existing.contains(&key) {
+            // A login already stored for the same site and username (whoever imported it, under
+            // whatever title) or repeated inside the file is not added again, as in a CSV import.
+            let keys = if item.kind == ItemKind::Login {
+                login_keys(&item.urls, item.username.as_deref())
+            } else {
+                Vec::new()
+            };
+            if existing.contains(&key) || keys.iter().any(|k| known_logins.contains(k)) {
                 summary.identical += 1;
                 continue;
             }
+            known_logins.extend(keys);
             match self.create_item(&input) {
                 Ok(created) => {
                     summary.imported += 1;
@@ -331,5 +358,45 @@ mod tests {
                 .import_1pux(&dir.path().join("missing.1pux"), None)
                 .is_err()
         );
+    }
+}
+
+#[cfg(test)]
+mod login_dedupe_tests {
+    use super::*;
+    use crate::item_input::ItemInput;
+    use crate::service::tests::with_account;
+
+    #[test]
+    fn a_login_already_stored_for_the_same_site_and_user_is_not_added_again() {
+        let mut fx = with_account();
+        fx.app
+            .create_item(&ItemInput {
+                title: "Apple title".into(),
+                urls: vec!["https://a.com/login".into()],
+                username: Some("Ann".into()),
+                ..ItemInput::default()
+            })
+            .unwrap();
+        let item = |title: &str, url: &str| ImportedItem {
+            kind: ItemKind::Login,
+            title: title.into(),
+            username: Some("ann".into()),
+            urls: vec![url.into()],
+            password: None,
+            notes: None,
+            totp: None,
+            tags: vec![],
+            favorite: false,
+            archived: false,
+            fields: vec![],
+        };
+        let items = [
+            item("a.com", "https://a.com"),
+            item("b", "https://b.com"),
+            item("b2", "https://b.com/x"),
+        ];
+        let (summary, _) = fx.app.import_items(&items, 0, None).unwrap();
+        assert_eq!((summary.imported, summary.identical), (1, 2));
     }
 }
