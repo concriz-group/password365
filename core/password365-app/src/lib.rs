@@ -18,6 +18,7 @@ pub mod cxf_export;
 pub mod devices;
 pub mod dto;
 pub mod duplicates;
+pub mod emergency_kit;
 mod error;
 pub mod field_layout;
 pub mod item_icon;

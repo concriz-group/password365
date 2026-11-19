@@ -23,6 +23,7 @@ uniffi::setup_scaffolding!();
 
 mod autofill;
 mod editing;
+mod emergency_kit;
 mod importing;
 pub use autofill::{FillValues, LoginIdentity, PasskeyCreated, PasskeyIdentity, PasskeySignIn};
 mod pairing;
@@ -152,6 +153,23 @@ pub struct ItemView {
     pub favorite: bool,
     /// In the Archive.
     pub archived: bool,
+    /// Attached files.
+    pub attachments: Vec<AttachmentRow>,
+}
+
+/// A file attached to an item.
+#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+pub struct AttachmentRow {
+    /// Id.
+    pub id: String,
+    /// File name.
+    pub name: String,
+    /// Size in bytes.
+    pub size: u64,
+    /// Media type ("" when unknown).
+    pub content_type: String,
+    /// The bytes are on this device.
+    pub available: bool,
 }
 
 /// A one-time password code.
@@ -303,6 +321,17 @@ impl Password365 {
             tags: item.summary.tags,
             favorite: item.summary.favorite,
             archived: item.summary.archived,
+            attachments: item
+                .attachments
+                .into_iter()
+                .map(|a| AttachmentRow {
+                    id: a.id,
+                    name: a.name,
+                    size: a.size,
+                    content_type: a.content_type,
+                    available: a.available,
+                })
+                .collect(),
         })
     }
 
