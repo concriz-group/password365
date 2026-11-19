@@ -23,11 +23,13 @@ uniffi::setup_scaffolding!();
 
 mod autofill;
 mod editing;
+mod importing;
 pub use autofill::{FillValues, LoginIdentity, PasskeyCreated, PasskeyIdentity, PasskeySignIn};
 mod pairing;
 mod security;
 mod sync_files;
 pub use editing::{Category, FieldDraft, Generated, ItemDraft, Recipe, TemplateField};
+pub use importing::ImportResult;
 pub use pairing::{Device, SyncSummary};
 pub use security::MobileSettings;
 

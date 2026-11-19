@@ -6,7 +6,7 @@ use super::*;
 
 /// A Keychain in memory.
 #[derive(Default)]
-struct MemoryKeeper(Mutex<Option<String>>);
+pub(crate) struct MemoryKeeper(Mutex<Option<String>>);
 
 impl KeyKeeper for MemoryKeeper {
     fn load(&self) -> Option<String> {
@@ -21,9 +21,9 @@ impl KeyKeeper for MemoryKeeper {
     }
 }
 
-const PASSWORD: &str = "correct horse battery";
+pub(crate) const PASSWORD: &str = "correct horse battery";
 
-fn vault(dir: &tempfile::TempDir, keeper: Arc<MemoryKeeper>) -> Arc<Password365> {
+pub(crate) fn vault(dir: &tempfile::TempDir, keeper: Arc<MemoryKeeper>) -> Arc<Password365> {
     Password365::with_kdf(
         dir.path().to_str().unwrap(),
         keeper,
