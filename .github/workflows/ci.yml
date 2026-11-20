@@ -81,7 +81,8 @@ jobs:
 
   desktop-e2e:
     # The desktop UI in a real browser against the in-memory demo backend (no Tauri).
-    runs-on: ubuntu-latest
+    # ubuntu-24.04, not -latest: this Playwright does not support Ubuntu 26.04 yet.
+    runs-on: ubuntu-24.04
     defaults:
       run:
         working-directory: apps/desktop
