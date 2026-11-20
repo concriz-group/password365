@@ -3,3 +3,7 @@ dist/
 coverage/
 src-tauri/target/
 src-tauri/gen/
+
+# Playwright
+test-results/
+playwright-report/

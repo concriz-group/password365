@@ -89,7 +89,8 @@ function storeFields(kind: string, input: ItemInput, item: Pick<Stored, "fields"
 }
 
 export function createMockBackend(): Invoke {
-  let initialized = true;
+  // `?fresh=1`: no account yet (the first-run screens; used by the browser end-to-end tests).
+  let initialized = !new URLSearchParams(window.location.search).has("fresh");
   let unlocked = false;
   const vaults: Vault[] = [
     { id: "v-personal", name: "Personal", item_count: 0 },

@@ -11,7 +11,8 @@
     "test": "vitest run",
     "coverage": "vitest run --coverage",
     "tauri": "tauri",
-    "licenses": "python3 ../../scripts/third-party-licenses.py src-tauri/Cargo.toml . src/generated/third-party-licenses.json"
+    "licenses": "python3 ../../scripts/third-party-licenses.py src-tauri/Cargo.toml . src/generated/third-party-licenses.json",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@fontsource/nunito": "^5.3.0",
@@ -21,6 +22,7 @@
     "react-dom": "19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@tauri-apps/cli": "2.12.4",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
