@@ -3,6 +3,12 @@
 [advisories]
 version = 2
 yanked = "deny"
+ignore = [
+    # chrono is "unmaintained" (a notice, not a vulnerability). It only comes with the KeePass
+    # reader (keepass 0.14 to 0.17 all use it), which reads database dates. Revisit when keepass
+    # drops it.
+    "RUSTSEC-2026-0543",
+]
 
 [licenses]
 version = 2
