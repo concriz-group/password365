@@ -140,13 +140,27 @@ impl Password365 {
 
     /// New device: opens the account with its master password (retry on a
     /// wrong one) and tells the other device this one's name.
-    pub fn join_finish(&self, password: String, device_name: String) -> Result<()> {
+    ///
+    /// `replace_key`: this device still holds the Secret Key of an earlier account (the call
+    /// failed with `foreign_secret_key` and the person agreed to replace it).
+    pub fn join_finish(
+        &self,
+        password: String,
+        device_name: String,
+        replace_key: bool,
+    ) -> Result<()> {
         let (joining, bundle) = {
             let mut slot = self.join_slot();
             let bundle = slot.bundle.clone().ok_or_else(step_missing)?;
             (slot.joining.take().ok_or_else(step_missing)?, bundle)
         };
-        if let Err(e) = self.app().join_account(&bundle, password.into()) {
+        let joined = if replace_key {
+            self.app()
+                .join_account_replacing_key(&bundle, password.into())
+        } else {
+            self.app().join_account(&bundle, password.into())
+        };
+        if let Err(e) = joined {
             self.join_slot().joining = Some(joining);
             return Err(e.into());
         }

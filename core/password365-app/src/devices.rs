@@ -252,16 +252,33 @@ impl AppService {
     /// keeps the Secret Key in the keychain and unlocks. A wrong master
     /// password fails without writing anything (the user can retry).
     pub fn join_account(&mut self, bundle: &[u8], password: SecretString) -> Result<()> {
-        self.guarded(|s| s.join_account_unguarded(bundle, password))
+        self.guarded(|s| s.join_account_unguarded(bundle, password, false))
     }
 
-    fn join_account_unguarded(&mut self, bundle: &[u8], password: SecretString) -> Result<()> {
+    /// Like [`Self::join_account`], but when the keychain still holds the Secret Key of a
+    /// different (earlier) account it is replaced by the new account's key. Only after the
+    /// person confirmed it ([`AppError::ForeignSecretKey`]): the old key is erased from this
+    /// device (the vault that it opened is already gone from here).
+    pub fn join_account_replacing_key(
+        &mut self,
+        bundle: &[u8],
+        password: SecretString,
+    ) -> Result<()> {
+        self.guarded(|s| s.join_account_unguarded(bundle, password, true))
+    }
+
+    fn join_account_unguarded(
+        &mut self,
+        bundle: &[u8],
+        password: SecretString,
+        replace_key: bool,
+    ) -> Result<()> {
         if self.status().initialized {
             return Err(AppError::AlreadyInitialized);
         }
         let (session, secret_key) =
             Store::join(&self.config.store_path, bundle, password, self.config.kdf)?;
-        if let Err(e) = self.remember_joined_key(&secret_key) {
+        if let Err(e) = self.remember_joined_key(&secret_key, replace_key) {
             // Never leave a store this device cannot unlock.
             drop(session);
             let _ = std::fs::remove_file(&self.config.store_path);
@@ -274,13 +291,15 @@ impl AppService {
     /// Stores the account's Secret Key. A key left by an earlier, interrupted
     /// attempt to join the same account is kept; a different account's key is
     /// never overwritten.
-    fn remember_joined_key(&self, key: &AccountSecretKey) -> Result<()> {
+    fn remember_joined_key(&self, key: &AccountSecretKey, replace: bool) -> Result<()> {
         match self.keys.load()? {
             None => self.keys.save(key),
             Some(stored) if stored.expose() == key.expose() => Ok(()),
-            Some(_) => Err(AppError::Validation(
-                "This computer already holds the Secret Key of a different account.".into(),
-            )),
+            Some(_) if replace => {
+                self.keys.remove()?;
+                self.keys.save(key)
+            }
+            Some(_) => Err(AppError::ForeignSecretKey),
         }
     }
 

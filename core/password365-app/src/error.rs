@@ -50,6 +50,10 @@ pub enum AppError {
     /// recently: type the master password to go on.
     #[error("confirm it is you: type your master password")]
     VerificationNeeded,
+    /// This device still holds the Secret Key of another account (left by an earlier vault).
+    /// Joining a new account would replace it: the caller must ask first.
+    #[error("this device still holds the Secret Key of a different account")]
+    ForeignSecretKey,
     /// Too many wrong master passwords: wait this many seconds.
     #[error("too many wrong passwords — try again in {0} s")]
     TooManyAttempts(u64),
@@ -73,6 +77,7 @@ impl AppError {
             Self::SecretKeyRequired => "secret_key_required",
             Self::PasswordRequired => "password_required",
             Self::VerificationNeeded => "verification_needed",
+            Self::ForeignSecretKey => "foreign_secret_key",
         }
     }
 }

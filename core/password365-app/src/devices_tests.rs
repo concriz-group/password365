@@ -332,10 +332,27 @@ fn a_different_accounts_key_is_kept_and_nothing_is_created() {
     b.keys.save(&foreign).unwrap();
     assert_eq!(
         b.app.join_account(&bundle, PW.into()).unwrap_err().code(),
-        "validation"
+        "foreign_secret_key"
     );
     assert!(!b.app.status().initialized, "no store is left behind");
     assert_eq!(b.keys.load().unwrap().unwrap().expose(), foreign.expose());
+}
+
+#[test]
+fn a_different_accounts_key_is_replaced_only_when_asked_to() {
+    let mut a = with_account();
+    let bundle = bundle_of(&mut a);
+    let other = with_account();
+    let mut b = fresh();
+    b.keys.save(&other.keys.load().unwrap().unwrap()).unwrap();
+    b.app
+        .join_account_replacing_key(&bundle, PW.into())
+        .unwrap();
+    assert!(b.app.status().unlocked);
+    assert_eq!(
+        b.keys.load().unwrap().unwrap().expose(),
+        a.keys.load().unwrap().unwrap().expose()
+    );
 }
 
 #[test]
