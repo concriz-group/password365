@@ -5,6 +5,16 @@ release page and the app's update notice show the section of the new version.
 
 ## [Unreleased]
 
+## [0.1.3] — 2026-11-21
+
+### Fixed
+- Texts, fields, buttons and links no longer touch each other on the first-run screens (create
+  vault, set up with another device, restore a backup) and in the Devices and Settings panels.
+
+### Added
+- Add a device from the iPhone: the phone shows the QR code, and a computer set up with "Set up with
+  another device" joins by pasting the pairing code or link. This version already reads both.
+
 ## [0.1.2] — 2026-11-21
 
 ### Fixed

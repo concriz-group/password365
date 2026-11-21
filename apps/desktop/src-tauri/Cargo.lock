@@ -4028,7 +4028,7 @@ dependencies = [
 
 [[package]]
 name = "password365-desktop"
-version = "0.1.2"
+version = "0.1.3"
 dependencies = [
  "active-win-pos-rs",
  "arboard",
