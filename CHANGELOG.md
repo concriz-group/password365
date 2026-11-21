@@ -5,25 +5,7 @@ release page and the app's update notice show the section of the new version.
 
 ## [Unreleased]
 
-## [0.1.1] — 2026-11-21
-
-### Added
-- The Emergency Kit is also kept inside your vault as a PDF document (created with a new
-  account; Settings › Security › Emergency Kit › Save in the vault), so you can see, print or
-  share your Secret Key from any unlocked device.
-
-### Changed
-- Imports from other managers (1Password, Bitwarden, KeePass, Credential Exchange) no longer add
-  a login you already have for the same site and username.
-- The browser extension's "save password" prompt follows the site (registrable domain), not the
-  exact address the form was submitted from.
-
-### Security
-- The remaining low findings of the outside review: a sealed integrity sum, a message-bound menu
-  token for the extension, an attachment allow-list, and passkeys claiming user verification only
-  when it really happened.
-
-## [0.1.0] — 2026-11-16
+## [0.1.0] — 2026-11-21
 
 First public version.
 
@@ -40,3 +22,11 @@ First public version.
 - Import from 1Password, Bitwarden, KeePass/KeePassXC, browsers and CSV; export to CSV and CXF.
 - Update checks (off until you choose), with what changed and "Skip this version".
 - English, Português and Español.
+- The Emergency Kit is also kept inside your vault as a PDF document (created with a new
+  account; Settings › Security › Emergency Kit › Save in the vault), so you can see, print or
+  share your Secret Key from any unlocked device.
+
+### Security
+- The remaining low findings of the outside review: a sealed integrity sum, a message-bound menu
+  token for the extension, an attachment allow-list, and passkeys claiming user verification only
+  when it really happened.
