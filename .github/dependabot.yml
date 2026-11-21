@@ -1,0 +1,28 @@
+# Weekly dependency updates, grouped so a week is one pull request per ecosystem.
+# cargo-deny (see core/deny.toml) still decides what is allowed.
+version: 2
+updates:
+  - package-ecosystem: github-actions   # pinned by commit SHA in the workflows
+    directory: /
+    schedule: { interval: weekly }
+    groups: { actions: { patterns: ["*"] } }
+  - package-ecosystem: cargo
+    directory: /core
+    schedule: { interval: weekly }
+    groups: { rust: { patterns: ["*"] } }
+  - package-ecosystem: cargo
+    directory: /apps/desktop/src-tauri
+    schedule: { interval: weekly }
+    groups: { tauri: { patterns: ["*"] } }
+  - package-ecosystem: npm
+    directory: /apps/desktop
+    schedule: { interval: weekly }
+    groups: { desktop: { patterns: ["*"] } }
+  - package-ecosystem: npm
+    directory: /extension
+    schedule: { interval: weekly }
+    groups: { extension: { patterns: ["*"] } }
+  - package-ecosystem: npm
+    directory: /site
+    schedule: { interval: weekly }
+    groups: { site: { patterns: ["*"] } }
