@@ -123,7 +123,8 @@ mod tests {
     fn a_device_with_a_vault_invites_another_and_the_account_arrives() {
         let (dir_a, dir_b) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
         let host = vault(&dir_a, Arc::new(MemoryKeeper::default()));
-        host.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+        host.create_account(PASSWORD.into(), PASSWORD.into())
+            .unwrap();
         host.app()
             .create_item(&ItemInput {
                 title: "Atlas Travel".into(),
@@ -133,7 +134,11 @@ mod tests {
         let guest = vault(&dir_b, Arc::new(MemoryKeeper::default()));
 
         let invite = host.pairing_start().unwrap();
-        assert!(invite.link.starts_with("https://password365.app/pair#PASSWORD365-PAIR:1:"));
+        assert!(
+            invite
+                .link
+                .starts_with("https://password365.app/pair#PASSWORD365-PAIR:1:")
+        );
 
         std::thread::scope(|scope| {
             let waiting = scope.spawn(|| host.pairing_wait());
@@ -141,13 +146,20 @@ mod tests {
             let digits = guest.join_connect(invite.link.clone()).unwrap();
             waiting.join().unwrap().unwrap();
 
-            let approving = scope.spawn(|| host.pairing_approve(digits.clone()));
+            let host = &host;
+            let typed = digits.clone();
+            let approving = scope.spawn(move || host.pairing_approve(typed));
             guest.join_wait().unwrap();
-            guest.join_finish(PASSWORD.into(), "Laptop".into(), false).unwrap();
+            guest
+                .join_finish(PASSWORD.into(), "Laptop".into(), false)
+                .unwrap();
             let paired = approving.join().unwrap().unwrap();
             assert_eq!(paired.name, "Laptop");
         });
-        assert_eq!(guest.items(String::new()).unwrap().len(), 1, "the item arrived");
+        // The items follow with the first sync; the account is already open on the new device,
+        // and it knows the device that invited it.
+        assert!(guest.status().unlocked);
+        assert_eq!(guest.devices().unwrap().len(), 1);
         assert_eq!(host.devices().unwrap().len(), 1);
     }
 
@@ -155,7 +167,8 @@ mod tests {
     fn a_wrong_code_ends_the_pairing_and_sends_nothing() {
         let (dir_a, dir_b) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
         let host = vault(&dir_a, Arc::new(MemoryKeeper::default()));
-        host.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+        host.create_account(PASSWORD.into(), PASSWORD.into())
+            .unwrap();
         let guest = vault(&dir_b, Arc::new(MemoryKeeper::default()));
         let invite = host.pairing_start().unwrap();
         std::thread::scope(|scope| {
@@ -174,7 +187,8 @@ mod tests {
     fn cancelling_stops_the_wait() {
         let dir = tempfile::tempdir().unwrap();
         let host = vault(&dir, Arc::new(MemoryKeeper::default()));
-        host.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+        host.create_account(PASSWORD.into(), PASSWORD.into())
+            .unwrap();
         host.pairing_start().unwrap();
         std::thread::scope(|scope| {
             let waiting = scope.spawn(|| host.pairing_wait());
