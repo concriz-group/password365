@@ -3,7 +3,7 @@
 Thank you for helping! Every kind of contribution counts: bug reports, ideas, translations, code
 and reviews.
 
-- **Bugs and ideas:** [open an issue](https://github.com/remofurlanetto/password365/issues/new/choose)
+- **Bugs and ideas:** [open an issue](https://github.com/concriz-group/password365/issues/new/choose)
   (or, in the app, Settings › About › Help and feedback). Never paste passwords, Secret Keys or
   vault files.
 - **Security problems:** privately, never in an issue — see [SECURITY.md](SECURITY.md).

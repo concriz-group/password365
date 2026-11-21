@@ -6,7 +6,7 @@ Password365 keeps people's most sensitive data, so security reports are our firs
 
 **Please do not open a public issue.** Instead:
 
-- Use GitHub's private report: [Report a vulnerability](https://github.com/remofurlanetto/password365/security/advisories/new)
+- Use GitHub's private report: [Report a vulnerability](https://github.com/concriz-group/password365/security/advisories/new)
   (only the maintainers see it), or
 - write to **hello@password365.app** with "SECURITY" in the subject.
 

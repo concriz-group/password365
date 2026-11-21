@@ -4,7 +4,7 @@
 use password365_app::{AppError, Result};
 use serde::Deserialize;
 
-const REPO: &str = "https://github.com/remofurlanetto/password365";
+const REPO: &str = "https://github.com/concriz-group/password365";
 
 /// What the user wants to do.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]

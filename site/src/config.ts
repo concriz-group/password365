@@ -8,9 +8,9 @@ export const site = {
    * once the first release is out (until then the Download page says "Coming soon").
    */
   released: true,
-  latest: "https://github.com/remofurlanetto/password365/releases/latest/download/",
+  latest: "https://github.com/concriz-group/password365/releases/latest/download/",
   /** The public repository (code, specifications, issues). */
-  repo: "https://github.com/remofurlanetto/password365",
+  repo: "https://github.com/concriz-group/password365",
   /** Store pages, once listed (null: not yet). */
   stores: {
     chrome: null as string | null,

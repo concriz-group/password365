@@ -7,7 +7,7 @@ body:
       value: |
         Thanks for taking the time! **Never paste passwords, your Secret Key, your master password or
         vault files here** — issues are public. Security problems go to
-        [a private report](https://github.com/remofurlanetto/password365/security/advisories/new) instead.
+        [a private report](https://github.com/concriz-group/password365/security/advisories/new) instead.
   - type: dropdown
     id: app
     attributes:

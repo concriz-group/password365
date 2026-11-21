@@ -7,8 +7,8 @@ encrypted vault **on your own devices**. Your computer, phone and tablet sync **
 other** — on your network or with a file you carry — never through a server. No account, no cloud,
 no tracking.
 
-[Website](https://password365.app) · [Download](https://github.com/remofurlanetto/password365/releases/latest) ·
-[Security](docs/crypto-spec.md) · [Report a bug](https://github.com/remofurlanetto/password365/issues/new/choose)
+[Website](https://password365.app) · [Download](https://github.com/concriz-group/password365/releases/latest) ·
+[Security](docs/crypto-spec.md) · [Report a bug](https://github.com/concriz-group/password365/issues/new/choose)
 
 > **Status:** early releases. Password365 has not had an independent security audit yet.
 
@@ -29,7 +29,7 @@ no tracking.
 ## Install
 
 Download the newest version for your system from the
-[releases page](https://github.com/remofurlanetto/password365/releases/latest):
+[releases page](https://github.com/concriz-group/password365/releases/latest):
 
 | System | File |
 |---|---|

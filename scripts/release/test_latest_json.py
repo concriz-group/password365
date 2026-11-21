@@ -5,7 +5,7 @@ from latest_json import manifest, notes
 
 NOW = datetime.datetime(2026, 11, 16, 12, 0, tzinfo=datetime.timezone.utc)
 SIGS = {"Password365-macOS.app.tar.gz": "mac-sig\n", "Password365-Windows-setup.exe": "win-sig", "Password365-Linux.AppImage": "linux-sig"}
-URL = "https://github.com/remofurlanetto/password365/releases/download/v0.2.0"
+URL = "https://github.com/concriz-group/password365/releases/download/v0.2.0"
 CHANGELOG = """# Changelog
 
 ## [Unreleased]

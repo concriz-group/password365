@@ -5,9 +5,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Every text of the apps lives in [`i18n/locales/<language>/*.json`](https://github.com/remofurlanetto/password365/tree/main/i18n)
+        Every text of the apps lives in [`i18n/locales/<language>/*.json`](https://github.com/concriz-group/password365/tree/main/i18n)
         (the website's in `i18n/site/`). The easiest way to help is a pull request — see
-        [CONTRIBUTING.md](https://github.com/remofurlanetto/password365/blob/main/CONTRIBUTING.md#translations).
+        [CONTRIBUTING.md](https://github.com/concriz-group/password365/blob/main/CONTRIBUTING.md#translations).
         You can also just tell us here.
   - type: input
     id: language

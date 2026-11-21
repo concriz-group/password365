@@ -22,7 +22,7 @@ members = [
 version = "0.1.0"
 edition = "2024"
 license = "GPL-3.0-or-later"
-repository = "https://github.com/remofurlanetto/password365"
+repository = "https://github.com/concriz-group/password365"
 rust-version = "1.88"
 
 [workspace.dependencies]

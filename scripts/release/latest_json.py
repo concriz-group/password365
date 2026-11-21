@@ -6,7 +6,7 @@
 `manifest` builds the updater's `latest.json` (read by the app from the newest
 GitHub release) from the signed update bundles in <bundles dir>, each next to
 its `.sig`; <download url> is where that release's files are, e.g.
-https://github.com/remofurlanetto/password365/releases/download/v0.2.0.
+https://github.com/concriz-group/password365/releases/download/v0.2.0.
 `notes` prints what changed in <version>, from CHANGELOG.md (its "## [0.2.0]"
 section): the release page and the app's update notice show it.
 """

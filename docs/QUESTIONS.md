@@ -4,7 +4,7 @@ Decisions taken autonomously with a default are marked **(default applied)** —
 
 1. ~~**Name**~~ — **Resolved (you, 2026-11-13): the app is Password365, domain `password365.app`
    (registered).** Renamed from Quillock everywhere. Please rename the GitHub repo to
-   `remofurlanetto/password365` (Settings › Rename; old links keep redirecting).
+   `concriz-group/password365` (Settings › Rename; old links keep redirecting).
 2. **Trademark** — "365" means every day of the year; a quick search found no password manager with
    this name. Optional: a trademark check before public launch.
 3. ~~**License**~~ — **Resolved (you, 2026-11-16): GPL-3.0-or-later** for the core, desktop app and extension

@@ -3,7 +3,7 @@ name: Release
 # Builds the desktop installers for macOS, Windows and Linux and, for a tag,
 # publishes them as a GitHub release with the signed update bundles and
 # `latest.json`, which the app's updater reads from the newest release:
-#   https://github.com/remofurlanetto/password365/releases/latest/download/latest.json
+#   https://github.com/concriz-group/password365/releases/latest/download/latest.json
 # File names stay the same from one release to the next (Password365-macOS.dmg…),
 # so the website links to releases/latest/download/<name>.
 #
