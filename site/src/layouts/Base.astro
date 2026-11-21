@@ -2,6 +2,7 @@
 import "@fontsource/nunito/900.css";
 import "../styles/site.css";
 import { href, languages, translator } from "../i18n";
+import { site } from "../config";
 
 interface Props { tag: string; page?: string; title?: string; description?: string }
 const { tag, page = "", title, description } = Astro.props;
@@ -82,6 +83,7 @@ const year = new Date().getFullYear();
             <li><a href={href(tag) + "#features"}>{t("nav.features")}</a></li>
             <li><a href={href(tag, "security")}>{t("nav.security")}</a></li>
             <li><a href={href(tag, "download")}>{t("nav.download")}</a></li>
+            <li><a href={site.repo}>{t("footer.source")}</a></li>
           </ul>
         </div>
         <div>

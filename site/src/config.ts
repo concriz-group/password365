@@ -9,6 +9,8 @@ export const site = {
    */
   released: true,
   latest: "https://github.com/remofurlanetto/password365/releases/latest/download/",
+  /** The public repository (code, specifications, issues). */
+  repo: "https://github.com/remofurlanetto/password365",
   /** Store pages, once listed (null: not yet). */
   stores: {
     chrome: null as string | null,

@@ -18,11 +18,9 @@
     "eyebrow": "Synced across your devices. Stored on no one else's.",
     "title": "Not your server, not your passwords.",
     "lead": "Password365 keeps your passwords, passkeys and one-time codes in sync across your computer, phone and tablet — without ever putting them on a server you don't control. No account, no cloud.",
-    "primary": "Download for Mac",
+    "primary": "Download",
     "secondary": "See how it works",
-    "note": "Free on your computer. iPhone and iPad coming soon.",
-    "primaryWindows": "Download for Windows",
-    "primaryLinux": "Download for Linux"
+    "note": "Free for Mac, Windows and Linux. iPhone and iPad coming soon."
   },
   "pillars": {
     "noAccount": "No cloud servers",
@@ -238,11 +236,31 @@
     "product": "Product",
     "company": "Password365",
     "privacy": "Privacy",
-    "rights": "© {year} Password365"
+    "rights": "© {year} Password365",
+    "source": "Source code"
   },
   "notFound": {
     "title": "Page not found",
     "text": "This page does not exist.",
     "home": "Go to the home page"
+  },
+  "open": {
+    "title": "Open source, checked in the open",
+    "lead": "You should not have to take our word for it. All of Password365's code is public, so anyone can read it, build it and check what it does with your passwords.",
+    "code": {
+      "title": "Read the code",
+      "text": "The apps, the browser extension and the cryptography are published on GitHub under the GPL-3.0 license: free to use, study and share."
+    },
+    "verify": {
+      "title": "Verify it",
+      "text": "The cryptography and the sync protocol are written down, with a threat model. Automated tests run on every change. It has not had an independent audit yet; we say so, and we welcome reviewers."
+    },
+    "help": {
+      "title": "Help build it",
+      "text": "Report a bug, suggest an idea, add your language or send a fix. Found a vulnerability? Report it privately and we will answer within 7 days."
+    },
+    "github": "View the code on GitHub",
+    "contribute": "How to contribute",
+    "specs": "Security specifications"
   }
 }

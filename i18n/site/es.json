@@ -18,11 +18,9 @@
     "eyebrow": "Sincronizado entre tus dispositivos. Guardado en el servidor de nadie.",
     "title": "No es tu servidor, no son tus contraseñas.",
     "lead": "Password365 mantiene tus contraseñas, llaves de acceso y códigos de verificación sincronizados entre tu ordenador, tu móvil y tu tableta — sin ponerlos nunca en un servidor que no controlas. Sin cuenta, sin nube.",
-    "primary": "Descargar para Mac",
+    "primary": "Descargar",
     "secondary": "Mira cómo funciona",
-    "note": "Gratis en tu ordenador. iPhone y iPad muy pronto.",
-    "primaryWindows": "Descargar para Windows",
-    "primaryLinux": "Descargar para Linux"
+    "note": "Gratis para Mac, Windows y Linux. iPhone y iPad muy pronto."
   },
   "pillars": {
     "noAccount": "Sin servidores en la nube",
@@ -238,11 +236,31 @@
     "product": "Producto",
     "company": "Password365",
     "privacy": "Privacidad",
-    "rights": "© {year} Password365"
+    "rights": "© {year} Password365",
+    "source": "Código fuente"
   },
   "notFound": {
     "title": "Página no encontrada",
     "text": "Esta página no existe.",
     "home": "Ir a la página de inicio"
+  },
+  "open": {
+    "title": "Código abierto, verificable por todos",
+    "lead": "No tienes que fiarte de nuestra palabra. Todo el código de Password365 es público: cualquiera puede leerlo, compilarlo y comprobar qué hace con tus contraseñas.",
+    "code": {
+      "title": "Lee el código",
+      "text": "Las apps, la extensión del navegador y la criptografía están publicadas en GitHub con licencia GPL-3.0: libres para usar, estudiar y compartir."
+    },
+    "verify": {
+      "title": "Compruébalo",
+      "text": "La criptografía y el protocolo de sincronización están documentados, con un modelo de amenazas. Hay pruebas automáticas en cada cambio. Aún no ha tenido una auditoría independiente; lo decimos abiertamente y damos la bienvenida a quien quiera revisarlo."
+    },
+    "help": {
+      "title": "Ayuda a construirlo",
+      "text": "Informa de un error, sugiere una idea, añade tu idioma o envía una corrección. ¿Encontraste una vulnerabilidad? Infórmala en privado y respondemos en 7 días."
+    },
+    "github": "Ver el código en GitHub",
+    "contribute": "Cómo contribuir",
+    "specs": "Especificaciones de seguridad"
   }
 }

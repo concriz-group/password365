@@ -18,11 +18,9 @@
     "eyebrow": "Sincronizado entre seus aparelhos. Guardado no servidor de ninguém.",
     "title": "Não é seu servidor, não são suas senhas.",
     "lead": "O Password365 mantém suas senhas, chaves de acesso e códigos de verificação sincronizados entre o computador, o celular e o tablet — sem nunca colocá-los num servidor que você não controla. Sem conta, sem nuvem.",
-    "primary": "Baixar para Mac",
+    "primary": "Baixar",
     "secondary": "Veja como funciona",
-    "note": "Grátis no computador. iPhone e iPad em breve.",
-    "primaryWindows": "Baixar para Windows",
-    "primaryLinux": "Baixar para Linux"
+    "note": "Grátis para Mac, Windows e Linux. iPhone e iPad em breve."
   },
   "pillars": {
     "noAccount": "Sem servidores na nuvem",
@@ -238,11 +236,31 @@
     "product": "Produto",
     "company": "Password365",
     "privacy": "Privacidade",
-    "rights": "© {year} Password365"
+    "rights": "© {year} Password365",
+    "source": "Código-fonte"
   },
   "notFound": {
     "title": "Página não encontrada",
     "text": "Esta página não existe.",
     "home": "Ir para a página inicial"
+  },
+  "open": {
+    "title": "Código aberto, verificável por todos",
+    "lead": "Você não precisa acreditar na nossa palavra. Todo o código do Password365 é público: qualquer pessoa pode ler, compilar e conferir o que ele faz com as suas senhas.",
+    "code": {
+      "title": "Leia o código",
+      "text": "Os apps, a extensão de navegador e a criptografia estão publicados no GitHub sob a licença GPL-3.0: livres para usar, estudar e compartilhar."
+    },
+    "verify": {
+      "title": "Verifique",
+      "text": "A criptografia e o protocolo de sincronização estão documentados, com um modelo de ameaças. Testes automáticos rodam a cada mudança. Ainda não houve uma auditoria independente; dizemos isso abertamente e recebemos bem quem quiser revisar."
+    },
+    "help": {
+      "title": "Ajude a construir",
+      "text": "Reporte um bug, sugira uma ideia, adicione seu idioma ou envie uma correção. Achou uma vulnerabilidade? Reporte em particular e respondemos em até 7 dias."
+    },
+    "github": "Ver o código no GitHub",
+    "contribute": "Como contribuir",
+    "specs": "Especificações de segurança"
   }
 }
