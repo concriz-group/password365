@@ -132,7 +132,7 @@
     "mac": "Mac",
     "macNote": "Free",
     "windowsLinux": "Windows and Linux",
-    "windowsLinuxNote": "Coming soon",
+    "windowsLinuxNote": "Free",
     "browsers": "Chrome, Edge and Firefox",
     "browsersNote": "Free extension",
     "iphone": "iPhone and iPad",
@@ -170,7 +170,9 @@
     "ios": "Password365 for iPhone and iPad",
     "iosText": "AutoFill, passkeys and Face ID, synced with your computer.",
     "soon": "Coming soon",
-    "notYet": "Not available yet"
+    "notYet": "Not available yet",
+    "extensionFirefox": "Browser extension for Firefox",
+    "extensionManual": "Until the store listings: unzip it and load it as an unpacked extension (developer mode)."
   },
   "securityPage": {
     "title": "Security",

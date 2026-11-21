@@ -10,7 +10,8 @@ const rows = [
   { icon: "work", name: t("download.mac"), text: t("download.macText"), link: download("Password365-macOS.dmg") },
   { icon: "code", name: t("download.windows"), text: "", link: download("Password365-Windows-setup.exe") },
   { icon: "code", name: t("download.linux"), text: "AppImage", link: download("Password365-Linux.AppImage") },
-  { icon: "globe", name: t("download.extension"), text: t("download.extensionText"), link: site.stores.chrome },
+  { icon: "globe", name: t("download.extension"), text: t("download.extensionText"), link: site.stores.chrome ?? download("Password365-extension-Chromium.zip") },
+  { icon: "globe", name: t("download.extensionFirefox"), text: t("download.extensionManual"), link: site.stores.firefox ?? download("Password365-extension-Firefox.zip") },
   { icon: "phone", name: t("download.ios"), text: t("download.iosText"), link: site.stores.appStore },
 ];
 ---

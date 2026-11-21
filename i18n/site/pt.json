@@ -132,7 +132,7 @@
     "mac": "Mac",
     "macNote": "Grátis",
     "windowsLinux": "Windows e Linux",
-    "windowsLinuxNote": "Em breve",
+    "windowsLinuxNote": "Grátis",
     "browsers": "Chrome, Edge e Firefox",
     "browsersNote": "Extensão grátis",
     "iphone": "iPhone e iPad",
@@ -170,7 +170,9 @@
     "ios": "Password365 para iPhone e iPad",
     "iosText": "Preenchimento Automático, chaves de acesso e Face ID, sincronizados com o computador.",
     "soon": "Em breve",
-    "notYet": "Ainda não disponível"
+    "notYet": "Ainda não disponível",
+    "extensionFirefox": "Extensão para Firefox",
+    "extensionManual": "Até as lojas: descompacte e carregue como extensão sem compactação (modo desenvolvedor)."
   },
   "securityPage": {
     "title": "Segurança",
