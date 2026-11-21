@@ -264,5 +264,13 @@
     "github": "Ver o código no GitHub",
     "contribute": "Como contribuir",
     "specs": "Especificações de segurança"
+  },
+  "pairPage": {
+    "title": "Adicione este iPhone ao cofre do seu computador",
+    "lead": "O seu computador mostrou um QR code para adicionar um dispositivo. Se o Password365 está instalado neste iPhone, toque no botão para continuar.",
+    "open": "Abrir o Password365",
+    "none": "Abra esta página pelo QR code do seu computador, com a câmera deste iPhone.",
+    "noApp": "Ainda não tem o app? O Password365 para iPhone está chegando à App Store. Instale e escaneie o código de novo.",
+    "how": "O código nunca sai dos seus dispositivos: ele fica na parte do endereço que não é enviada a nenhum servidor."
   }
 }

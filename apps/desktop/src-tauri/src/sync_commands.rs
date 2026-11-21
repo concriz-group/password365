@@ -40,9 +40,11 @@ pub fn invite_on(
 ) -> Result<InviteDto> {
     let host = state.with(|s| s.start_pairing(ip))?;
     let code = host.invite_code();
+    // The QR code is a link: the phone's own camera opens Password365 with the code filled in.
+    let link = host.invite_link();
     slots.put_host(host)?;
     Ok(InviteDto {
-        qr_svg: qr_svg(&code)?,
+        qr_svg: qr_svg(&link)?,
         code,
     })
 }

@@ -1,0 +1,10 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["5V7DKBU392.app.password365.ios"],
+        "components": [{ "/": "/pair" }]
+      }
+    ]
+  }
+}

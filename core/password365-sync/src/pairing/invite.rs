@@ -14,6 +14,18 @@ use zeroize::{Zeroize, ZeroizeOnDrop};
 use crate::DeviceId;
 
 const PREFIX: &str = "PASSWORD365-PAIR:1:";
+/// What every code starts with, whatever its version (to find a code inside a link or a message).
+const MARKER: &str = "PASSWORD365-PAIR:";
+/// The web address a code travels in: the invite's QR code is this link, so the phone's own
+/// camera opens Password365 (or the page that explains how to). The code is in the fragment,
+/// which a browser never sends to a server.
+pub const LINK_PREFIX: &str = "https://password365.app/pair#";
+
+/// The link that carries `code` (see [`LINK_PREFIX`]).
+#[must_use]
+pub fn link_for(code: &str) -> String {
+    format!("{LINK_PREFIX}{code}")
+}
 const FIXED_LEN: usize = 16 + 32 + 32;
 /// Longest LAN address accepted (`[ipv6]:port` fits easily).
 pub const MAX_ADDR_LEN: usize = 64;
@@ -74,9 +86,13 @@ impl Invite {
         code
     }
 
-    /// Reads a scanned (or typed) code. Case and surrounding spaces are ignored.
+    /// Reads a scanned or typed code, or a link that carries one (`https://password365.app/pair#…`).
+    /// Case and surrounding spaces are ignored.
     pub fn parse(code: &str) -> Result<Self, InviteError> {
-        let code = code.trim().to_ascii_uppercase();
+        let upper = code.trim().to_ascii_uppercase();
+        // The code, wherever it sits in what was scanned, up to the next space.
+        let found = upper.find(MARKER).ok_or(InviteError::NotAnInvite)?;
+        let code = upper[found..].split_whitespace().next().unwrap_or_default();
         let body = code.strip_prefix(PREFIX).ok_or(InviteError::NotAnInvite)?;
         let mut bytes = BASE32_NOPAD
             .decode(body.as_bytes())
@@ -127,6 +143,21 @@ mod tests {
             [9; 32],
             addr.map(str::to_owned),
         )
+    }
+
+    #[test]
+    fn a_link_that_carries_the_code_is_read_like_the_code() {
+        let original = invite(Some("192.168.1.20:7480"));
+        let link = link_for(&original.to_code());
+        assert!(link.starts_with("https://password365.app/pair#PASSWORD365-PAIR:1:"));
+        assert_eq!(Invite::parse(&link), Ok(original.clone()));
+        // Pasted with words around it, or with the case changed by a chat app.
+        let wrapped = format!("Join me: {}  thanks", link.to_ascii_lowercase());
+        assert_eq!(Invite::parse(&wrapped), Ok(original));
+        assert_eq!(
+            Invite::parse("https://password365.app/pair#nothing"),
+            Err(InviteError::NotAnInvite)
+        );
     }
 
     #[test]

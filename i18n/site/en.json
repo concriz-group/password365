@@ -264,5 +264,13 @@
     "github": "View the code on GitHub",
     "contribute": "How to contribute",
     "specs": "Security specifications"
+  },
+  "pairPage": {
+    "title": "Add this iPhone to your computer's vault",
+    "lead": "Your computer showed a QR code to add a device. If Password365 is installed on this iPhone, tap the button to continue.",
+    "open": "Open Password365",
+    "none": "Open this page from the QR code on your computer, with this iPhone's camera.",
+    "noApp": "Don't have the app yet? Password365 for iPhone is coming to the App Store. Install it, then scan the code again.",
+    "how": "The code never leaves your devices: it is in the part of the address that is not sent to any server."
   }
 }

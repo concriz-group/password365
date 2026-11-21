@@ -4,8 +4,8 @@ import "../styles/site.css";
 import { href, languages, translator } from "../i18n";
 import { site } from "../config";
 
-interface Props { tag: string; page?: string; title?: string; description?: string }
-const { tag, page = "", title, description } = Astro.props;
+interface Props { tag: string; page?: string; title?: string; description?: string; noindex?: boolean }
+const { tag, page = "", title, description, noindex = false } = Astro.props;
 const t = translator(tag);
 const pageTitle = title ? `${title} — Password365` : t("meta.title");
 const canonical = new URL(href(tag, page), Astro.site).toString();
@@ -43,6 +43,7 @@ const year = new Date().getFullYear();
     <title>{pageTitle}</title>
     <meta name="description" content={description ?? t("meta.description")} />
     <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
     {languages.map((l) => <link rel="alternate" hreflang={l.tag} href={new URL(href(l.tag, page), Astro.site).toString()} />)}
     <link rel="alternate" hreflang="x-default" href={new URL(href("en", page), Astro.site).toString()} />
     <link rel="icon" href="/brand/app-icon.svg" type="image/svg+xml" />

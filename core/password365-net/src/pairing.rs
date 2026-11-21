@@ -57,6 +57,14 @@ impl PairingHost {
         self.invite.to_code()
     }
 
+    /// The link to show as the QR code: opening it with the phone's own camera starts Password365
+    /// (or a page that says how to get it). The code is in the link's fragment, so no server
+    /// ever sees it. It contains the same one-time secret as [`Self::invite_code`].
+    #[must_use]
+    pub fn invite_link(&self) -> String {
+        password365_sync::pairing::link_for(&self.invite.to_code())
+    }
+
     /// Waits for the new device and runs the handshake. Show the returned
     /// pairing's code and ask the user to compare it with the other screen.
     pub fn accept(self) -> Result<HostPairing> {
