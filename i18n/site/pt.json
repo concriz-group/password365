@@ -20,7 +20,9 @@
     "lead": "O Password365 mantém suas senhas, chaves de acesso e códigos de verificação sincronizados entre o computador, o celular e o tablet — sem nunca colocá-los num servidor que você não controla. Sem conta, sem nuvem.",
     "primary": "Baixar para Mac",
     "secondary": "Veja como funciona",
-    "note": "Grátis no computador. iPhone e iPad em breve."
+    "note": "Grátis no computador. iPhone e iPad em breve.",
+    "primaryWindows": "Baixar para Windows",
+    "primaryLinux": "Baixar para Linux"
   },
   "pillars": {
     "noAccount": "Sem servidores na nuvem",

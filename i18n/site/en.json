@@ -20,7 +20,9 @@
     "lead": "Password365 keeps your passwords, passkeys and one-time codes in sync across your computer, phone and tablet — without ever putting them on a server you don't control. No account, no cloud.",
     "primary": "Download for Mac",
     "secondary": "See how it works",
-    "note": "Free on your computer. iPhone and iPad coming soon."
+    "note": "Free on your computer. iPhone and iPad coming soon.",
+    "primaryWindows": "Download for Windows",
+    "primaryLinux": "Download for Linux"
   },
   "pillars": {
     "noAccount": "No cloud servers",

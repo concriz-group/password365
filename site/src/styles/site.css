@@ -87,12 +87,24 @@ p { margin: 0 0 1em; }
 .brand-word { font-family: var(--heading); font-weight: 900; font-size: 1.35rem; letter-spacing: -0.02em; }
 .brand img { width: 50px; height: auto; margin-top: -6px; }
 .menu-toggle { display: none; }
+/* Language menu in the header (not only in the footer). */
+.site-header nav { order: 2; }
+.lang-menu { order: 3; position: relative; }
+.lang-menu summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; font-weight: 600; font-size: 0.93rem; color: var(--ink); user-select: none; }
+.lang-menu summary::-webkit-details-marker { display: none; }
+.lang-menu summary:hover { border-color: var(--accent-ink); }
+.lang-menu ul { list-style: none; margin: 0; padding: 6px; position: absolute; right: 0; top: calc(100% + 8px); min-width: 170px; background: var(--bg); border: 1px solid var(--line); border-radius: 12px; box-shadow: 0 12px 32px rgba(0,0,0,0.14); z-index: 20; }
+.lang-menu a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; font-weight: 500; }
+.lang-menu a:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.lang-menu a b { display: inline-block; min-width: 2.2em; }
+.lang-menu a[aria-current="true"] { font-weight: 700; color: var(--accent-ink); }
 @media (max-width: 860px) {
   .site-header nav { display: none; position: absolute; top: 68px; left: 0; right: 0; flex-direction: column; align-items: stretch; gap: 0; background: var(--bg); border-bottom: 1px solid var(--line); padding: 8px 24px 20px; }
   .site-header nav a { padding: 12px 0; border-bottom: 1px solid var(--line); }
   .site-header nav .button { margin-top: 14px; justify-content: center; }
   .site-header.open nav { display: flex; }
-  .menu-toggle { display: inline-flex; margin-left: auto; background: none; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; color: var(--ink); font: inherit; font-weight: 600; }
+  .lang-menu { order: 1; margin-left: auto; }
+  .menu-toggle { order: 2; display: inline-flex; background: none; border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; color: var(--ink); font: inherit; font-weight: 600; }
 }
 
 /* Sections */
