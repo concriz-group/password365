@@ -70,6 +70,27 @@ button.link { background: none; border: none; padding: 0; color: var(--accent-in
 .alt-links { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; }
 .alt-links button.link { text-decoration: none; color: var(--muted); font-size: 0.9rem; }
 .alt-links button.link:hover { color: var(--accent-ink); text-decoration: underline; }
+/* Forms on the first-run cards (create, join, restore, unlock): one column with room between the parts. */
+main.card form { display: flex; flex-direction: column; gap: 14px; }
+main.card form > p { margin: 0; }
+main.card form > label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 0.9rem; }
+main.card form textarea, main.card form input:not([type="checkbox"]):not([type="radio"]) { width: 100%; }
+main.card form .field { margin: 0; }
+main.card form > button[type="submit"], main.card form > button.primary { margin-top: 6px; }
+/* What follows a form (other ways in, "Back"): apart from the button, quiet and centered. */
+main.card > p.hint:last-child { margin: 20px 0 0; text-align: center; }
+main.card > button.link { display: block; margin: 20px auto 0; }
+/* Panels (Devices, Settings, Import, Backup…): room between a text and the button or link after it. */
+article > p, article .settings-body > p { margin: 0.5rem 0; }
+article p.hint, .settings-body p.hint { margin: 0.4rem 0 1rem; line-height: 1.45; }
+article p + button, article p + .button, article .hint + button, article .hint + .button,
+article p + form, .settings-body p + button, .settings-body .hint + button { margin-top: 0.8rem; }
+article .detail-header { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 0.4rem; }
+.inline-form { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; margin: 0.8rem 0 1.2rem; }
+.settings-body > * + button, .settings-body > * + .button { margin-top: 0.8rem; }
+.settings-body label + .hint, .settings-body .field + .hint { margin-top: 0.3rem; }
+.settings-body form { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: flex-end; }
+.settings-body form > .field, .settings-body form > label, .settings-body form > p, .settings-body form > .error { flex-basis: 100%; }
 /* Erase this vault. */
 form.erase { display: flex; flex-direction: column; gap: 12px; text-align: left; }
 form.erase h2 { margin: 0; }

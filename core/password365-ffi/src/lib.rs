@@ -24,6 +24,7 @@ uniffi::setup_scaffolding!();
 mod autofill;
 mod editing;
 mod emergency_kit;
+mod hosting;
 mod importing;
 pub use autofill::{FillValues, LoginIdentity, PasskeyCreated, PasskeyIdentity, PasskeySignIn};
 mod pairing;
@@ -218,6 +219,7 @@ impl SecretKeyStore for Keeper {
 pub struct Password365 {
     app: Mutex<AppService>,
     join: pairing::JoinSlot,
+    host: hosting::HostSlot,
 }
 
 impl Password365 {
@@ -248,6 +250,7 @@ impl Password365 {
         Arc::new(Self {
             app: Mutex::new(app),
             join: pairing::JoinSlot::default(),
+            host: hosting::HostSlot::default(),
         })
     }
 }
