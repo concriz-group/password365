@@ -5,6 +5,20 @@ release page and the app's update notice show the section of the new version.
 
 ## [Unreleased]
 
+## [0.1.2] — 2026-11-21
+
+### Fixed
+- Erasing the vault (and starting a new one) no longer fails when the macOS Keychain entry with the
+  Secret Key was made by another build of the app ("Invalid attempt to change the owner of this
+  item"). That entry is left alone and ignored, and the key of the new vault is kept in the app's
+  owner-only key file.
+
+### Changed
+- The lock screen and the erase screen have the logo and more room between their parts.
+- The browser extension's popup has the logo and clearer messages: the app is not open (with a link
+  to get it), the vault is locked (with a Show/Hide button for the master password), logins with
+  their initial, and the password generator in its own card.
+
 ## [0.1.1] — 2026-11-21
 
 ### Added
