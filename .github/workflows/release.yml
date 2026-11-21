@@ -13,6 +13,9 @@ name: Release
 #
 # Secrets (repository settings › Secrets and variables › Actions), see scripts/release/README.md:
 #   TAURI_SIGNING_PRIVATE_KEY, TAURI_SIGNING_PRIVATE_KEY_PASSWORD   the update signing key
+#   APPLE_CERTIFICATE (base64 .p12 of the Developer ID Application certificate), APPLE_CERTIFICATE_PASSWORD,
+#   APPLE_SIGNING_IDENTITY, APPLE_API_KEY (key id), APPLE_API_ISSUER, APPLE_API_KEY_P8 (contents of the .p8)
+#                                    macOS signing and notarization; without them the macOS build is unsigned
 # Without them the installers are built but carry no update bundle.
 on:
   push:
@@ -85,10 +88,33 @@ jobs:
           sudo apt-get install -y libwebkit2gtk-4.1-dev libayatana-appindicator3-dev librsvg2-dev \
             libxdo-dev libdbus-1-dev patchelf
       - run: npm ci
+      - name: macOS signing and notarization (Developer ID)
+        if: runner.os == 'macOS'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_API_KEY_P8: ${{ secrets.APPLE_API_KEY_P8 }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
+        run: |
+          if [ -z "$APPLE_CERTIFICATE" ] || [ -z "$APPLE_API_KEY_P8" ]; then
+            if [ "${GITHUB_REF_TYPE}" = tag ]; then
+              echo "::error::a release needs the Apple secrets (scripts/release/README.md)"; exit 1
+            fi
+            echo "::warning::no Apple secrets: this macOS build is not signed or notarized"
+          else
+            # Tauri signs with the Developer ID certificate and notarizes with the API key.
+            key="$RUNNER_TEMP/AuthKey_${APPLE_API_KEY}.p8"
+            printf '%s' "$APPLE_API_KEY_P8" > "$key"
+            echo "APPLE_API_KEY_PATH=$key" >> "$GITHUB_ENV"
+          fi
       - name: Build (and sign the update bundle when the key is set)
         env:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_API_ISSUER: ${{ secrets.APPLE_API_ISSUER }}
+          APPLE_API_KEY: ${{ secrets.APPLE_API_KEY }}
         run: |
           if [ -z "$TAURI_SIGNING_PRIVATE_KEY" ]; then
             if [ "${GITHUB_REF_TYPE}" = tag ]; then

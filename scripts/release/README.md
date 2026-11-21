@@ -30,8 +30,23 @@ update bundles and publishes a GitHub release with the changelog section, the in
 stable names (`Password365-macOS.dmg` …) and `latest.json`, which installed apps read from
 `releases/latest`. Running the workflow by hand (Actions tab) only builds, to try things out.
 
+## macOS signing and notarization (Developer ID)
+
+Without these secrets the macOS installer is unsigned (a test build only; a `v*` tag refuses to publish without them).
+
+1. A **Developer ID Application** certificate in your Keychain Access (developer.apple.com › Certificates).
+   Export it with its private key as a `.p12` (Keychain Access › right click › Export), with a password.
+2. An App Store Connect API key (Users and Access › Integrations; the `.p8`, its Key ID and the Issuer ID).
+3. Give them to GitHub Actions:
+   ```sh
+   base64 -i DeveloperID.p12 | gh secret set APPLE_CERTIFICATE
+   gh secret set APPLE_CERTIFICATE_PASSWORD
+   gh secret set APPLE_SIGNING_IDENTITY       # "Developer ID Application: Your Name (TEAMID)"
+   gh secret set APPLE_API_KEY                # the Key ID
+   gh secret set APPLE_API_ISSUER             # the Issuer ID
+   gh secret set APPLE_API_KEY_P8 < AuthKey_XXXX.p8
+   ```
+
 ## Not yet
 
-- macOS: Developer ID signing and notarization (needs the Apple Developer Program); until then
-  macOS shows a warning the first time the app opens (right-click › Open).
 - Windows: code signing (SmartScreen warns about unsigned installers).
