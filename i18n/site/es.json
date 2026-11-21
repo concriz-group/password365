@@ -18,9 +18,11 @@
     "eyebrow": "Sincronizado entre tus dispositivos. Guardado en el servidor de nadie.",
     "title": "No es tu servidor, no son tus contraseñas.",
     "lead": "Password365 mantiene tus contraseñas, llaves de acceso y códigos de verificación sincronizados entre tu ordenador, tu móvil y tu tableta — sin ponerlos nunca en un servidor que no controlas. Sin cuenta, sin nube.",
-    "primary": "Descargar",
+    "primary": "Descargar para Mac",
     "secondary": "Mira cómo funciona",
-    "note": "Gratis para Mac, Windows y Linux. iPhone y iPad muy pronto."
+    "note": "Gratis para Mac, Windows y Linux. iPhone y iPad muy pronto.",
+    "primaryWindows": "Descargar para Windows",
+    "primaryLinux": "Descargar para Linux"
   },
   "pillars": {
     "noAccount": "Sin servidores en la nube",

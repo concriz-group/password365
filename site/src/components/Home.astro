@@ -1,7 +1,7 @@
 ---
 import Icon from "./Icon.astro";
 import { href, translator } from "../i18n";
-import { site } from "../config";
+import { site, download } from "../config";
 
 const { tag } = Astro.props as { tag: string };
 const t = translator(tag);
@@ -29,6 +29,16 @@ const sources = [
   "Chrome", "Safari", "Firefox", "Edge",
 ];
 const faq = [0, 1, 2, 3, 4, 5];
+const mac = download("Password365-macOS.dmg");
+const windows = download("Password365-Windows-setup.exe");
+const linux = download("Password365-Linux.AppImage");
+// The button starts as a plain "Download" (the download page: right for phones and without
+// JavaScript); a visitor on a computer gets the file for their own system.
+const choices = JSON.stringify({
+  mac: mac && { href: mac, label: t("hero.primary") },
+  windows: windows && { href: windows, label: t("hero.primaryWindows") },
+  linux: linux && { href: linux, label: t("hero.primaryLinux") },
+});
 ---
 <section class="hero">
   <div class="wrap">
@@ -36,7 +46,7 @@ const faq = [0, 1, 2, 3, 4, 5];
     <h1>{t("hero.title")}</h1>
     <p class="lead">{t("hero.lead")}</p>
     <div class="buttons">
-      <a class="button primary" href={href(tag, "download")}>{t("hero.primary")}</a>
+      <a class="button primary" id="hero-download" href={href(tag, "download")} data-choices={choices}>{t("nav.download")}</a>
       <a class="button secondary" href="#sync">{t("hero.secondary")}</a>
     </div>
     <p class="note">{t("hero.note")}</p>
@@ -212,3 +222,18 @@ const faq = [0, 1, 2, 3, 4, 5];
     <div class="buttons"><a class="button primary" href={href(tag, "download")}>{t("cta.button")}</a></div>
   </div>
 </section>
+
+<script>
+  const button = document.getElementById("hero-download") as HTMLAnchorElement | null;
+  if (button?.dataset.choices) {
+    const choices = JSON.parse(button.dataset.choices) as Record<string, { href: string; label: string } | null>;
+    const ua = navigator.userAgent;
+    const mobile = /iPhone|iPad|iPod|Android/i.test(ua) || (navigator.maxTouchPoints > 1 && /Macintosh/.test(ua));
+    const system = mobile ? null : /Windows/i.test(ua) ? "windows" : /Mac/i.test(ua) ? "mac" : /Linux|X11/i.test(ua) ? "linux" : null;
+    const choice = system ? choices[system] : null;
+    if (choice) {
+      button.href = choice.href;
+      button.textContent = choice.label;
+    }
+  }
+</script>
