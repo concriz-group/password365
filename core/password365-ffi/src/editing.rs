@@ -316,6 +316,13 @@ impl Password365 {
         Ok(self.app().remove_duplicate_logins()? as u64)
     }
 
+    /// Erases the vault on this device for good: the store, the quick-unlock copy and the Secret
+    /// Key. Works while locked (a forgotten master password must not trap the vault). The app
+    /// asks first, clears its own Face ID key and starts over.
+    pub fn erase_vault(&self) -> Result<()> {
+        Ok(self.app().erase_vault()?)
+    }
+
     /// Moves an item to Recently Deleted.
     pub fn delete_item(&self, id: String) -> Result<()> {
         Ok(self.app().delete_item(&id)?)

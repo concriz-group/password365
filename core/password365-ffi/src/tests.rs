@@ -360,7 +360,9 @@ mod joining {
         let keeper = Arc::new(MemoryKeeper::default());
         let phone = vault(&dir, keeper.clone());
         assert!(
-            phone.join_finish(PASSWORD.into(), "iPhone".into(), false).is_err(),
+            phone
+                .join_finish(PASSWORD.into(), "iPhone".into(), false)
+                .is_err(),
             "nothing to finish yet"
         );
         let digits = phone.join_connect(code).unwrap();
@@ -378,7 +380,9 @@ mod joining {
             !phone.status().initialized,
             "a wrong password writes nothing"
         );
-        phone.join_finish(PASSWORD.into(), "iPhone".into(), false).unwrap();
+        phone
+            .join_finish(PASSWORD.into(), "iPhone".into(), false)
+            .unwrap();
         assert!(
             keeper.load().is_some(),
             "the account's Secret Key is in the Keychain"
@@ -467,7 +471,9 @@ mod joining {
         phone.join_connect(code).unwrap();
         phone.join_wait().unwrap();
         phone.join_wait().unwrap();
-        phone.join_finish(PASSWORD.into(), "iPhone".into(), false).unwrap();
+        phone
+            .join_finish(PASSWORD.into(), "iPhone".into(), false)
+            .unwrap();
         let (mac, phone_on_mac) = inviter.join().unwrap();
         (mac, phone, phone_on_mac.id)
     }
