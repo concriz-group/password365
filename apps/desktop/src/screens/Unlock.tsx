@@ -5,6 +5,7 @@ import { toApiError } from "../api/client";
 import { useClient } from "../api/context";
 import { ErrorMessage } from "../components/ErrorMessage";
 import { PasswordInput } from "../components/PasswordInput";
+import { EraseVault } from "../components/EraseVault";
 import { useAction } from "../hooks/useAction";
 import { useT } from "../i18n";
 
@@ -15,6 +16,7 @@ export function Unlock({ onUnlocked }: { onUnlocked: () => void }) {
   const [password, setPassword] = useState("");
   const [secretKey, setSecretKey] = useState("");
   const [askSecretKey, setAskSecretKey] = useState(false);
+  const [erasing, setErasing] = useState(false);
   // Seconds left before another try (after wrong passwords).
   const [wait, setWait] = useState(0);
   useEffect(() => {
@@ -41,6 +43,14 @@ export function Unlock({ onUnlocked }: { onUnlocked: () => void }) {
       setPassword("");
       onUnlocked();
     }
+  }
+
+  if (erasing) {
+    return (
+      <main className="centered card">
+        <EraseVault onErased={onUnlocked} onCancel={() => setErasing(false)} />
+      </main>
+    );
   }
 
   return (
@@ -89,6 +99,9 @@ export function Unlock({ onUnlocked }: { onUnlocked: () => void }) {
         )}
         <button type="submit" className="primary" disabled={!password || unlock.busy || wait > 0}>
           {unlock.busy ? t("unlock.unlocking") : t("unlock.unlock")}
+        </button>
+        <button type="button" className="link" onClick={() => setErasing(true)}>
+          {t("erase.link")}
         </button>
       </form>
     </main>

@@ -1,0 +1,13 @@
+{
+  "word": "BORRAR",
+  "link": "¿Olvidaste la contraseña maestra? Borrar esta bóveda…",
+  "title": "Borrar esta bóveda",
+  "what": "Esto borra para siempre la bóveda de este ordenador: todos los elementos, la Secret Key y los dispositivos vinculados guardados aquí. Los otros dispositivos que vinculaste conservan sus copias y no se envía nada a ningún sitio.",
+  "then": "Después puedes crear una bóveda nueva, configurar este ordenador desde otro dispositivo que ya uses, o restaurar una copia de seguridad.",
+  "lost": "Los elementos que solo existen en este ordenador se pierden. Restaurar una copia los recupera.",
+  "type": "Para continuar, escribe {word}:",
+  "confirm": "Borrar esta bóveda",
+  "cancel": "Conservarla",
+  "settingsHint": "Empieza de cero en este ordenador: una bóveda nueva, o unirte a otro dispositivo.",
+  "working": "Borrando…"
+}

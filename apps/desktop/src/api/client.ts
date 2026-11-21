@@ -172,6 +172,8 @@ export function createClient(invoke: Invoke) {
     settings: () => call<Settings>("settings"),
     updateSettings: (settings: Settings) => call<void>("update_settings", { settings }),
     printPage: () => call<void>("print_page"),
+    /** Erases this computer's vault for good (works while locked). */
+    eraseVault: () => call<void>("erase_vault"),
     revealSecretKey: (password: string) => call<string>("reveal_secret_key", { password }),
     /** Keeps the Emergency Kit PDF in the vault (once) and returns the item's id. */
     saveEmergencyKit: (password: string, text: KitText) => call<string>("save_emergency_kit", { password, text }),

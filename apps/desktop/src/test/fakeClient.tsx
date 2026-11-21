@@ -12,7 +12,7 @@ export function fakeClient(overrides: Partial<Record<keyof Client, unknown>> = {
     "vaults", "createVault", "renameVault", "deleteVault",
     "items", "item", "reveal", "totpCode", "createItem", "updateItem", "deleteItem", "markReviewed", "tags", "setFavorite", "archivedItems", "setArchived", "moveItem", "wifiQr", "itemIcons", "sshKeys", "breachedPasswords", "import1pux", "importBitwarden", "importKdbx", "copySecret", "attachFile", "saveAttachment", "openAttachment", "removeAttachment", "removePasskey", "exportCxf", "importCxf", "sshAnswer", "duplicateItem", "hideQuickAccess", "openInApp", "categories", "revealField", "watchtower", "autoType", "profile", "setProfile",
     "deletedItems", "restoreItem", "deletePermanently",
-    "generate", "importCsv", "exportCsv", "settings", "updateSettings", "printPage", "revealSecretKey", "saveEmergencyKit", "pendingPasswordChange", "adoptMasterPassword",
+    "generate", "importCsv", "exportCsv", "settings", "updateSettings", "printPage", "revealSecretKey", "eraseVault", "saveEmergencyKit", "pendingPasswordChange", "adoptMasterPassword",
     "exportBackup", "backupInfo", "restoreBackup",
     "thisDevice", "renameThisDevice", "devices", "removeDevice", "syncDevice",
     "exportSyncFile", "importSyncFile", "updateCheck", "updateInstall", "openHelp",

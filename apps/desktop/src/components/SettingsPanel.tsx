@@ -11,6 +11,7 @@ import { BackupSection } from "./BackupSection";
 import { DeveloperSettings } from "./DeveloperSettings";
 import { PrivacySettings } from "./PrivacySettings";
 import { EmergencyKitSection } from "./EmergencyKitSection";
+import { EraseVault } from "./EraseVault";
 import { ExportSection } from "./ExportSection";
 import { ErrorMessage } from "./ErrorMessage";
 import { PasswordInput } from "./PasswordInput";
@@ -293,6 +294,7 @@ function ChangePassword() {
 function Advanced() {
   const { t, preference, languages, choose } = useI18n();
   const pick = useAction((tag: string) => choose(tag));
+  const [erasing, setErasing] = useState(false);
   return (
     <>
       <h2>{t("settings.section_advanced")}</h2>
@@ -309,6 +311,17 @@ function Advanced() {
         <p className="hint">{t("settings.languageHint")}</p>
       </div>
       <ErrorMessage error={pick.error} />
+      <h2>{t("erase.title")}</h2>
+      {erasing ? (
+        <EraseVault onCancel={() => setErasing(false)} />
+      ) : (
+        <>
+          <p className="hint">{t("erase.settingsHint")}</p>
+          <button type="button" className="danger" onClick={() => setErasing(true)}>
+            {t("erase.title")}…
+          </button>
+        </>
+      )}
     </>
   );
 }

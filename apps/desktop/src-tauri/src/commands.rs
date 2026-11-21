@@ -57,6 +57,16 @@ pub fn user_active(state: State<'_, SharedState>) -> Result<()> {
     })
 }
 
+/// Erases this computer's vault (works while locked: the way out of a forgotten password). The
+/// screen asks first. Then the app goes back to its first-run screens.
+#[tauri::command]
+pub fn erase_vault(state: State<'_, SharedState>, app: tauri::AppHandle) -> Result<()> {
+    use tauri::Emitter as _;
+    state.with(password365_app::AppService::erase_vault)?;
+    let _ = app.emit(crate::state::STATUS_EVENT, ());
+    Ok(())
+}
+
 #[tauri::command]
 pub fn lock(state: State<'_, SharedState>) -> Result<()> {
     state.with(|s| {

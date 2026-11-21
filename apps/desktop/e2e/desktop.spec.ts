@@ -95,3 +95,14 @@ test.describe("security and settings", () => {
   });
 });
 
+test.describe("erase the vault", () => {
+  test("a locked vault with a forgotten password can be erased and started again", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: /Forgot your master password/ }).click();
+    const confirm = page.getByRole("button", { name: "Erase this vault" });
+    await expect(confirm).toBeDisabled();
+    await page.getByLabel("To go on, type ERASE:").fill("ERASE");
+    await confirm.click();
+    await expect(page.getByRole("heading", { name: "Create your vault" })).toBeVisible();
+  });
+});

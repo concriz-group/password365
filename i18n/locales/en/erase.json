@@ -1,0 +1,13 @@
+{
+  "word": "ERASE",
+  "link": "Forgot your master password? Erase this vault…",
+  "title": "Erase this vault",
+  "what": "This erases the vault on this computer for good: every item, the Secret Key and the paired devices stored here. Other devices you paired keep their own copies, and nothing is sent anywhere.",
+  "then": "Afterwards you can start a new vault, set this computer up from another device you already use, or restore a backup.",
+  "lost": "Items that exist only on this computer are lost. Restoring a backup brings them back.",
+  "type": "To go on, type {word}:",
+  "confirm": "Erase this vault",
+  "cancel": "Keep it",
+  "settingsHint": "Starts over on this computer: a new vault, or join another device.",
+  "working": "Erasing…"
+}

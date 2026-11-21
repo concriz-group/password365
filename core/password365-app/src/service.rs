@@ -65,12 +65,12 @@ pub const VERIFIED_FOR: std::time::Duration = std::time::Duration::from_secs(5 *
 pub struct AppService {
     pub(crate) config: AppConfig,
     pub(crate) keys: Box<dyn SecretKeyStore>,
-    session: Option<Session>,
+    pub(crate) session: Option<Session>,
     auto_lock: AutoLock,
     pub(crate) backup_log: crate::backup::BackupLog,
     pub(crate) profile_choice: crate::profile::ProfileChoice,
     settings: Settings,
-    attempts: crate::attempts::Attempts,
+    pub(crate) attempts: crate::attempts::Attempts,
     /// Unlocks so far (permissions given "until the vault locks" belong to one).
     unlocks: u64,
     /// When the user last proved who they are (unlock or master password).

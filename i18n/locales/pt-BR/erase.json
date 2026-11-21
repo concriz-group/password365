@@ -1,0 +1,13 @@
+{
+  "word": "APAGAR",
+  "link": "Esqueceu a senha mestra? Apagar este cofre…",
+  "title": "Apagar este cofre",
+  "what": "Isto apaga para sempre o cofre deste computador: todos os itens, a Secret Key e os dispositivos pareados guardados aqui. Os outros dispositivos que você pareou ficam com as cópias deles, e nada é enviado a lugar nenhum.",
+  "then": "Depois você pode criar um cofre novo, configurar este computador a partir de outro dispositivo que você já usa, ou restaurar um backup.",
+  "lost": "Itens que existem só neste computador se perdem. Restaurar um backup traz eles de volta.",
+  "type": "Para continuar, digite {word}:",
+  "confirm": "Apagar este cofre",
+  "cancel": "Manter",
+  "settingsHint": "Recomeça neste computador: um cofre novo, ou entrar em outro dispositivo.",
+  "working": "Apagando…"
+}

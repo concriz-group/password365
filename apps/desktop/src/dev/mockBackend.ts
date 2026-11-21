@@ -180,6 +180,11 @@ export function createMockBackend(): Invoke {
   return async (command, args = {}) => {
     const a = args as Record<string, unknown>;
     if (command === "status") return { initialized, unlocked };
+    if (command === "erase_vault") {
+      initialized = false;
+      unlocked = false;
+      return null;
+    }
     if (command === "print_page") return window.print();
     if (command === "backup_info") return { last_backup_ms: lastBackup, due: lastBackup === null };
     if (command === "restore_backup") return fail("io", "restoring a backup needs the desktop app");

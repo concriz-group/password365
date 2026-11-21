@@ -135,6 +135,7 @@ pub fn run() {
             updates::update_check,
             updates::update_install,
             commands::status,
+            commands::erase_vault,
             commands::create_account,
             commands::unlock,
             commands::lock,
