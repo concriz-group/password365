@@ -122,10 +122,11 @@ section.dark .eyebrow { color: var(--accent); }
 .hero .buttons { justify-content: center; }
 .hero .note { color: var(--muted); font-size: 0.95rem; margin-top: 16px; }
 .hero-visual { position: relative; margin: clamp(40px, 6vw, 72px) auto 0; max-width: 1000px; height: clamp(300px, 48vw, 600px); text-align: left; }
-.device { position: absolute; border-radius: 36px; overflow: hidden; background: #000; box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.35), 0 0 0 10px #1b1b1f, 0 0 0 11px #3a3a40; }
+.device { --bezel: clamp(4px, 1.1vw, 10px); position: absolute; border-radius: 36px; overflow: hidden; background: #000; box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.35), 0 0 0 var(--bezel) #1b1b1f, 0 0 0 calc(var(--bezel) + 1px) #3a3a40; }
 .device img { width: 100%; }
-.device.tablet { left: 0; right: 18%; top: 0; border-radius: 28px; }
-.device.phone { right: 2%; width: 24%; top: 12%; border-radius: 42px; }
+/* Corners in percent, so a small screen keeps the proportions of a real tablet and phone. */
+.device.tablet { left: 0; right: 18%; top: 0; border-radius: 3.6% / 2.7%; }
+.device.phone { right: 2%; width: 24%; top: 12%; border-radius: 13% / 6%; }
 @media (max-width: 700px) {
   .device.tablet { right: 0; }
   .device.phone { width: 38%; right: -2%; top: 22%; }
