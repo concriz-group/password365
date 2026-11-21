@@ -23,20 +23,25 @@ impl AppService {
     /// key, preferences).
     pub fn erase_vault(&mut self) -> Result<()> {
         self.session = None;
+        // Every step is tried even when one fails, so a vault is never left half-erased behind an
+        // error; the first problem is reported at the end.
+        let mut first_error: Option<AppError> = None;
         for suffix in SIDE_FILES {
             let path = with_suffix(&self.config.store_path, suffix);
             match std::fs::remove_file(&path) {
                 Ok(()) => {}
                 Err(e) if e.kind() == std::io::ErrorKind::NotFound => {}
                 Err(e) => {
-                    return Err(AppError::Io(format!(
+                    first_error.get_or_insert(AppError::Io(format!(
                         "cannot erase {}: {e}",
                         path.display()
                     )));
                 }
             }
         }
-        self.keys.remove()?;
+        if let Err(e) = self.keys.remove() {
+            first_error.get_or_insert(e);
+        }
         // What the app kept beside the settings about this vault (not preferences): when the
         // last backup was made, which identity and card the extension fills by default.
         if let Some(settings) = self.config.settings_path.as_deref() {
@@ -48,7 +53,7 @@ impl AppService {
         self.profile_choice = crate::profile::ProfileChoice::default();
         self.attempts = Attempts::default();
         crate::attempts::save(self.config.settings_path.as_deref(), &self.attempts);
-        Ok(())
+        first_error.map_or(Ok(()), Err)
     }
 }
 

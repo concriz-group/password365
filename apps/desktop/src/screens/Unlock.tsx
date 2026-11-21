@@ -48,6 +48,7 @@ export function Unlock({ onUnlocked }: { onUnlocked: () => void }) {
   if (erasing) {
     return (
       <main className="centered card">
+        <BrandLockup layout="stacked" />
         <EraseVault onErased={onUnlocked} onCancel={() => setErasing(false)} />
       </main>
     );
@@ -77,11 +78,7 @@ export function Unlock({ onUnlocked }: { onUnlocked: () => void }) {
               autoComplete="off"
             />
           </div>
-        ) : (
-          <button type="button" className="link" onClick={() => setAskSecretKey(true)}>
-            {t("unlock.newDevice")}
-          </button>
-        )}
+        ) : null}
         {toApiError(unlock.error ?? {}).code === "too_many_attempts" ? (
           wait > 0 && (
             <p role="alert" className="error">
@@ -100,9 +97,16 @@ export function Unlock({ onUnlocked }: { onUnlocked: () => void }) {
         <button type="submit" className="primary" disabled={!password || unlock.busy || wait > 0}>
           {unlock.busy ? t("unlock.unlocking") : t("unlock.unlock")}
         </button>
-        <button type="button" className="link" onClick={() => setErasing(true)}>
-          {t("erase.link")}
-        </button>
+        <div className="alt-links">
+          {!askSecretKey && (
+            <button type="button" className="link" onClick={() => setAskSecretKey(true)}>
+              {t("unlock.newDevice")}
+            </button>
+          )}
+          <button type="button" className="link" onClick={() => setErasing(true)}>
+            {t("erase.link")}
+          </button>
+        </div>
       </form>
     </main>
   );

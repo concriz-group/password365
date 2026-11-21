@@ -9,6 +9,7 @@ mod browser_host;
 mod clipboard;
 mod commands;
 mod help;
+mod key_bypass;
 mod keychain;
 mod legacy;
 mod pairing_slots;
@@ -41,6 +42,8 @@ const SETTINGS_FILE: &str = "settings.json";
 /// Fallback Secret Key file (only used when no OS keychain is available, and
 /// migrated into the keychain when one is).
 const SECRET_KEY_FILE: &str = "secret-key";
+/// Present when the keychain entry belongs to another build and is ignored (see `key_bypass`).
+const KEYCHAIN_BYPASS_MARKER: &str = "secret-key.keychain-bypassed";
 
 /// Where the Secret Key lives: the OS keychain when available, otherwise an
 /// owner-only file. A key found in an older place (the key file, or the
@@ -62,9 +65,13 @@ fn key_store<S: SecretSlot + 'static>(
         )),
         None => file,
     };
-    Box::new(MigratingSecretKeyStore::new(
-        Box::new(SlotSecretKeyStore::new(slot)),
-        older,
+    Box::new(key_bypass::BypassingStore::new(
+        Box::new(MigratingSecretKeyStore::new(
+            Box::new(SlotSecretKeyStore::new(slot)),
+            older,
+        )),
+        key_dir.join(SECRET_KEY_FILE),
+        key_dir.join(KEYCHAIN_BYPASS_MARKER),
     ))
 }
 

@@ -17,6 +17,7 @@ async function main() {
       setTimeout(() => void navigator.clipboard.writeText(""), CLIPBOARD_CLEAR_MS);
     },
     close: () => window.close(),
+    openUrl: (url) => void chrome.tabs.create({ url }),
   });
 }
 

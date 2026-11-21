@@ -1,19 +1,67 @@
-:root { color-scheme: light dark; --accent: #ff7900; --accent-text: #0d0d0d; --muted: #6b6862; --border: #e5e2dd; }
-@media (prefers-color-scheme: dark) { :root { --accent: #ff8a1f; --accent-text: #121214; --muted: #a8a49c; --border: #2e2d2b; } }
-body { width: 320px; margin: 0; font: 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-header { font-weight: 700; padding: 10px 14px; border-bottom: 1px solid var(--border); }
-main { padding: 10px 14px; }
-h1 { font-size: 13px; text-transform: uppercase; color: var(--muted); margin: 4px 0 8px; }
+:root {
+  color-scheme: light dark;
+  --bg: #ffffff; --panel: #f6f4f1; --ink: #151515; --muted: #6b6862; --border: #e6e2dc;
+  --accent: #ff7900; --accent-hover: #e86d00; --accent-text: #111111; --danger: #c0392b;
+  --tile: #fff3e8;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #17171a; --panel: #212125; --ink: #f2f0ec; --muted: #a8a49c; --border: #34343a;
+    --accent: #ff8a1f; --accent-hover: #ff9d45; --accent-text: #121214; --danger: #f87171; --tile: #2b2118; }
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { width: 340px; min-height: 240px; margin: 0; background: var(--bg); color: var(--ink);
+  font: 14px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+header img { display: block; }
+.word { font: 900 19px/1 ui-rounded, "SF Pro Rounded", "Nunito", system-ui, sans-serif; letter-spacing: -0.02em; }
+.word b { color: var(--accent); font-weight: 900; }
+main { padding: 18px 16px 18px; }
+h1 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 10px; font-weight: 700; }
+h2 { font-size: 17px; margin: 0 0 6px; text-align: center; }
 ul { list-style: none; margin: 0; padding: 0; }
-li { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--border); }
-.login { display: flex; flex-direction: column; min-width: 0; }
-.login span, .login strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .muted { color: var(--muted); }
-button { font: inherit; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-text); border-radius: 6px; padding: 4px 10px; cursor: pointer; }
-.generator { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-code { flex-basis: 100%; word-break: break-all; font-size: 13px; }
-.message { color: var(--muted); }
-form.unlock { display: flex; flex-wrap: wrap; gap: 8px; }
-form.unlock input { flex: 1; min-width: 0; font: inherit; padding: 6px 8px; border-radius: 6px;
-  border: 1px solid #8884; background: transparent; color: inherit; }
-form.unlock .error { flex-basis: 100%; margin: 0; color: #f87171; min-height: 1em; }
+.message { color: var(--muted); text-align: center; margin: 0; }
+
+/* A screen with one message: the mark, a title, a few words and what to do. */
+.hero { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 6px 4px 2px; }
+.mark { width: 76px; height: 76px; border-radius: 22px; background: var(--tile); display: grid; place-items: center; margin-bottom: 14px; }
+.mark img { width: 52px; height: auto; display: block; }
+.mark picture { display: block; }
+.hero p { margin: 0 0 16px; color: var(--muted); }
+.actions { display: flex; flex-direction: column; gap: 8px; width: 100%; }
+
+button, .button { font: inherit; font-weight: 600; border: 1px solid var(--border); background: var(--panel); color: var(--ink);
+  border-radius: 10px; padding: 9px 14px; cursor: pointer; text-align: center; text-decoration: none; display: inline-block; }
+button:hover, .button:hover { border-color: var(--accent); }
+button:focus-visible, .button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.primary, .button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
+button.primary:hover, .button.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+button:disabled { opacity: 0.6; cursor: default; }
+
+/* Master password form. */
+form.unlock { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+.field { position: relative; }
+.field input { width: 100%; font: inherit; padding: 10px 64px 10px 12px; border-radius: 10px; border: 1px solid var(--border);
+  background: var(--panel); color: inherit; }
+.field .toggle { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); border: none; background: none; padding: 4px 8px;
+  color: var(--accent-hover); font-weight: 600; }
+form.unlock .error { margin: 0; color: var(--danger); min-height: 1em; text-align: left; font-size: 13px; }
+
+/* Logins for this site. */
+.logins li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--border); }
+.logins li:last-child { border-bottom: none; }
+.avatar { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-weight: 800;
+  background: hsl(var(--h, 28) 80% 90%); color: hsl(var(--h, 28) 60% 30%); }
+@media (prefers-color-scheme: dark) { .avatar { background: hsl(var(--h, 28) 35% 24%); color: hsl(var(--h, 28) 80% 82%); } }
+.login { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.login strong, .login span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.logins button { padding: 6px 12px; }
+.empty { text-align: center; padding: 8px 0 4px; }
+.empty strong { display: block; margin-bottom: 4px; }
+.empty span { color: var(--muted); font-size: 13px; }
+
+/* Generator. */
+.generator { margin-top: 16px; padding: 12px; background: var(--panel); border-radius: 12px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.generator h1 { flex-basis: 100%; margin: 0; }
+code { flex-basis: 100%; word-break: break-all; font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; }

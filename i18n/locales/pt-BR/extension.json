@@ -48,5 +48,17 @@
   "passkeyVerify": "{site} pede para confirmar que é você: digite sua senha mestra no popup do Password365",
   "confirmIdentity": "Confirmar que é você",
   "confirmPasskey": "Confirme que é você para usar a passkey",
-  "confirm": "Confirmar"
+  "confirm": "Confirmar",
+  "appNotRunningTitle": "O Password365 não está aberto",
+  "appNotRunningBody": "Abra o app Password365 neste computador e clique neste ícone de novo. Suas senhas ficam no app: a extensão só preenche.",
+  "getApp": "Baixar o app",
+  "hostMissingTitle": "Falta o auxiliar do navegador",
+  "createVaultTitle": "Crie o seu cofre",
+  "lockedBody": "Digite a sua senha mestra para desbloquear o cofre.",
+  "showPassword": "Mostrar",
+  "hidePassword": "Ocultar",
+  "genTitle": "Gerador de senhas",
+  "noLoginsTitle": "Nada salvo para este site",
+  "noLoginsHint": "Entre uma vez e o Password365 oferece salvar, ou adicione no app.",
+  "openAppButton": "Abrir o app"
 }

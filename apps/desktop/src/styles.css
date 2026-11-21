@@ -66,6 +66,17 @@ button:disabled { opacity: 0.5; cursor: not-allowed; }
 button.primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); width: 100%; margin-top: 1rem; }
 button.ghost { background: transparent; }
 button.link { background: none; border: none; padding: 0; color: var(--accent-ink); text-decoration: underline; }
+/* Quiet text actions under a primary button (new device, erase): apart from it and from each other. */
+.alt-links { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 20px; }
+.alt-links button.link { text-decoration: none; color: var(--muted); font-size: 0.9rem; }
+.alt-links button.link:hover { color: var(--accent-ink); text-decoration: underline; }
+/* Erase this vault. */
+form.erase { display: flex; flex-direction: column; gap: 12px; text-align: left; }
+form.erase h2 { margin: 0; }
+form.erase p { margin: 0; }
+form.erase label { margin-top: 6px; font-weight: 600; }
+form.erase input { width: 100%; }
+form.erase .actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
 
 .hint { font-size: 0.85rem; color: var(--muted); margin: 0.2rem 0; }
 .hint.ok { color: var(--ok); }

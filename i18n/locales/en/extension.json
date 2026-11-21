@@ -48,5 +48,17 @@
   "passkeyVerify": "{site} asks to confirm it is you: type your master password in the Password365 popup",
   "confirmIdentity": "Confirm it is you",
   "confirmPasskey": "Confirm it is you to use the passkey",
-  "confirm": "Confirm"
+  "confirm": "Confirm",
+  "appNotRunningTitle": "Password365 is not open",
+  "appNotRunningBody": "Open the Password365 app on this computer, then click this icon again. Your passwords stay in the app: the extension only fills them in.",
+  "getApp": "Get the app",
+  "hostMissingTitle": "The browser helper is missing",
+  "createVaultTitle": "Create your vault",
+  "lockedBody": "Enter your master password to unlock your vault.",
+  "showPassword": "Show",
+  "hidePassword": "Hide",
+  "genTitle": "Password generator",
+  "noLoginsTitle": "Nothing saved for this site",
+  "noLoginsHint": "Sign in once and Password365 offers to save it, or add it in the app.",
+  "openAppButton": "Open the app"
 }

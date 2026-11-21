@@ -62,9 +62,10 @@ pub fn user_active(state: State<'_, SharedState>) -> Result<()> {
 #[tauri::command]
 pub fn erase_vault(state: State<'_, SharedState>, app: tauri::AppHandle) -> Result<()> {
     use tauri::Emitter as _;
-    state.with(password365_app::AppService::erase_vault)?;
+    // The screens follow the vault's state, so they refresh even if a last step failed.
+    let erased = state.with(password365_app::AppService::erase_vault);
     let _ = app.emit(crate::state::STATUS_EVENT, ());
-    Ok(())
+    erased
 }
 
 #[tauri::command]

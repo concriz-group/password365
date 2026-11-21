@@ -155,4 +155,32 @@ describe("popup", () => {
     await flush();
     expect(root.querySelector("code")!.textContent).toBe("Password365 is locked.");
   });
+
+  it("offers the download page when the app is missing or not open", async () => {
+    const { root, deps, render } = setup({ status: fail("app_not_running") });
+    const openUrl = vi.fn();
+    await renderPopup(root, { ...deps, openUrl });
+    expect(root.querySelector("h2")!.textContent).toBe("Password365 is not open");
+    root.querySelector<HTMLButtonElement>("button.primary")!.click();
+    expect(openUrl).toHaveBeenCalledWith("https://password365.app/download/");
+    void render;
+  });
+
+  it("shows and hides the master password, and starts each login with its letter", async () => {
+    const { root, render } = setup({ status: ok({ initialized: true, unlocked: false }) });
+    await render();
+    const input = root.querySelector<HTMLInputElement>("input")!;
+    const toggle = root.querySelector<HTMLButtonElement>("button.toggle")!;
+    expect(input.type).toBe("password");
+    toggle.click();
+    expect(input.type).toBe("text");
+    expect(toggle.textContent).toBe("Hide");
+    toggle.click();
+    expect(input.type).toBe("password");
+
+    const unlockedView = setup({ status: unlocked, logins: ok([{ id: "1", title: "atlas travel", username: "ana" }]) });
+    await unlockedView.render();
+    expect(unlockedView.root.querySelector(".avatar")!.textContent).toBe("A");
+  });
 });
+

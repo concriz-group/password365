@@ -48,5 +48,17 @@
   "passkeyVerify": "{site} pide confirmar que eres tú: escribe tu contraseña maestra en la ventana de Password365",
   "confirmIdentity": "Confirmar que eres tú",
   "confirmPasskey": "Confirma que eres tú para usar la passkey",
-  "confirm": "Confirmar"
+  "confirm": "Confirmar",
+  "appNotRunningTitle": "Password365 no está abierto",
+  "appNotRunningBody": "Abre la app Password365 en este ordenador y vuelve a hacer clic en este icono. Tus contraseñas se quedan en la app: la extensión solo las rellena.",
+  "getApp": "Obtener la app",
+  "hostMissingTitle": "Falta el ayudante del navegador",
+  "createVaultTitle": "Crea tu bóveda",
+  "lockedBody": "Escribe tu contraseña maestra para desbloquear la bóveda.",
+  "showPassword": "Mostrar",
+  "hidePassword": "Ocultar",
+  "genTitle": "Generador de contraseñas",
+  "noLoginsTitle": "Nada guardado para este sitio",
+  "noLoginsHint": "Inicia sesión una vez y Password365 ofrece guardarlo, o añádelo en la app.",
+  "openAppButton": "Abrir la app"
 }
