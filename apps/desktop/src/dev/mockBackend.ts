@@ -167,7 +167,32 @@ export function createMockBackend(): Invoke {
     ],
   });
 
-  let lastBackup: number | null = null;
+  // `?shots`: made-up items with no real brands, for the website's screenshots (see
+  // site/scripts/shots.mjs). Same data as the iPhone screenshots.
+  const shots = new URLSearchParams(window.location.search).has("shots");
+  if (shots) {
+    items.length = 0;
+    const login = (title: string, username: string, site: string, extra: Partial<ItemInput> = {}) =>
+      add("v-personal", { title, username, urls: [`https://${site}`], password: "correct-horse-battery", ...extra });
+    login("Atlas Travel", "ana.lima@northwind.example", "atlas-travel.example");
+    add("v-personal", { kind: "note", title: "Home Wi-Fi", notes: "Network: Lighthouse" });
+    login("Horizon Bank", "ana.lima", "horizon-bank.example", { totp: "JBSWY3DPEHPK3PXP" });
+    login("Juniper Market", "ana.lima@northwind.example", "juniper-market.example");
+    login("Lumen Cloud", "ana.lima@northwind.example", "lumen.example", { totp: "JBSWY3DPEHPK3PXP", notes: "Recovery codes are in the safe." });
+    login("Northwind Mail", "ana.lima@northwind.example", "northwind-mail.example");
+    login("Orbit Music", "analima", "orbit-music.example");
+    login("Pixel Studio", "ana@pixelstudio.example", "pixelstudio.example");
+    add("v-personal", {
+      kind: "card",
+      title: "Visa Horizon",
+      fields: [
+        { label: "cardholder name", value: "Ana Lima" },
+        { label: "number", value: "4111111111111111" },
+        { label: "expiry date", value: "2029-04" },
+      ],
+    });
+  }
+  let lastBackup: number | null = shots ? Date.now() : null;
   const profile: { identity: string | null; card: string | null } = { identity: null, card: null };
   let deviceName = "This Mac";
   const devices: Device[] = [
