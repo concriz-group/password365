@@ -61,7 +61,11 @@ per field (CRDT) — same guarantees (proven by property tests), simpler storage
 Authenticity moves to the transport/bundle layer (Noise + Ed25519-signed bundles). See
 `docs/sync-protocol.md` §1. Say if you'd rather keep the op log (e.g. for an audit trail per change).
 
-## 19. Touch ID / Windows Hello and macOS AutoFill need signed release builds (blocked on you)
+## 19. Touch ID / Windows Hello and macOS AutoFill need signed release builds (macOS signing done 2026-11-21)
+The macOS release is now signed with Developer ID and notarized by the pipeline, so Touch ID and the
+macOS AutoFill extension can be built next. Windows stays unsigned (SmartScreen warns). What follows is
+the original reasoning.
+
 Both need the app signed with your own identities:
 - **Touch ID** keeps the unlock key in the Keychain behind biometry (`kSecAccessControlBiometryCurrentSet`),
   which only works for a Developer ID–signed, notarized app with the keychain entitlement.

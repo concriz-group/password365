@@ -36,10 +36,16 @@ Download the newest version for your system from the
 | macOS (Apple silicon and Intel) | `Password365-macOS.dmg` |
 | Windows 10 and 11 | `Password365-Windows-setup.exe` (or `.msi`) |
 | Linux | `Password365-Linux.AppImage` or `.deb` |
+| Browser extension | `Password365-extension-Chromium.zip` (Chrome, Edge, Brave) or `-Firefox.zip` |
+
+The macOS app is signed and notarized by Apple. The Windows installer is not code-signed yet, so
+SmartScreen may warn the first time ("More info › Run anyway"). Until the extension is in the
+browser stores, unzip it and load it as an unpacked extension (Chrome: `chrome://extensions` ›
+Developer mode › Load unpacked); the app registers its helper with your browsers by itself.
 
 The app can check for new versions once a day (it asks the first time you open it); every update
 is signed, and the app refuses one that is not. Password365 for iPhone and iPad is built on the
-same core.
+same core and is coming to the App Store.
 
 ## Security
 

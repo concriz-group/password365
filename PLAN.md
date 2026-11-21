@@ -1,5 +1,8 @@
 # Pass — Offline-First Password Manager: Implementation Plan
 
+> **Historical planning document.** The product is now called Password365 and some details below
+> changed along the way; the current behavior is in the README, `docs/` and the code.
+
 > Working name: **Pass**. A 1Password-style password manager for iOS, Android, macOS, Windows
 > (and Linux for free), with a browser extension. **No cloud, no server, no account backend.**
 > Devices sync only with each other, directly: local Wi-Fi, Bluetooth/proximity, or an
