@@ -21,6 +21,25 @@ const year = new Date().getFullYear();
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline define:vars={{ current: tag, targets: Object.fromEntries(languages.map((l) => [l.tag, href(l.tag, page)])) }}>
+      // First visit: send a Portuguese or Spanish browser to its language. Only from the English page,
+      // never after the visitor picked a language in the menu, and once per tab (so Back works).
+      try {
+        document.addEventListener("click", (e) => {
+          const link = e.target instanceof Element ? e.target.closest(".lang-menu a, .languages a") : null;
+          if (link) localStorage.setItem("p365-lang", link.getAttribute("hreflang") || "");
+        }, true);
+        if (current === "en" && !localStorage.getItem("p365-lang") && !sessionStorage.getItem("p365-redirected")) {
+          const wanted = (navigator.languages && navigator.languages.length ? navigator.languages : [navigator.language || ""])
+            .map((l) => String(l).toLowerCase().slice(0, 2))
+            .find((code) => code === "en" || targets[code]);
+          if (wanted && wanted !== "en" && targets[wanted]) {
+            sessionStorage.setItem("p365-redirected", "1");
+            location.replace(targets[wanted] + location.search + location.hash);
+          }
+        }
+      } catch (_) { /* storage blocked: no redirect, nothing breaks */ }
+    </script>
     <title>{pageTitle}</title>
     <meta name="description" content={description ?? t("meta.description")} />
     <link rel="canonical" href={canonical} />
