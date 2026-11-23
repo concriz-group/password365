@@ -756,3 +756,100 @@ fn duplicates_are_listed_and_merged_through_the_ffi() {
     let kept = p.edit_draft(es).unwrap();
     assert_eq!(kept.urls.len(), 2, "both websites on the login that stays");
 }
+
+#[test]
+fn what_a_phone_needs_from_the_desktop_works_through_the_ffi() {
+    let dir = tempfile::tempdir().unwrap();
+    let p = vault(&dir, std::sync::Arc::new(MemoryKeeper::default()));
+    p.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+    let id = p
+        .create_item(ItemDraft {
+            kind: "login".into(),
+            title: "Mail".into(),
+            username: "ana".into(),
+            password: "pw-1".into(),
+            totp: String::new(),
+            notes: String::new(),
+            urls: vec!["https://mail.example".into()],
+            tags: vec![],
+            favorite: false,
+            region: String::new(),
+            fields: vec![],
+            version: 0,
+        })
+        .unwrap();
+    // The item says when it changed and that it has no earlier password yet.
+    let view = p.item(id.clone()).unwrap();
+    assert!(view.updated_at > 0);
+    assert_eq!(view.previous_passwords, 0);
+
+    // A file is attached, comes back through the item, and can be removed.
+    let file = dir.path().join("note.txt");
+    std::fs::write(&file, "hello").unwrap();
+    let attached = p
+        .attach_file(id.clone(), file.to_string_lossy().into_owned())
+        .unwrap();
+    assert_eq!((attached.name.as_str(), attached.size), ("note.txt", 5));
+    assert_eq!(
+        p.attachment_bytes(id.clone(), attached.id.clone()).unwrap(),
+        b"hello"
+    );
+    p.remove_attachment(id.clone(), attached.id).unwrap();
+    assert!(p.item(id.clone()).unwrap().attachments.is_empty());
+
+    // Export needs the master password again and writes the file.
+    let csv = dir.path().join("out.csv");
+    assert!(
+        p.export_csv(csv.to_string_lossy().into_owned(), "wrong".into())
+            .is_err()
+    );
+    assert_eq!(
+        p.export_csv(csv.to_string_lossy().into_owned(), PASSWORD.into())
+            .unwrap(),
+        1
+    );
+    assert!(
+        std::fs::read_to_string(&csv)
+            .unwrap()
+            .contains("mail.example")
+    );
+    let cxf = dir.path().join("out.cxf");
+    assert_eq!(
+        p.export_cxf(cxf.to_string_lossy().into_owned(), PASSWORD.into())
+            .unwrap(),
+        1
+    );
+
+    // Delete, then it is in Recently Deleted: restore it, delete again, and delete for good.
+    p.delete_item(id.clone()).unwrap();
+    let gone = p.deleted_items().unwrap();
+    assert_eq!(gone.len(), 1);
+    assert_eq!(gone[0].title, "Mail");
+    assert!(gone[0].purge_at > gone[0].deleted_at);
+    p.restore_item(id.clone()).unwrap();
+    assert!(p.deleted_items().unwrap().is_empty());
+    p.delete_item(id.clone()).unwrap();
+    p.delete_permanently(id.clone()).unwrap();
+    assert!(p.deleted_items().unwrap().is_empty());
+    let gone_id = id.clone();
+    assert!(p.item(id).is_err());
+    // Only a Wireless Router item has a Wi-Fi code.
+    let mut router = p.new_draft("wireless_router".into()).unwrap();
+    router.title = "Home".into();
+    for field in &mut router.fields {
+        match field.label.to_lowercase().as_str() {
+            "network name" => field.value = "Home Net".into(),
+            "wireless network password" => field.value = "s3cret;pw".into(),
+            _ => {}
+        }
+    }
+    let router_id = p.create_item(router).unwrap();
+    assert_eq!(
+        p.wifi_join_text(router_id).unwrap().as_deref(),
+        Some("WIFI:T:WPA;S:Home Net;P:s3cret\\;pw;;")
+    );
+    assert!(
+        p.wifi_join_text(gone_id).is_err(),
+        "a deleted item has no code"
+    );
+}

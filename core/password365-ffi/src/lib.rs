@@ -28,6 +28,7 @@ mod hosting;
 mod importing;
 pub use autofill::{FillValues, LoginIdentity, PasskeyCreated, PasskeyIdentity, PasskeySignIn};
 mod pairing;
+mod phone_extras;
 mod security;
 mod sync_files;
 mod watchtower;
@@ -37,6 +38,7 @@ pub use editing::{
 };
 pub use importing::ImportResult;
 pub use pairing::{Device, SyncSummary};
+pub use phone_extras::DeletedItemView;
 pub use security::MobileSettings;
 
 /// Where the app keeps the Secret Key (the iOS Keychain), implemented in Swift.
@@ -159,6 +161,10 @@ pub struct ItemView {
     pub archived: bool,
     /// Attached files.
     pub attachments: Vec<AttachmentRow>,
+    /// When it was last changed (ms since epoch).
+    pub updated_at: i64,
+    /// Passwords it had before the current one.
+    pub previous_passwords: u64,
 }
 
 /// A file attached to an item.
@@ -327,6 +333,8 @@ impl Password365 {
             tags: item.summary.tags,
             favorite: item.summary.favorite,
             archived: item.summary.archived,
+            updated_at: item.summary.updated_at,
+            previous_passwords: item.password_history_count as u64,
             attachments: item
                 .attachments
                 .into_iter()
