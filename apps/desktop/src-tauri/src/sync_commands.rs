@@ -7,7 +7,7 @@
 use password365_app::devices::{DeviceDto, SyncResultDto, ThisDeviceDto, net_error};
 use password365_app::{AppError, AppService, Result};
 use password365_crypto::secret::SecretString;
-use password365_net::pairing::{Joining, local_ip};
+use password365_net::pairing::{HostPairing, JoinListener, Joining, local_ip};
 use password365_net::tcp::SYNC_PORT;
 use serde::Serialize;
 use tauri::State;
@@ -83,6 +83,42 @@ pub fn approve_device(
     state.with(|s| s.send_pairing_bundle(&mut pairing, vault_ids))?;
     let peer = pairing.wait_joined(SYNC_PORT).map_err(net_error)?;
     state.with(|s| s.pin_device(peer))
+}
+
+/// Device with the vault: connects to the code a NEW device shows (pasted or scanned). The person
+/// then types the six digits that device shows, and [`approve_device`] sends the account.
+pub fn connect_to_new_device(slots: &PairingSlots, code: &str) -> Result<()> {
+    slots.cancel_all()?;
+    let pairing = HostPairing::connect(code).map_err(net_error)?;
+    slots.put_pairing(pairing)
+}
+
+/// New device (no vault yet): starts showing a QR code for the device with the vault to scan.
+pub fn join_listen(slots: &PairingSlots) -> Result<InviteDto> {
+    join_listen_on(slots, local_ip().map_err(net_error)?)
+}
+
+/// [`join_listen`] on `ip`.
+pub fn join_listen_on(slots: &PairingSlots, ip: std::net::IpAddr) -> Result<InviteDto> {
+    let listener = JoinListener::open(ip).map_err(net_error)?;
+    let code = listener.invite_code();
+    let link = listener.invite_link();
+    slots.put_listener(listener)?;
+    Ok(InviteDto {
+        qr_svg: qr_svg(&link)?,
+        code,
+    })
+}
+
+/// New device: waits until the device with the vault scans the code and connects; returns the six
+/// digits to show here (the person types them on the other device). Cancelled by `cancel_pairing`.
+pub fn join_accept(slots: &PairingSlots) -> Result<String> {
+    let listener = slots.take_listener()?;
+    let cancel = slots.cancel_flag()?;
+    let joining = listener.accept_cancellable(&cancel).map_err(net_error)?;
+    let shown = joining.verification_code().to_owned();
+    slots.put_joining(joining)?;
+    Ok(shown)
 }
 
 /// New device: connects with the scanned/typed code; returns the code to compare.
@@ -224,6 +260,23 @@ pub fn cancel_pairing(slots: State<'_, SharedSlots>) -> Result<()> {
 pub async fn join_with_code(slots: State<'_, SharedSlots>, code: String) -> Result<String> {
     let slots = SharedSlots::clone(&slots);
     blocking(move || join_connect(&slots, &code)).await
+}
+
+#[tauri::command]
+pub async fn connect_new_device(slots: State<'_, SharedSlots>, code: String) -> Result<()> {
+    let slots = SharedSlots::clone(&slots);
+    blocking(move || connect_to_new_device(&slots, &code)).await
+}
+
+#[tauri::command]
+pub fn join_show_code(slots: State<'_, SharedSlots>) -> Result<InviteDto> {
+    join_listen(&slots)
+}
+
+#[tauri::command]
+pub async fn join_accept_scan(slots: State<'_, SharedSlots>) -> Result<String> {
+    let slots = SharedSlots::clone(&slots);
+    blocking(move || join_accept(&slots)).await
 }
 
 #[tauri::command]

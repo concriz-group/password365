@@ -5,13 +5,15 @@ import { ErrorMessage } from "../components/ErrorMessage";
 import { PasswordInput } from "../components/PasswordInput";
 import { useAction } from "../hooks/useAction";
 import { useT } from "../i18n";
+import type { Invite } from "../api/types";
+import { copySecret as copy } from "../lib/clipboard";
 
 interface Props {
   onDone: () => void;
   onBack: () => void;
 }
 
-type Step = "code" | "verify" | "password";
+type Step = "show" | "code" | "verify" | "password";
 
 /**
  * New install, set up from a device that already has Password365: paste the
@@ -21,7 +23,10 @@ type Step = "code" | "verify" | "password";
 export function JoinDevice({ onDone, onBack }: Props) {
   const client = useClient();
   const t = useT();
-  const [step, setStep] = useState<Step>("code");
+  // First this computer shows a QR code for the device that has the vault to scan; the other way
+  // (paste a code that device shows) is one click away.
+  const [step, setStep] = useState<Step>("show");
+  const [invite, setInvite] = useState<Invite | null>(null);
   const [code, setCode] = useState("");
   const [shown, setShown] = useState("");
   const [password, setPassword] = useState("");
@@ -45,6 +50,32 @@ export function JoinDevice({ onDone, onBack }: Props) {
     onDone();
   });
 
+  // Step "show": start listening, show the QR code, and move on when a device connects.
+  const showing = useRef(false);
+  const [showError, setShowError] = useState<unknown>(null);
+  useEffect(() => {
+    if (step !== "show" || showing.current) return;
+    showing.current = true;
+    let live = true;
+    client
+      .joinShowCode()
+      .then(async (shownInvite) => {
+        if (!live) return;
+        setInvite(shownInvite);
+        const digits = await client.joinAcceptScan();
+        if (!live) return;
+        setShown(digits);
+        setStep("verify");
+      })
+      .catch((reason) => {
+        if (live) setShowError(reason);
+        showing.current = false;
+      });
+    return () => {
+      live = false;
+    };
+  }, [step, client]);
+
   const { run: waitForApproval } = approval;
   useEffect(() => {
     if (step === "verify" && !waiting.current) {
@@ -61,6 +92,41 @@ export function JoinDevice({ onDone, onBack }: Props) {
   return (
     <main className="centered card">
       <h1>{t("join.title")}</h1>
+      {step === "show" && (
+        <>
+          <p>
+            {t("join.showIntro").split("{place}")[0]}
+            <strong>{t("join.showPlace")}</strong>
+            {t("join.showIntro").split("{place}")[1]}
+          </p>
+          {invite ? (
+            <>
+              <img className="qr" alt={t("join.showQr")} src={`data:image/svg+xml;utf8,${encodeURIComponent(invite.qr_svg)}`} />
+              <p className="hint" role="status">
+                {t("join.showWaiting")}
+              </p>
+              <button type="button" onClick={() => void copy(invite.code)}>
+                {t("addDevice.copyCode")}
+              </button>
+            </>
+          ) : showError ? (
+            <ErrorMessage error={showError} />
+          ) : (
+            <p className="muted">{t("addDevice.preparing")}</p>
+          )}
+          <button
+            type="button"
+            className="link"
+            onClick={() => {
+              void client.cancelPairing();
+              showing.current = false;
+              setStep("code");
+            }}
+          >
+            {t("join.pasteInstead")}
+          </button>
+        </>
+      )}
       {step === "code" && (
         <form onSubmit={connect.run}>
           <p>

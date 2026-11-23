@@ -11,5 +11,10 @@
   "deviceName": "Nombre de este dispositivo",
   "deviceNameExample": "p. ej., Portátil del trabajo",
   "settingUp": "Configurando…",
-  "finish": "Finalizar"
+  "finish": "Finalizar",
+  "showIntro": "En el dispositivo que tiene tu bóveda (tu móvil u otro ordenador), abre {place} y escanea este código. Los dos dispositivos deben estar en la misma red.",
+  "showPlace": "Dispositivos › Añadir un dispositivo › Escanear el código del dispositivo nuevo",
+  "showQr": "Código QR para unirse a esta bóveda",
+  "showWaiting": "Esperando a que el otro dispositivo escanee… El código vale una sola vez y caduca en 5 minutos.",
+  "pasteInstead": "O pega un código del otro dispositivo"
 }

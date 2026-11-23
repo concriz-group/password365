@@ -88,6 +88,8 @@ function storeFields(kind: string, input: ItemInput, item: Pick<Stored, "fields"
   }
 }
 
+const DEMO_QR = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" width="220" height="220"><rect width="29" height="29" fill="#fff"/><path fill="#000" d="M2 2h7v7H2zM20 2h7v7h-7zM2 20h7v7H2zM11 11h7v7h-7z"/></svg>`;
+
 export function createMockBackend(): Invoke {
   // `?fresh=1`: no account yet (the first-run screens; used by the browser end-to-end tests).
   let initialized = !new URLSearchParams(window.location.search).has("fresh");
@@ -225,6 +227,10 @@ export function createMockBackend(): Invoke {
       unlocked = true;
       return null;
     }
+    // Joining another device works before there is a vault here.
+    if (command === "join_show_code") return { code: "PASSWORD365-PAIR:1:DEMODEMODEMO", qr_svg: DEMO_QR };
+    if (command === "join_accept_scan") return new Promise(() => {});
+    if (command === "cancel_pairing") return null;
     if (!unlocked) return fail("locked", "the vault is locked");
     switch (command) {
       case "settings":

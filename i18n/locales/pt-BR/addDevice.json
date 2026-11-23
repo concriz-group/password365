@@ -12,5 +12,7 @@
   "match": "Adicionar dispositivo",
   "noMatch": "Cancelar",
   "finishing": "Aguardando a senha mestra no novo dispositivo…",
-  "wrongCode": "Esse não é o código que o novo dispositivo mostra. Por segurança o pareamento foi interrompido: comece de novo."
+  "wrongCode": "Esse não é o código que o novo dispositivo mostra. Por segurança o pareamento foi interrompido: comece de novo.",
+  "pasteNew": "O dispositivo novo é que mostra o QR code? Cole aqui o código que ele mostra:",
+  "connectNew": "Conectar"
 }

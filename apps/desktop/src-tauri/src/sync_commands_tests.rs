@@ -126,3 +126,30 @@ fn steps_out_of_order_explain_themselves() {
         "validation"
     );
 }
+
+#[test]
+fn a_new_device_shows_the_code_and_the_device_with_the_vault_connects_and_approves() {
+    let (_da, a) = existing();
+    let slots_a = PairingSlots::default();
+    let vault = a.with(|s| Ok(s.vaults()?[0].id.clone())).unwrap();
+
+    // The new computer (no vault) shows a QR code and waits.
+    let (_db, b) = state();
+    let slots_b = Arc::new(PairingSlots::default());
+    let shown = join_listen_on(&slots_b, LOCALHOST).unwrap();
+    assert!(shown.qr_svg.contains("<svg"));
+    let s2 = Arc::clone(&slots_b);
+    let new_side = thread::spawn(move || join_accept(&s2).unwrap());
+
+    // The device with the vault scans (pastes) the code, and its person types what the new one shows.
+    connect_to_new_device(&slots_a, &shown.code).unwrap();
+    let digits = new_side.join().unwrap();
+    let (a2, s_a) = (Arc::clone(&a), slots_a);
+    let host = thread::spawn(move || approve_device(&a2, &s_a, &digits, &[vault]).unwrap());
+
+    join_wait_approval(&slots_b).unwrap();
+    join_finish(&b, &slots_b, PW.into(), "Desktop").unwrap();
+    assert_eq!(host.join().unwrap().name, "Desktop");
+    assert!(b.with(|s| Ok(s.status().unlocked)).unwrap());
+    assert_eq!(b.with(AppService::devices).unwrap()[0].name, "Laptop");
+}

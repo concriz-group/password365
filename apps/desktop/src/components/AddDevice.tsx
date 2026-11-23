@@ -36,6 +36,24 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
   const [copied, setCopied] = useState(false);
   const [typed, setTyped] = useState("");
   const digits = typed.replace(/\D/g, "");
+  // The other way: a NEW device shows the code, and it is pasted here.
+  const [pasted, setPasted] = useState("");
+  const [pasting, setPasting] = useState(false);
+  const [pasteError, setPasteError] = useState<ApiError | null>(null);
+
+  async function connectToNewDevice(e: { preventDefault: () => void }) {
+    e.preventDefault();
+    setPasteError(null);
+    setPasting(true);
+    try {
+      await client.connectNewDevice(pasted.trim());
+      setStep({ kind: "verify" });
+    } catch (reason) {
+      setPasteError(toApiError(reason));
+    } finally {
+      setPasting(false);
+    }
+  }
 
   useEffect(() => {
     let alive = true;
@@ -94,6 +112,16 @@ export function AddDevice({ vaults, onAdded, onClose, copy }: Props) {
           <p className="muted" role="status">
             {t("addDevice.waiting")}
           </p>
+          <form onSubmit={(e) => void connectToNewDevice(e)} className="paste-new-device">
+            <label>
+              {t("addDevice.pasteNew")}
+              <textarea value={pasted} onChange={(e) => setPasted(e.target.value)} rows={2} spellCheck={false} />
+            </label>
+            {pasteError && <ErrorMessage error={pasteError} />}
+            <button type="submit" disabled={!pasted.trim() || pasting}>
+              {t("addDevice.connectNew")}
+            </button>
+          </form>
         </>
       )}
       {step.kind === "verify" && (

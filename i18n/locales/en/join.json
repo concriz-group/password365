@@ -11,5 +11,10 @@
   "deviceName": "Name for this device",
   "deviceNameExample": "e.g. Work laptop",
   "settingUp": "Setting up…",
-  "finish": "Finish"
+  "finish": "Finish",
+  "showIntro": "On the device that has your vault (your phone or another computer), open {place} and scan this code. Both devices must be on the same network.",
+  "showPlace": "Devices › Add a device › Scan the new device's code",
+  "showQr": "QR code to join this vault",
+  "showWaiting": "Waiting for the other device to scan… The code works once and expires in 5 minutes.",
+  "pasteInstead": "Or paste a code from the other device"
 }

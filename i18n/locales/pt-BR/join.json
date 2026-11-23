@@ -11,5 +11,10 @@
   "deviceName": "Nome deste dispositivo",
   "deviceNameExample": "ex.: Notebook do trabalho",
   "settingUp": "Configurando…",
-  "finish": "Concluir"
+  "finish": "Concluir",
+  "showIntro": "No dispositivo que tem o seu cofre (o celular ou outro computador), abra {place} e escaneie este código. Os dois dispositivos precisam estar na mesma rede.",
+  "showPlace": "Dispositivos › Adicionar um dispositivo › Escanear o código do dispositivo novo",
+  "showQr": "QR code para entrar neste cofre",
+  "showWaiting": "Aguardando o outro dispositivo escanear… O código vale uma única vez e expira em 5 minutos.",
+  "pasteInstead": "Ou cole um código do outro dispositivo"
 }

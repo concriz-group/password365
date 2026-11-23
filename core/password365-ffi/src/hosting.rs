@@ -70,6 +70,18 @@ impl Password365 {
         Ok(())
     }
 
+    /// The other way: a NEW device (no vault yet) shows the code and this device scans it. Connects
+    /// to it (blocks: call it off the main thread). The new device then shows six digits, which are
+    /// typed here and checked by `pairing_approve`, as when this device shows the code.
+    pub fn pairing_connect(&self, code: String) -> Result<()> {
+        self.pairing_cancel();
+        let pairing = HostPairing::connect(code.trim()).map_err(net_error)?;
+        let mut slot = self.host_slot();
+        slot.cancel = Arc::new(AtomicBool::new(false));
+        slot.pairing = Some(pairing);
+        Ok(())
+    }
+
     /// Stops an invite or a wait.
     pub fn pairing_cancel(&self) {
         let mut slot = self.host_slot();
@@ -161,6 +173,37 @@ mod tests {
         assert!(guest.status().unlocked);
         assert_eq!(guest.devices().unwrap().len(), 1);
         assert_eq!(host.devices().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn a_phone_with_a_vault_scans_the_code_a_new_device_shows() {
+        use password365_net::pairing::JoinListener;
+        let dir = tempfile::tempdir().unwrap();
+        let host = vault(&dir, Arc::new(MemoryKeeper::default()));
+        host.create_account(PASSWORD.into(), PASSWORD.into())
+            .unwrap();
+        // The new device shows a link (the desktop does this); the phone scans it.
+        let listener = JoinListener::open(std::net::Ipv4Addr::LOCALHOST.into()).unwrap();
+        let link = listener.invite_link();
+        assert!(link.starts_with("https://password365.app/join#"));
+        let cancel = std::sync::atomic::AtomicBool::new(false);
+        std::thread::scope(|scope| {
+            let new_device = scope.spawn(move || {
+                let joining = listener.accept_cancellable(&cancel).unwrap();
+                joining.verification_code().to_owned()
+            });
+            host.pairing_connect(link).unwrap();
+            let digits = new_device.join().unwrap();
+            assert_eq!(digits.len(), 7, "six digits, in two groups");
+            // Wrong digits end the pairing and nothing is sent; the right ones are checked the same way.
+            let wrong = if digits.replace(' ', "") == "000000" {
+                "000001"
+            } else {
+                "000000"
+            };
+            assert!(host.pairing_approve(wrong.into()).is_err());
+            assert!(host.devices().unwrap().is_empty());
+        });
     }
 
     #[test]

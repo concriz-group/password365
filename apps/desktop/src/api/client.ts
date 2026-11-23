@@ -165,6 +165,12 @@ export function createClient(invoke: Invoke) {
     approveNewDevice: (code: string, vaultIds: string[]) => call<Device>("approve_new_device", { code, vaultIds }),
     cancelPairing: () => call<void>("cancel_pairing"),
     joinWithCode: (code: string) => call<string>("join_with_code", { code }),
+    /** New device: shows a QR code (and code) for the device that has the vault to scan. */
+    joinShowCode: () => call<Invite>("join_show_code"),
+    /** New device: waits until that device scans it; returns the six digits to show. */
+    joinAcceptScan: () => call<string>("join_accept_scan"),
+    /** Device with the vault: connects to the code a new device shows (pasted). */
+    connectNewDevice: (code: string) => call<void>("connect_new_device", { code }),
     joinWait: () => call<void>("join_wait"),
     joinComplete: (password: string, deviceName: string) =>
       call<void>("join_complete", { password, deviceName }),

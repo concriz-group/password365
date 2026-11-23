@@ -195,6 +195,23 @@ describe("AddDevice", () => {
     expect(client.cancelPairing).not.toHaveBeenCalled();
   });
 
+  it("connects to the code a NEW device shows (pasted), then asks for the six digits it shows", async () => {
+    const connectNewDevice = vi.fn().mockResolvedValue(undefined);
+    const { client, user } = setup({ waitForNewDevice: vi.fn().mockReturnValue(new Promise(() => {})), connectNewDevice });
+    await user.type(await screen.findByLabelText(/The new device shows a QR code instead/), "  PASSWORD365-PAIR:1:NEW ");
+    await user.click(screen.getByRole("button", { name: "Connect" }));
+    expect(client.connectNewDevice).toHaveBeenCalledWith("PASSWORD365-PAIR:1:NEW");
+    expect(await screen.findByLabelText("Verification code")).toBeInTheDocument();
+  });
+
+  it("shows why a pasted code did not connect", async () => {
+    const connectNewDevice = vi.fn().mockRejectedValue({ code: "io", message: "could not reach that device" });
+    const { user } = setup({ waitForNewDevice: vi.fn().mockReturnValue(new Promise(() => {})), connectNewDevice });
+    await user.type(await screen.findByLabelText(/The new device shows a QR code instead/), "X");
+    await user.click(screen.getByRole("button", { name: "Connect" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent("could not reach that device");
+  });
+
   it("needs at least one vault", async () => {
     const { user } = setup();
     await user.type(await screen.findByLabelText("Verification code"), "123456");

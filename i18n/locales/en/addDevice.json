@@ -12,5 +12,7 @@
   "match": "Add device",
   "noMatch": "Cancel",
   "finishing": "Waiting for the master password on the new device…",
-  "wrongCode": "That is not the code the new device shows. For your safety the pairing was stopped: start again."
+  "wrongCode": "That is not the code the new device shows. For your safety the pairing was stopped: start again.",
+  "pasteNew": "The new device shows a QR code instead? Paste the code it shows here:",
+  "connectNew": "Connect"
 }

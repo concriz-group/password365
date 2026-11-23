@@ -4,13 +4,15 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
 use password365_app::{AppError, Result};
-use password365_net::pairing::{HostPairing, Joining, PairingHost};
+use password365_net::pairing::{HostPairing, JoinListener, Joining, PairingHost};
 use zeroize::Zeroizing;
 
 /// In-progress pairing state, registered with Tauri next to the app state.
 #[derive(Default)]
 pub struct PairingSlots {
     host: Mutex<Option<PairingHost>>,
+    /// New device: showing a QR code, waiting for the device with the vault to scan it.
+    listener: Mutex<Option<JoinListener>>,
     pairing: Mutex<Option<HostPairing>>,
     joining: Mutex<Option<Joining>>,
     bundle: Mutex<Option<Zeroizing<Vec<u8>>>>,
@@ -40,6 +42,23 @@ impl PairingSlots {
             .map_err(|_| AppError::Internal("pairing state poisoned".into()))? = Arc::clone(&flag);
         *slot(&self.host)? = Some(host);
         Ok(flag)
+    }
+
+    /// New device: starts showing a code (cancelling anything before it).
+    pub fn put_listener(&self, listener: JoinListener) -> Result<()> {
+        self.cancel_all()?;
+        let flag = Arc::new(AtomicBool::new(false));
+        *self
+            .cancel
+            .lock()
+            .map_err(|_| AppError::Internal("pairing state poisoned".into()))? = flag;
+        *slot(&self.listener)? = Some(listener);
+        Ok(())
+    }
+
+    /// New device: the code being shown.
+    pub fn take_listener(&self) -> Result<JoinListener> {
+        slot(&self.listener)?.take().ok_or_else(|| missing("code"))
     }
 
     /// The flag that stops the current invite's wait.
@@ -102,6 +121,7 @@ impl PairingSlots {
             let _ = joining.cancel();
         }
         slot(&self.host)?.take();
+        slot(&self.listener)?.take();
         slot(&self.bundle)?.take();
         Ok(())
     }

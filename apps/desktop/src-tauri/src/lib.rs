@@ -219,6 +219,9 @@ pub fn run() {
             sync_commands::approve_new_device,
             sync_commands::cancel_pairing,
             sync_commands::join_with_code,
+            sync_commands::join_show_code,
+            sync_commands::connect_new_device,
+            sync_commands::join_accept_scan,
             sync_commands::join_wait,
             sync_commands::join_complete,
         ])
