@@ -47,6 +47,9 @@ pub enum RequestBody {
         item_id: String,
         /// Page URL (re-checked against the item's websites).
         page_url: String,
+        /// The person confirmed using this login on a site it was never used on (related domain).
+        #[serde(default)]
+        confirmed: bool,
     },
     /// After a form submit: new / known / changed?
     CheckSubmitted {

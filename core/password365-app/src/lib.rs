@@ -33,6 +33,7 @@ pub mod quick_unlock;
 pub mod reach;
 pub mod recently_deleted;
 pub mod secret_key_store;
+mod seen_sites;
 mod service;
 pub mod settings;
 pub mod ssh_agent;

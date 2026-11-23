@@ -54,6 +54,9 @@ pub enum AppError {
     /// Joining a new account would replace it: the caller must ask first.
     #[error("this device still holds the Secret Key of a different account")]
     ForeignSecretKey,
+    /// A login is offered on a related site it was never used on: the person must confirm once.
+    #[error("this login has not been used on this site before: confirm it is the right place")]
+    NewSite,
     /// Too many wrong master passwords: wait this many seconds.
     #[error("too many wrong passwords — try again in {0} s")]
     TooManyAttempts(u64),
@@ -78,6 +81,7 @@ impl AppError {
             Self::PasswordRequired => "password_required",
             Self::VerificationNeeded => "verification_needed",
             Self::ForeignSecretKey => "foreign_secret_key",
+            Self::NewSite => "new_site",
         }
     }
 }

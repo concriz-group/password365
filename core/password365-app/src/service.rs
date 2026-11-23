@@ -730,9 +730,14 @@ impl AppService {
 
 /// Keeps `settings`' security part sealed in the vault.
 fn seal_security(session: &mut Session, settings: &Settings) -> Result<()> {
-    let json = serde_json::to_vec(&crate::settings::SecuritySettings::of(settings))
+    let security = serde_json::to_value(crate::settings::SecuritySettings::of(settings))
         .map_err(|e| AppError::Internal(e.to_string()))?;
-    Ok(session.set_app_data(&json)?)
+    // The sealed block also holds other parts (where logins were used): keep them.
+    let mut block = crate::seen_sites::read_block(session);
+    if let serde_json::Value::Object(fields) = security {
+        block.extend(fields);
+    }
+    crate::seen_sites::write_block(session, &block)
 }
 
 pub(crate) fn parse_id<T: FromStr>(id: &str) -> Result<T> {

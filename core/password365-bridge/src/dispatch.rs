@@ -26,9 +26,11 @@ pub fn handle(service: &mut AppService, request: Request) -> Response {
         } => to_value(Ok(AppService::same_site(&submitted_on, &page_url))),
         RequestBody::Unlock { password } => to_value(service.unlock(password, None)),
         RequestBody::LoginsForUrl { page_url } => to_value(service.logins_for_url(&page_url)),
-        RequestBody::Fill { item_id, page_url } => {
-            to_value(service.fill_credentials(&item_id, &page_url))
-        }
+        RequestBody::Fill {
+            item_id,
+            page_url,
+            confirmed,
+        } => to_value(service.fill_credentials(&item_id, &page_url, confirmed)),
         RequestBody::CheckSubmitted { login } => to_value(service.check_submitted(&login)),
         RequestBody::SaveSubmitted { login, vault_id } => {
             to_value(service.save_submitted(&login, vault_id.as_deref()))

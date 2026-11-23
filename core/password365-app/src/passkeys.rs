@@ -146,6 +146,8 @@ impl AppService {
         let same_account = self
             .logins_for_url(page_url)?
             .into_iter()
+            // A passkey joins a login of this very site, never one reached through a related domain.
+            .filter(|c| c.match_level != "related")
             .filter(|c| c.username.as_deref() == Some(passkey.user_name.as_str()))
             .map(|c| c.id)
             .find(|id| !existing.iter().any(|(item, _)| item.id.to_string() == *id));

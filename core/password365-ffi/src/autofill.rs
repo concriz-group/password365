@@ -130,7 +130,10 @@ impl Password365 {
     /// Username and password of `item_id` for `service` (the site is checked
     /// against the item's websites, like the browser extension). An empty
     /// `service` fills an item the user picked from the whole list.
-    pub fn fill(&self, item_id: String, service: String) -> Result<FillValues> {
+    ///
+    /// `confirmed`: the person agreed to use this login on a site it was never used on (a related
+    /// domain); without it that case fails with `new_site`.
+    pub fn fill(&self, item_id: String, service: String, confirmed: bool) -> Result<FillValues> {
         let mut app = self.app();
         if service.trim().is_empty() {
             let view = app.item(&item_id)?;
@@ -142,7 +145,7 @@ impl Password365 {
                 password,
             });
         }
-        let creds = app.fill_credentials(&item_id, &page_url(&service))?;
+        let creds = app.fill_credentials(&item_id, &page_url(&service), confirmed)?;
         Ok(FillValues {
             username: creds.username.unwrap_or_default(),
             password: creds.password.unwrap_or_default(),

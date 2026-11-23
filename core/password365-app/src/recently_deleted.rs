@@ -47,8 +47,10 @@ impl AppService {
 
     /// Deletes an item from Recently Deleted for good.
     pub fn delete_permanently(&mut self, id: &str) -> Result<()> {
-        let id = parse_id::<ItemId>(id)?;
-        Ok(self.session()?.purge_item(id)?)
+        let item = parse_id::<ItemId>(id)?;
+        self.session()?.purge_item(item)?;
+        // The sites remembered for it go with it.
+        crate::seen_sites::forget(self.session()?, id)
     }
 
     /// Purges items deleted more than [`RETENTION_DAYS`] before `now`.

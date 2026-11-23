@@ -1,9 +1,9 @@
 {
   "_about": "Sites that are the same account under different domains (a brand's country sites, or a company's own login domains). A login saved for one is offered on the others, at the weakest match level. Only domains the company owns belong here: a new top-level domain is never assumed to be the brand's (that is how look-alike sites work). Each entry is a registrable domain.",
   "groups": [
-    ["amazon.com", "amazon.es", "amazon.de", "amazon.fr", "amazon.it", "amazon.co.uk", "amazon.nl", "amazon.se", "amazon.pl", "amazon.com.be", "amazon.ca", "amazon.com.mx", "amazon.com.br", "amazon.com.au", "amazon.co.jp", "amazon.in", "amazon.ae", "amazon.sa", "amazon.sg", "amazon.com.tr", "amazon.eg"],
+    ["amazon.com", "amazon.es", "amazon.de", "amazon.fr", "amazon.it", "amazon.co.uk", "amazon.nl", "amazon.se", "amazon.pl", "amazon.be", "amazon.ca", "amazon.com.mx", "amazon.com.br", "amazon.com.au", "amazon.co.jp", "amazon.in", "amazon.ae", "amazon.sa", "amazon.sg", "amazon.com.tr", "amazon.eg"],
     ["google.com", "google.es", "google.de", "google.fr", "google.it", "google.co.uk", "google.com.br", "google.com.mx", "google.pt", "google.nl", "google.ca", "google.com.au", "google.co.jp", "google.co.in", "youtube.com", "gmail.com", "googlemail.com"],
-    ["microsoft.com", "live.com", "office.com", "microsoftonline.com", "outlook.com", "outlook.live.com", "xbox.com", "msn.com", "bing.com", "skype.com"],
+    ["microsoft.com", "live.com", "office.com", "microsoftonline.com", "outlook.com", "xbox.com", "msn.com", "bing.com", "skype.com"],
     ["apple.com", "icloud.com", "me.com"],
     ["ebay.com", "ebay.es", "ebay.de", "ebay.fr", "ebay.it", "ebay.co.uk", "ebay.com.au", "ebay.ca", "ebay.nl", "ebay.pl"],
     ["aliexpress.com", "aliexpress.us", "alibaba.com", "alipay.com"],

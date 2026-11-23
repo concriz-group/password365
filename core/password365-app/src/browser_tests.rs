@@ -105,7 +105,7 @@ fn fill_is_released_only_for_matching_pages() {
     let (_d, mut app) = app();
     let id = add(&mut app, "GitHub", "https://github.com", "octo", "s3cret");
     let creds = app
-        .fill_credentials(&id, "https://github.com/login")
+        .fill_credentials(&id, "https://github.com/login", false)
         .unwrap();
     assert_eq!(
         creds,
@@ -116,11 +116,11 @@ fn fill_is_released_only_for_matching_pages() {
     );
 
     let err = app
-        .fill_credentials(&id, "https://github.com.evil.io/login")
+        .fill_credentials(&id, "https://github.com.evil.io/login", false)
         .unwrap_err();
     assert_eq!(err.code(), "validation");
     assert_eq!(
-        app.fill_credentials(&id, "not a url at all ://")
+        app.fill_credentials(&id, "not a url at all ://", false)
             .unwrap_err()
             .code(),
         "validation"
@@ -185,7 +185,7 @@ fn saving_updates_a_changed_password_and_keeps_history() {
     assert_eq!(updated.summary.id, id);
     assert_eq!(updated.password_history_count, 1);
     assert_eq!(
-        app.fill_credentials(&id, "https://github.com")
+        app.fill_credentials(&id, "https://github.com", false)
             .unwrap()
             .password
             .as_deref(),
@@ -255,11 +255,80 @@ fn archived_logins_are_not_offered() {
 }
 
 #[test]
+fn a_related_site_asks_once_and_is_remembered_and_other_sites_still_ask() {
+    let (_dir, mut app) = app();
+    let shop = add(&mut app, "Amazon", "https://www.amazon.com", "ana", "pw1");
+    // Offered on a related country site, marked as new there.
+    let offered = app
+        .logins_for_url("https://www.amazon.es/ap/signin")
+        .unwrap();
+    let candidate = offered.iter().find(|l| l.id == shop).unwrap();
+    assert_eq!(
+        (candidate.match_level, candidate.new_site),
+        ("related", true)
+    );
+    // Without the person's confirmation nothing is released.
+    assert_eq!(
+        app.fill_credentials(&shop, "https://www.amazon.es/", false)
+            .unwrap_err()
+            .code(),
+        "new_site"
+    );
+    // Confirmed: released, and the site is remembered (also across a lock and unlock).
+    let creds = app
+        .fill_credentials(&shop, "https://www.amazon.es/", true)
+        .unwrap();
+    assert_eq!(creds.password.as_deref(), Some("pw1"));
+    app.lock();
+    app.unlock(PW.into(), None).unwrap();
+    let again = app.logins_for_url("https://www.amazon.es/").unwrap();
+    assert!(!again.iter().find(|l| l.id == shop).unwrap().new_site);
+    assert!(
+        app.fill_credentials(&shop, "https://www.amazon.es/", false)
+            .is_ok()
+    );
+    // Another related site is new again.
+    assert_eq!(
+        app.fill_credentials(&shop, "https://www.amazon.de/", false)
+            .unwrap_err()
+            .code(),
+        "new_site"
+    );
+    // The login's own site never asks.
+    assert!(
+        app.fill_credentials(&shop, "https://www.amazon.com/", false)
+            .is_ok()
+    );
+}
+
+#[test]
+fn what_is_remembered_does_not_disturb_the_security_settings_sharing_the_sealed_block() {
+    let (_dir, mut app) = app();
+    let shop = add(&mut app, "Amazon", "https://amazon.com", "ana", "pw");
+    app.fill_credentials(&shop, "https://amazon.es", true)
+        .unwrap();
+    let mut settings = app.settings();
+    settings.auto_lock_minutes = 7;
+    app.update_settings(settings).unwrap();
+    app.lock();
+    app.unlock(PW.into(), None).unwrap();
+    assert_eq!(
+        app.settings().auto_lock_minutes,
+        7,
+        "the security settings survive"
+    );
+    assert!(
+        app.fill_credentials(&shop, "https://amazon.es", false)
+            .is_ok(),
+        "and so does the memory"
+    );
+}
+
+#[test]
 fn a_login_saved_for_one_country_site_is_offered_on_the_brands_others_and_a_wildcard_on_any() {
     let (_dir, mut app) = app();
     let shop = add(&mut app, "Amazon", "https://www.amazon.com", "ana", "pw1");
     let any = add(&mut app, "Brand", "mybrand.*", "ana", "pw2");
-    // The listed brand: amazon.com's login is offered on amazon.es.
     let offered: Vec<String> = app
         .logins_for_url("https://www.amazon.es/ap/signin")
         .unwrap()
@@ -267,14 +336,6 @@ fn a_login_saved_for_one_country_site_is_offered_on_the_brands_others_and_a_wild
         .map(|l| l.id)
         .collect();
     assert!(offered.contains(&shop));
-    assert_eq!(
-        app.fill_credentials(&shop, "https://www.amazon.es/")
-            .unwrap()
-            .password
-            .as_deref(),
-        Some("pw1")
-    );
-    // The wildcard written by the person: any ending, but only that exact name.
     for page in ["https://mybrand.es/login", "https://mybrand.co.uk/"] {
         assert!(
             app.logins_for_url(page)
@@ -283,6 +344,7 @@ fn a_login_saved_for_one_country_site_is_offered_on_the_brands_others_and_a_wild
                 .any(|l| l.id == any),
             "{page}"
         );
+        assert!(app.fill_credentials(&any, page, true).is_ok());
     }
     assert!(
         app.logins_for_url("https://mybrand-login.com/")
@@ -291,7 +353,7 @@ fn a_login_saved_for_one_country_site_is_offered_on_the_brands_others_and_a_wild
             .all(|l| l.id != any)
     );
     assert!(
-        app.fill_credentials(&any, "https://mybrand-login.com/")
+        app.fill_credentials(&any, "https://mybrand-login.com/", true)
             .is_err()
     );
 }

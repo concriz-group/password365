@@ -643,18 +643,18 @@ fn autofill_lists_and_fills_logins_codes_and_passkeys() {
             .is_empty()
     );
     assert_eq!(
-        p.fill(id.clone(), "gist.github.com".into()).unwrap(),
+        p.fill(id.clone(), "gist.github.com".into(), false).unwrap(),
         FillValues {
             username: "octo".into(),
             password: "pw".into()
         }
     );
     assert!(
-        p.fill(id.clone(), "evil.com".into()).is_err(),
+        p.fill(id.clone(), "evil.com".into(), false).is_err(),
         "never filled into another site"
     );
     assert_eq!(
-        p.fill(id.clone(), String::new()).unwrap().password,
+        p.fill(id.clone(), String::new(), false).unwrap().password,
         "pw",
         "picked from the whole list"
     );

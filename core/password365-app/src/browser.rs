@@ -24,8 +24,10 @@ pub struct LoginCandidate {
     pub title: String,
     /// Username, if any.
     pub username: Option<String>,
-    /// `origin`, `host` or `site`.
+    /// `origin`, `host`, `site` or `related` (another domain of the same account).
     pub match_level: &'static str,
+    /// A related-domain match on a site this login was never used on: filling needs a confirmation.
+    pub new_site: bool,
 }
 
 /// Credentials released for one fill.
@@ -75,6 +77,7 @@ impl AppService {
     pub fn logins_for_url(&mut self, page_url: &str) -> Result<Vec<LoginCandidate>> {
         let page = page_site(page_url)?;
         let session = self.session()?;
+        let seen = crate::seen_sites::read(session);
         let mut found: Vec<(MatchLevel, &ItemSummary)> = session
             .items()
             .into_iter()
@@ -92,18 +95,38 @@ impl AppService {
                 title: s.overview.title.clone(),
                 username: s.overview.username.clone(),
                 match_level: level_name(level),
+                new_site: level == MatchLevel::Related
+                    && !crate::seen_sites::seen(&seen, &s.id.to_string(), &page.registrable),
             })
             .collect())
     }
 
-    /// Releases username + password of `id`, but only for a matching page.
-    pub fn fill_credentials(&mut self, id: &str, page_url: &str) -> Result<FillCredentials> {
+    /// Releases username + password of `id`, but only for a matching page. A login that matches only
+    /// through a related domain, on a site it was never used on, is released only with `confirmed`
+    /// (the person agreed to this site); the site is then remembered.
+    pub fn fill_credentials(
+        &mut self,
+        id: &str,
+        page_url: &str,
+        confirmed: bool,
+    ) -> Result<FillCredentials> {
         let page = page_site(page_url)?;
         let item = self.load_item(id)?;
-        if best_fill_match(&page, &item.overview.urls).is_none() {
+        let Some(level) = best_fill_match(&page, &item.overview.urls) else {
             return Err(AppError::Validation(
                 "this login is not for this website".into(),
             ));
+        };
+        if level == MatchLevel::Related {
+            let session = self.session()?;
+            let known =
+                crate::seen_sites::seen(&crate::seen_sites::read(session), id, &page.registrable);
+            if !known && !confirmed {
+                return Err(AppError::NewSite);
+            }
+            if !known {
+                crate::seen_sites::remember(session, id, &page.registrable)?;
+            }
         }
         Ok(FillCredentials {
             username: item.overview.username.clone(),
@@ -224,6 +247,7 @@ const fn level_name(level: MatchLevel) -> &'static str {
         MatchLevel::Origin => "origin",
         MatchLevel::Host => "host",
         MatchLevel::Site => "site",
+        MatchLevel::Related => "related",
     }
 }
 

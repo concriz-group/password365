@@ -16,6 +16,9 @@ pub enum MatchLevel {
     Host,
     /// Same registrable domain (e.g. `login.example.com` vs `www.example.com`).
     Site,
+    /// A different domain that is the same account: a listed brand's other country site, or a
+    /// wildcard the person wrote (`amazon.*`). The weakest match: the app asks once per site.
+    Related,
 }
 
 /// The sites that are one account under several domains (`templates/equivalent-domains.json`).
@@ -55,11 +58,11 @@ pub fn match_level(page: &Site, saved: &Site) -> Option<MatchLevel> {
         // `amazon.co.uk`) must be exactly that, with a real top-level domain after it.
         let name = page.registrable.split('.').next().unwrap_or_default();
         return (page.registrable.contains('.') && name == saved.registrable)
-            .then_some(MatchLevel::Site);
+            .then_some(MatchLevel::Related);
     }
     if page.registrable != saved.registrable {
         // A listed pair (`amazon.com` and `amazon.es`) is the same account, at the weakest level.
-        return equivalent(&page.registrable, &saved.registrable).then_some(MatchLevel::Site);
+        return equivalent(&page.registrable, &saved.registrable).then_some(MatchLevel::Related);
     }
     if page.host != saved.host {
         return Some(MatchLevel::Site);
@@ -114,11 +117,11 @@ mod tests {
     fn a_brands_country_sites_are_one_account_but_look_alikes_are_not() {
         assert_eq!(
             level("https://www.amazon.es/ap/signin", "https://amazon.com"),
-            Some(MatchLevel::Site)
+            Some(MatchLevel::Related)
         );
         assert_eq!(
             level("https://accounts.google.com", "https://youtube.com"),
-            Some(MatchLevel::Site)
+            Some(MatchLevel::Related)
         );
         assert!(allowed("https://www.amazon.de/", "https://www.amazon.com/"));
         // Not listed: another top-level domain is not assumed to be the brand's.
@@ -140,7 +143,7 @@ mod tests {
             "https://amazon.co.uk",
             "https://amazon.xyz",
         ] {
-            assert_eq!(level(page, "amazon.*"), Some(MatchLevel::Site), "{page}");
+            assert_eq!(level(page, "amazon.*"), Some(MatchLevel::Related), "{page}");
         }
         assert!(allowed("https://amazon.de", "https://www.amazon.*/login"));
         // Only the exact name: look-alikes and other names stay out.
@@ -160,6 +163,40 @@ mod tests {
         assert_eq!(level("http://amazon", "amazon.*"), None);
         // No downgrade from https to http.
         assert!(!allowed("http://amazon.es", "https://amazon.*"));
+    }
+
+    /// The list of equivalent domains is data a person edits: these checks keep a mistake out of it.
+    #[test]
+    fn the_equivalent_domains_list_is_well_formed() {
+        let groups: Vec<Vec<String>> = {
+            #[derive(Deserialize)]
+            struct File {
+                groups: Vec<Vec<String>>,
+            }
+            serde_json::from_str::<File>(include_str!("../../../templates/equivalent-domains.json"))
+                .unwrap()
+                .groups
+        };
+        assert!(!groups.is_empty());
+        let mut seen = std::collections::HashSet::new();
+        for group in &groups {
+            assert!(group.len() >= 2, "a group of one is no group: {group:?}");
+            for domain in group {
+                assert_eq!(domain, &domain.to_ascii_lowercase(), "lower case: {domain}");
+                assert!(
+                    !domain.contains('*') && !domain.contains('/') && !domain.contains(' '),
+                    "plain domain: {domain}"
+                );
+                // Registrable: not a subdomain, and not a shared-hosting suffix (`blogspot.com`, `github.io`,
+                // where anyone makes a site of their own).
+                let site = Site::parse(domain).unwrap_or_else(|| panic!("not a domain: {domain}"));
+                assert_eq!(
+                    &site.registrable, domain,
+                    "must be a registrable domain: {domain}"
+                );
+                assert!(seen.insert(domain.clone()), "in two groups: {domain}");
+            }
+        }
     }
 
     #[test]
