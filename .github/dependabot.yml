@@ -8,10 +8,28 @@ updates:
     groups: { actions: { patterns: ["*"] } }
   - package-ecosystem: cargo
     directory: /core
+    # These libraries change their API in each 0.x release; moving needs code changes and tests (the vault
+    # database, the SSH agent, the pairing code). Done on purpose, not by a bot. Review: 2026-11-23.
+    ignore:
+      - { dependency-name: rusqlite }
+      - { dependency-name: mdns-sd }
+      - { dependency-name: ssh-encoding }
+      - { dependency-name: signature }
+      - { dependency-name: rand_core }
+      - { dependency-name: qrcode }
     schedule: { interval: weekly }
     groups: { rust: { patterns: ["*"] } }
   - package-ecosystem: cargo
     directory: /apps/desktop/src-tauri
+    # These libraries change their API in each 0.x release; moving needs code changes and tests (the vault
+    # database, the SSH agent, the pairing code). Done on purpose, not by a bot. Review: 2026-11-23.
+    ignore:
+      - { dependency-name: rusqlite }
+      - { dependency-name: mdns-sd }
+      - { dependency-name: ssh-encoding }
+      - { dependency-name: signature }
+      - { dependency-name: rand_core }
+      - { dependency-name: qrcode }
     schedule: { interval: weekly }
     groups: { tauri: { patterns: ["*"] } }
   - package-ecosystem: npm
