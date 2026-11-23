@@ -5,6 +5,13 @@ release page and the app's update notice show the section of the new version.
 
 ## [Unreleased]
 
+## [0.1.7] — 2026-11-23
+
+### Changed
+- Updated the libraries the app is built on (compatible updates only; libraries whose API changes
+  stay on their current versions until a migration is planned) and the tools that build and test it.
+  No change in how the app works.
+
 ## [0.1.6] — 2026-11-23
 
 ### Added
