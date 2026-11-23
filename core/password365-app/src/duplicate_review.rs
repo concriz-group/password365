@@ -72,10 +72,11 @@ impl AppService {
     pub fn duplicate_groups(&mut self) -> Result<Vec<DuplicateGroup>> {
         let mut by_key: BTreeMap<(String, String), Vec<ItemId>> = BTreeMap::new();
         for s in self.session()?.items() {
-            if s.kind == ItemKind::Login && crate::service::active(s) {
-                if let Some(key) = key_of(&s.overview.urls, s.overview.username.as_deref()) {
-                    by_key.entry(key).or_default().push(s.id);
-                }
+            if s.kind == ItemKind::Login
+                && crate::service::active(s)
+                && let Some(key) = key_of(&s.overview.urls, s.overview.username.as_deref())
+            {
+                by_key.entry(key).or_default().push(s.id);
             }
         }
         let mut groups = Vec::new();
@@ -173,18 +174,18 @@ impl AppService {
             overview.favorite |= other.overview.favorite;
             kept.set_overview(overview, now);
             if kept.details.totp.is_none() {
-                kept.details.totp = other.details.totp.clone();
+                kept.details.totp.clone_from(&other.details.totp);
             }
             if kept.details.notes.is_none() {
-                kept.details.notes = other.details.notes.clone();
+                kept.details.notes.clone_from(&other.details.notes);
             }
             // A different password is not lost: it joins the history of the one that stays.
-            if other.details.password != kept.details.password {
-                if let Some(password) = other.details.password.clone() {
-                    kept.details
-                        .password_history
-                        .record(password, other.updated_at);
-                }
+            if other.details.password != kept.details.password
+                && let Some(password) = other.details.password.clone()
+            {
+                kept.details
+                    .password_history
+                    .record(password, other.updated_at);
             }
             merged.push(other_id);
         }
