@@ -94,7 +94,7 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
       case "logins":
         return bridge.request<LoginCandidate[]>({ type: "logins_for_url", page_url: await tabUrl(message.tabId) });
       case "fill":
-        return fillTab(message.tabId, message.itemId);
+        return fillTab(message.tabId, message.itemId, false, message.confirmed === true);
       case "generate":
         return generate();
       case "passkey-waiting":
@@ -118,7 +118,7 @@ export function createHandler({ extensionId, extensionOrigin, bridge, tabs, prom
         return { state: "ready", logins, profile, passkeys: passkeys.offeredChoices(tabId) } satisfies MenuState;
       }
       case "menu-fill":
-        return fillTab(tabId, message.itemId, true);
+        return fillTab(tabId, message.itemId, true, message.confirmed === true);
       case "menu-suggest": {
         const { value } = await generate();
         await tabs.send(tabId, { kind: "fill-new-password", password: value, fromMenu: true });

@@ -20,18 +20,22 @@ function el<K extends keyof HTMLElementTagNameMap>(doc: Document, tag: K, text?:
 }
 
 /** A row of the menu: avatar letter, title and subtitle; runs `action` on click. */
-function row(doc: Document, title: string, subtitle: string, action: () => Promise<Reply>) {
+function row(doc: Document, title: string, subtitle: string, action: () => Promise<Reply>, warning?: string) {
   const button = el(doc, "button", undefined, "row");
   button.type = "button";
   const avatar = el(doc, "span", (title.trim()[0] ?? "?").toUpperCase(), "avatar");
   const text = el(doc, "span", undefined, "text");
   text.append(el(doc, "span", title, "title"), el(doc, "span", subtitle, "sub"));
+  if (warning) text.append(el(doc, "span", warning, "warn"));
   button.append(avatar, text);
   button.addEventListener("click", async () => {
     button.disabled = true;
     const reply = await action();
     if (!reply.ok) {
-      text.lastElementChild!.textContent = helpFor(reply.error);
+      text.querySelector(".sub")!.textContent = helpFor(reply.error);
+      button.disabled = false;
+    } else if (reply.result === "again") {
+      // The click only asked for a confirmation: ready for the real one.
       button.disabled = false;
     }
   });
@@ -83,7 +87,23 @@ export async function renderMenu(root: HTMLElement, { send, mode, pollMs = 1000 
   const logins: LoginCandidate[] = state.logins ?? [];
   if (logins.length > 0) root.append(el(doc, "p", t("loginsForSite"), "heading"));
   for (const login of logins) {
-    const button = row(doc, login.title, login.username ?? "", () => send({ kind: "menu-fill", itemId: login.id }));
+    // A related-domain login on a site it was never used on: the first click only asks.
+    let armed = login.new_site !== true;
+    const button = row(
+      doc,
+      login.title,
+      login.username ?? "",
+      async () => {
+        if (!armed) {
+          armed = true;
+          button.querySelector(".sub")!.textContent = t("confirmFillHere");
+          button.classList.add("confirm");
+          return { ok: true, result: "again" } as Reply;
+        }
+        return send({ kind: "menu-fill", itemId: login.id, ...(login.new_site ? { confirmed: true } : {}) });
+      },
+      login.new_site === true ? t("newSiteNote") : undefined,
+    );
     button.dataset.search = `${login.title}\u0000${login.username ?? ""}`.toLowerCase();
     root.append(button);
   }

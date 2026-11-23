@@ -14,7 +14,7 @@ export type BridgeBody =
   | { type: "status" }
   | { type: "unlock"; password: string }
   | { type: "logins_for_url"; page_url: string }
-  | { type: "fill"; item_id: string; page_url: string }
+  | { type: "fill"; item_id: string; page_url: string; confirmed?: boolean }
   | { type: "check_submitted"; login: SubmittedLogin }
   | { type: "save_submitted"; login: SubmittedLogin; vault_id?: string }
   | { type: "same_site"; submitted_on: string; page_url: string }
@@ -97,7 +97,9 @@ export interface LoginCandidate {
   id: string;
   title: string;
   username: string | null;
-  match_level: "origin" | "host" | "site";
+  match_level: "origin" | "host" | "site" | "related";
+  /** A related-domain login on a site it was never used on: filling needs the person's confirmation. */
+  new_site?: boolean;
 }
 
 export interface FillCredentials {

@@ -60,5 +60,8 @@
   "genTitle": "Password generator",
   "noLoginsTitle": "Nothing saved for this site",
   "noLoginsHint": "Sign in once and Password365 offers to save it, or add it in the app.",
-  "openAppButton": "Open the app"
+  "openAppButton": "Open the app",
+  "newSiteNote": "First time with this login on this site",
+  "confirmFill": "Confirm and fill",
+  "confirmFillHere": "Click again to fill here"
 }

@@ -28,9 +28,9 @@ export function createActions({ bridge, tabs }: Deps) {
   }
 
   /** Asks the app for one login's credentials (it re-checks the site) and fills the tab. */
-  async function fillTab(tabId: number, itemId: string, fromMenu = false): Promise<true> {
+  async function fillTab(tabId: number, itemId: string, fromMenu = false, confirmed = false): Promise<true> {
     const page_url = await tabUrl(tabId);
-    const creds = await bridge.request<FillCredentials>({ type: "fill", item_id: itemId, page_url });
+    const creds = await bridge.request<FillCredentials>({ type: "fill", item_id: itemId, page_url, ...(confirmed ? { confirmed } : {}) });
     await tabs.send(tabId, { kind: "fill", ...creds, ...(fromMenu ? { fromMenu } : {}) });
     return true;
   }

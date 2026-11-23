@@ -246,4 +246,21 @@ describe("renderMenu — passkeys", () => {
       expect(root.textContent).toContain(text);
     }
   });
+
+  it("asks once before filling a related-domain login on a site it was never used on", async () => {
+    const logins = [{ id: "i1", title: "Amazon", username: "ana", match_level: "related", new_site: true }];
+    const { root, send } = setup(ok({ state: "ready", logins }));
+    await renderMenu(root, { send, mode: "login" });
+    expect(root.textContent).toContain("First time with this login on this site");
+    const row = root.querySelector<HTMLButtonElement>("button.row")!;
+    row.click();
+    await flush();
+    expect(send).not.toHaveBeenCalledWith(expect.objectContaining({ kind: "menu-fill" }));
+    expect(row.disabled).toBe(false);
+    expect(row.textContent).toContain("Click again to fill here");
+    row.click();
+    await flush();
+    expect(send).toHaveBeenLastCalledWith({ kind: "menu-fill", itemId: "i1", confirmed: true });
+  });
 });
+

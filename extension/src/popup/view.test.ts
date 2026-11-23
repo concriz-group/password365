@@ -182,5 +182,23 @@ describe("popup", () => {
     await unlockedView.render();
     expect(unlockedView.root.querySelector(".avatar")!.textContent).toBe("A");
   });
+
+  it("asks once before filling a related-domain login on a site it was never used on", async () => {
+    const { root, deps, render } = setup({
+      status: unlocked,
+      logins: ok([{ id: "i1", title: "Amazon", username: "ana", match_level: "related", new_site: true }]),
+      fill: ok(true),
+    });
+    await render();
+    expect(root.textContent).toContain("First time with this login on this site");
+    const fill = root.querySelector<HTMLButtonElement>(".logins button")!;
+    fill.click();
+    await flush();
+    expect(fill.textContent).toBe("Confirm and fill");
+    expect(deps.send).not.toHaveBeenCalledWith(expect.objectContaining({ kind: "fill" }));
+    fill.click();
+    await flush();
+    expect(deps.send).toHaveBeenCalledWith({ kind: "fill", tabId: 1, itemId: "i1", confirmed: true });
+  });
 });
 

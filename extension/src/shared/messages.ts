@@ -7,7 +7,7 @@ export type PopupMessage =
   | { kind: "status" }
   | { kind: "unlock"; password: string }
   | { kind: "logins"; tabId: number }
-  | { kind: "fill"; tabId: number; itemId: string }
+  | { kind: "fill"; tabId: number; itemId: string; confirmed?: boolean }
   | { kind: "generate" }
   | { kind: "passkey-waiting"; tabId: number }
   | { kind: "passkey-verifying"; tabId: number }
@@ -34,7 +34,7 @@ export type ContentMessage =
  */
 export type MenuMessage =
   | { kind: "menu-state" }
-  | { kind: "menu-fill"; itemId: string }
+  | { kind: "menu-fill"; itemId: string; confirmed?: boolean }
   | { kind: "menu-suggest" }
   | { kind: "menu-close" }
   | { kind: "menu-unlock" }

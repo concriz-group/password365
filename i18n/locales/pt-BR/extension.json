@@ -60,5 +60,8 @@
   "genTitle": "Gerador de senhas",
   "noLoginsTitle": "Nada salvo para este site",
   "noLoginsHint": "Entre uma vez e o Password365 oferece salvar, ou adicione no app.",
-  "openAppButton": "Abrir o app"
+  "openAppButton": "Abrir o app",
+  "newSiteNote": "Primeira vez com este login neste site",
+  "confirmFill": "Confirmar e preencher",
+  "confirmFillHere": "Clique de novo para preencher aqui"
 }

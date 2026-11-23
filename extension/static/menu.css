@@ -15,3 +15,7 @@ main { padding: 6px; }
 .text { display: flex; flex-direction: column; min-width: 0; }
 .title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .sub { color: #a8a49c; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.row .warn { display: block; color: #b45309; font-size: 11px; margin-top: 2px; }
+@media (prefers-color-scheme: dark) { .row .warn { color: #fbbf24; } }
+.row.confirm { outline: 2px solid #f59e0b; outline-offset: -2px; }

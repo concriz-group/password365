@@ -192,8 +192,16 @@ async function renderLogins(list: HTMLElement, deps: PopupDeps) {
     const text = el(doc, "span", undefined, "login");
     text.append(el(doc, "strong", login.title), el(doc, "span", login.username ?? "", "muted"));
     const fill = el(doc, "button", t("fill"));
+    // A related-domain login on a site it was never used on: the first tap only asks.
+    let armed = login.new_site !== true;
+    if (!armed) text.append(el(doc, "span", t("newSiteNote"), "warn"));
     fill.addEventListener("click", async () => {
-      const result = await deps.send({ kind: "fill", tabId, itemId: login.id });
+      if (!armed) {
+        armed = true;
+        fill.textContent = t("confirmFill");
+        return;
+      }
+      const result = await deps.send({ kind: "fill", tabId, itemId: login.id, ...(login.new_site ? { confirmed: true } : {}) });
       if (result.ok) deps.close();
       else fill.textContent = helpFor(result.error);
     });
