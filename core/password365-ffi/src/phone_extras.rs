@@ -24,6 +24,24 @@ pub struct DeletedItemView {
     pub purge_at: i64,
 }
 
+/// When the last backup was made, and whether a new one is due.
+#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+pub struct BackupInfoView {
+    /// Last backup (ms since epoch), if any.
+    pub last_backup_ms: Option<i64>,
+    /// No backup yet, or an old one (a reminder is due).
+    pub due: bool,
+}
+
+impl From<password365_app::backup::BackupInfo> for BackupInfoView {
+    fn from(i: password365_app::backup::BackupInfo) -> Self {
+        Self {
+            last_backup_ms: i.last_backup_ms,
+            due: i.due,
+        }
+    }
+}
+
 #[uniffi::export]
 impl Password365 {
     /// Items in Recently Deleted, most recently deleted first (they go away by themselves after 30 days).
@@ -89,5 +107,24 @@ impl Password365 {
     /// The `WIFI:` text of a Wireless Router item (a QR code of it joins the network), or none.
     pub fn wifi_join_text(&self, id: String) -> Result<Option<String>> {
         Ok(self.app().wifi_join_text(&id)?)
+    }
+
+    /// When the last backup was made, and whether one is due.
+    pub fn backup_info(&self) -> BackupInfoView {
+        self.app().backup_info().into()
+    }
+
+    /// Writes an encrypted backup of everything to a new file (vault unlocked); the caller shares it.
+    pub fn export_backup(&self, path: String) -> Result<BackupInfoView> {
+        Ok(self.app().export_backup(Path::new(&path))?.into())
+    }
+
+    /// First run on a new phone: restores a backup file with its Secret Key and master password, and leaves it unlocked.
+    pub fn restore_backup(&self, path: String, password: String, secret_key: String) -> Result<()> {
+        Ok(self.app().restore_backup(
+            Path::new(&path),
+            SecretString::from(password),
+            &secret_key,
+        )?)
     }
 }

@@ -853,3 +853,35 @@ fn what_a_phone_needs_from_the_desktop_works_through_the_ffi() {
         "a deleted item has no code"
     );
 }
+
+#[test]
+fn a_backup_made_on_one_phone_restores_on_another() {
+    let (dir_a, dir_b) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
+    let a = vault(&dir_a, std::sync::Arc::new(MemoryKeeper::default()));
+    let secret_key = a.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+    a.create_login(
+        "Mail".into(),
+        "ana".into(),
+        "pw-1".into(),
+        "https://mail.example".into(),
+    )
+    .unwrap();
+    assert!(a.backup_info().due, "no backup yet");
+    let file = dir_a.path().join("backup.p365");
+    let info = a
+        .export_backup(file.to_string_lossy().into_owned())
+        .unwrap();
+    assert!(info.last_backup_ms.is_some() && !info.due);
+    assert!(!a.backup_info().due);
+
+    // A new phone: wrong credentials fail, the right ones bring everything back, unlocked.
+    let b = vault(&dir_b, std::sync::Arc::new(MemoryKeeper::default()));
+    let path = file.to_string_lossy().into_owned();
+    assert!(
+        b.restore_backup(path.clone(), "wrong password".into(), secret_key.clone())
+            .is_err()
+    );
+    b.restore_backup(path, PASSWORD.into(), secret_key).unwrap();
+    assert!(b.status().unlocked);
+    assert_eq!(b.items(String::new()).unwrap().len(), 1);
+}
