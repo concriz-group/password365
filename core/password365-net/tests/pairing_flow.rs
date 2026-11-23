@@ -1,13 +1,14 @@
 //! A new device joins an existing one over localhost TCP, then they sync.
 
 use std::net::{IpAddr, Ipv4Addr, TcpListener};
+use std::sync::atomic::AtomicBool;
 use std::thread;
 
 use password365_crypto::kdf::KdfParams;
 use password365_crypto::secret_key::AccountSecretKey;
 use password365_model::{ItemDetails, ItemKind, ItemOverview};
 use password365_net::NetError;
-use password365_net::pairing::{Joining, PairingHost, local_ip};
+use password365_net::pairing::{HostPairing, JoinListener, Joining, PairingHost, local_ip};
 use password365_net::tcp::{accept_sync, sync_to};
 use password365_vault::{Credentials, Session, Store, VaultError};
 
@@ -235,4 +236,93 @@ fn the_local_ip_is_a_real_interface() {
     if let Ok(ip) = local_ip() {
         assert!(!ip.is_unspecified());
     }
+}
+
+#[test]
+fn a_new_device_that_shows_the_code_is_joined_by_the_device_with_the_vault() {
+    let Existing {
+        dir,
+        session,
+        secret_key,
+    } = existing();
+    let vault = session.vault_by_name("Personal").expect("vault").id;
+    // The NEW device (no vault yet) listens and shows the code.
+    let listener = JoinListener::open(LOCALHOST).expect("open");
+    let code = listener.invite_code();
+    assert!(
+        listener
+            .invite_link()
+            .starts_with("https://password365.app/join#PASSWORD365-PAIR:1:")
+    );
+    let cancel = AtomicBool::new(false);
+    let new_device = thread::spawn(move || {
+        let mut joining = listener.accept_cancellable(&cancel).expect("accept");
+        let shown = joining.verification_code().to_owned();
+        let bundle = joining.receive_bundle().expect("bundle");
+        (joining, shown, bundle)
+    });
+
+    // The device WITH the vault scans the code and connects.
+    let mut pairing = HostPairing::connect(&code).expect("connect");
+    let on_vault_device = pairing.verification_code().to_owned();
+    pairing
+        .send_bundle(&session, &secret_key, &[vault])
+        .expect("send");
+    let waiting = thread::spawn(move || (pairing.wait_joined(9), session));
+
+    let (joining, shown_on_new, bundle) = new_device.join().expect("new device");
+    assert_eq!(
+        shown_on_new, on_vault_device,
+        "both screens show the same six digits"
+    );
+    let path = dir.path().join("b.qlvault");
+    let (mut joined, _) = Store::join(
+        &path,
+        &bundle,
+        "master".into(),
+        KdfParams::insecure_for_tests(),
+    )
+    .expect("join");
+    joined.set_device_name("Desktop").expect("name");
+    joining.complete(&mut joined, 9).expect("complete");
+
+    let (peer, session) = waiting.join().expect("host");
+    let peer = peer.expect("pinned");
+    assert_eq!(
+        (peer.device_id, peer.name.as_str()),
+        (joined.device_id(), "Desktop")
+    );
+    assert_eq!(peer.vaults, Some(vec![vault]));
+    assert!(session.vault_by_name("Personal").is_some());
+}
+
+#[test]
+fn a_connection_without_the_one_time_secret_is_refused_by_the_listening_new_device() {
+    use password365_sync::pairing::Invite;
+    let listener = JoinListener::open(LOCALHOST).expect("open");
+    let mut forged = Invite::parse(&listener.invite_code()).expect("parse");
+    forged.psk[0] ^= 0xff;
+    let cancel = AtomicBool::new(false);
+    let waiting = thread::spawn(move || listener.accept_cancellable(&cancel).is_err());
+    // The secret is checked in the handshake's last message, so the connecting side may get that far;
+    // what matters is that the new device never accepts it and no account can be sent.
+    let _ = HostPairing::connect(&forged.to_code());
+    assert!(
+        waiting.join().expect("listener"),
+        "and the new device does not accept it either"
+    );
+}
+
+#[test]
+fn a_new_device_that_nobody_scans_gives_up_when_cancelled() {
+    let listener = JoinListener::open(LOCALHOST).expect("open");
+    let cancel = std::sync::Arc::new(AtomicBool::new(false));
+    let flag = std::sync::Arc::clone(&cancel);
+    let waiting = thread::spawn(move || listener.accept_cancellable(&flag).err());
+    thread::sleep(std::time::Duration::from_millis(150));
+    cancel.store(true, std::sync::atomic::Ordering::Relaxed);
+    assert!(matches!(
+        waiting.join().expect("thread"),
+        Some(NetError::Cancelled)
+    ));
 }

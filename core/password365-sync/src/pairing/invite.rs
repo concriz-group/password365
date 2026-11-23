@@ -26,6 +26,16 @@ pub const LINK_PREFIX: &str = "https://password365.app/pair#";
 pub fn link_for(code: &str) -> String {
     format!("{LINK_PREFIX}{code}")
 }
+
+/// Where a code travels when it is shown by a NEW device (one with no vault yet) for a device that
+/// has the vault to scan: the same code, another path, so the scanning app knows which way to go.
+pub const JOIN_LINK_PREFIX: &str = "https://password365.app/join#";
+
+/// The link a new device shows (see [`JOIN_LINK_PREFIX`]).
+#[must_use]
+pub fn join_link_for(code: &str) -> String {
+    format!("{JOIN_LINK_PREFIX}{code}")
+}
 const FIXED_LEN: usize = 16 + 32 + 32;
 /// Longest LAN address accepted (`[ipv6]:port` fits easily).
 pub const MAX_ADDR_LEN: usize = 64;

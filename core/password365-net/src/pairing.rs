@@ -17,6 +17,7 @@ use std::sync::atomic::{AtomicBool, Ordering};
 use std::time::{Duration, Instant};
 
 use password365_model::Timestamp;
+use password365_sync::DeviceId;
 use password365_sync::pairing::{Handshake, Invite, InviteError, StaticKey};
 use password365_vault::wire::PairMessage;
 use password365_vault::{Peer, Session, VaultError};
@@ -108,6 +109,25 @@ impl PairingHost {
     }
 }
 
+impl HostPairing {
+    /// The device with the vault scanned the code a NEW device shows: connects to it. The same steps
+    /// follow as when this device showed the code (compare the six digits, send the account).
+    pub fn connect(code: &str) -> Result<Self> {
+        let invite = Invite::parse(code)?;
+        let addr_text = invite.addr.clone().ok_or(NetError::NoAddress)?;
+        let addr: SocketAddr = addr_text.parse().map_err(|_| InviteError::Malformed)?;
+        let socket = TcpStream::connect_timeout(&addr, crate::tcp::TIMEOUT)?;
+        prepare(&socket)?;
+        let temporary = StaticKey::generate()?;
+        let stream = SecureStream::establish(socket, Handshake::scanner(&temporary, &invite)?)?;
+        Ok(Self {
+            stream,
+            from: addr,
+            vaults: Vec::new(),
+        })
+    }
+}
+
 /// The existing device's side once the new device is connected.
 pub struct HostPairing {
     stream: SecureStream<TcpStream>,
@@ -185,6 +205,76 @@ impl HostPairing {
 
     fn receive(&mut self) -> Result<PairMessage> {
         Ok(PairMessage::decode(&self.stream.receive()?)?)
+    }
+}
+
+/// The new device's side when IT shows the code (it has no vault to scan from): it listens, shows a
+/// QR code, and the device that has the vault scans it, connects, and sends the account. Everything
+/// after the connection is the same as when the vault device shows the code.
+pub struct JoinListener {
+    listener: TcpListener,
+    invite: Invite,
+    key: StaticKey,
+}
+
+impl JoinListener {
+    /// Listens on `ip` (any free port) with a throwaway key and a one-time invite.
+    pub fn open(ip: IpAddr) -> Result<Self> {
+        let listener = TcpListener::bind(SocketAddr::new(ip, 0))?;
+        let addr = listener.local_addr()?;
+        let key = StaticKey::generate()?;
+        let invite = Invite::new(DeviceId::new(), key.public(), Some(addr.to_string()));
+        Ok(Self {
+            listener,
+            invite,
+            key,
+        })
+    }
+
+    /// The code as plain text (it contains a one-time secret).
+    #[must_use]
+    pub fn invite_code(&self) -> String {
+        self.invite.to_code()
+    }
+
+    /// The link to show as the QR code: the phone's own camera opens Password365 with it.
+    #[must_use]
+    pub fn invite_link(&self) -> String {
+        password365_sync::pairing::join_link_for(&self.invite.to_code())
+    }
+
+    /// Waits for the device with the vault to connect; gives up when `cancel` is set or after
+    /// [`PAIRING_TIMEOUT`] (the invite's secret dies with it). Show the returned connection's
+    /// verification code: the other device's person types it there.
+    pub fn accept_cancellable(self, cancel: &AtomicBool) -> Result<Joining> {
+        self.listener.set_nonblocking(true)?;
+        let deadline = Instant::now() + PAIRING_TIMEOUT;
+        loop {
+            if cancel.load(Ordering::Relaxed) {
+                return Err(NetError::Cancelled);
+            }
+            match self.listener.accept() {
+                Ok((socket, from)) => {
+                    socket.set_nonblocking(false)?;
+                    prepare(&socket)?;
+                    let stream = SecureStream::establish(
+                        socket,
+                        Handshake::inviter(&self.key, &self.invite)?,
+                    )?;
+                    return Ok(Joining {
+                        stream,
+                        inviter: from,
+                    });
+                }
+                Err(e) if e.kind() == std::io::ErrorKind::WouldBlock => {
+                    if Instant::now() >= deadline {
+                        return Err(std::io::Error::from(std::io::ErrorKind::TimedOut).into());
+                    }
+                    std::thread::sleep(POLL);
+                }
+                Err(e) => return Err(e.into()),
+            }
+        }
     }
 }
 

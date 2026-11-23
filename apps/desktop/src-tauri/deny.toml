@@ -6,6 +6,9 @@ yanked = "deny"
 # Unmaintained (not vulnerable) crates with no replacement yet, used on Linux only.
 # Review when the upstream crates move on (checked 2026-11-14).
 ignore = [
+    # chrono is "unmaintained" (a notice, not a vulnerability); it only comes with the KeePass reader and
+    # kdotool. Same reasoning as core/deny.toml.
+    { id = "RUSTSEC-2026-0543", reason = "chrono, via the KeePass reader and kdotool; no vulnerability" },
     # zbus: keyring's Linux Secret Service backend (where the Secret Key is kept).
     { id = "RUSTSEC-2026-0370", reason = "zvariant, via keyring's Linux Secret Service store; no maintained successor yet" },
     { id = "RUSTSEC-2026-0371", reason = "zbus_names, same path" },
