@@ -13,6 +13,9 @@ pub struct Site {
     pub port: Option<u16>,
     /// Registrable domain (eTLD+1); for IPs and single-label hosts, the host itself.
     pub registrable: String,
+    /// A saved address written with a wildcard top-level domain (`amazon.*`): it stands for that
+    /// name under any ordinary domain ending. Only a saved address can be one; a page never is.
+    pub wildcard: bool,
 }
 
 impl Site {
@@ -25,6 +28,9 @@ impl Site {
         let trimmed = raw.trim();
         if trimmed.is_empty() {
             return None;
+        }
+        if let Some(site) = Self::parse_wildcard(trimmed) {
+            return Some(site);
         }
         // Only text without any scheme ("github.com/login") gets an implied https://.
         // Anything with a scheme (mailto:, android:, ftp:) is parsed as-is and rejected below.
@@ -45,6 +51,7 @@ impl Site {
                 registrable: format!("androidapp:{package}"),
                 host: package,
                 port: None,
+                wildcard: false,
             });
         }
         if !matches!(url.scheme(), "http" | "https") {
@@ -65,6 +72,30 @@ impl Site {
             host: host_text,
             port: url.port(),
             registrable,
+            wildcard: false,
+        })
+    }
+
+    /// `amazon.*`, `https://www.amazon.*/login`: the name before the wildcard ending, which must be
+    /// a single plain label (so `*.com` or `*` alone match nothing).
+    fn parse_wildcard(trimmed: &str) -> Option<Self> {
+        let without_scheme = trimmed.split_once("://").map_or(trimmed, |(_, rest)| rest);
+        let host = without_scheme
+            .split(['/', '?', '#'])
+            .next()?
+            .to_ascii_lowercase();
+        let base = host.strip_suffix(".*")?;
+        let base = base.strip_prefix("www.").unwrap_or(base);
+        let valid = !base.is_empty()
+            && !base.contains('*')
+            && !base.contains('.')
+            && base.chars().all(|c| c.is_ascii_alphanumeric() || c == '-');
+        valid.then(|| Self {
+            scheme: "https".into(),
+            host: format!("{base}.*"),
+            port: None,
+            registrable: base.to_owned(),
+            wildcard: true,
         })
     }
 

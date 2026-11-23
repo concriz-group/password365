@@ -253,3 +253,45 @@ fn archived_logins_are_not_offered() {
             .is_empty()
     );
 }
+
+#[test]
+fn a_login_saved_for_one_country_site_is_offered_on_the_brands_others_and_a_wildcard_on_any() {
+    let (_dir, mut app) = app();
+    let shop = add(&mut app, "Amazon", "https://www.amazon.com", "ana", "pw1");
+    let any = add(&mut app, "Brand", "mybrand.*", "ana", "pw2");
+    // The listed brand: amazon.com's login is offered on amazon.es.
+    let offered: Vec<String> = app
+        .logins_for_url("https://www.amazon.es/ap/signin")
+        .unwrap()
+        .into_iter()
+        .map(|l| l.id)
+        .collect();
+    assert!(offered.contains(&shop));
+    assert_eq!(
+        app.fill_credentials(&shop, "https://www.amazon.es/")
+            .unwrap()
+            .password
+            .as_deref(),
+        Some("pw1")
+    );
+    // The wildcard written by the person: any ending, but only that exact name.
+    for page in ["https://mybrand.es/login", "https://mybrand.co.uk/"] {
+        assert!(
+            app.logins_for_url(page)
+                .unwrap()
+                .iter()
+                .any(|l| l.id == any),
+            "{page}"
+        );
+    }
+    assert!(
+        app.logins_for_url("https://mybrand-login.com/")
+            .unwrap()
+            .iter()
+            .all(|l| l.id != any)
+    );
+    assert!(
+        app.fill_credentials(&any, "https://mybrand-login.com/")
+            .is_err()
+    );
+}

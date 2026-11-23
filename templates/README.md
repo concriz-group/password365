@@ -48,3 +48,12 @@ or `label`) and section headings from `sections.json`.
 The country then appears in the item editor's "Country or region" list; new
 identities follow the country of the app's language. The tests check every
 file (unknown categories, duplicate labels, split sections).
+
+## Equivalent domains
+
+`equivalent-domains.json` lists sites that are one account under several domains (`amazon.com`,
+`amazon.es`, …): a login saved for one is offered on the others. Only domains the company really
+owns go in it. A person can also write a wildcard ending in a login's website (`amazon.*`): that one
+login then matches that exact name under any domain ending (never look-alikes such as
+`amazon-login.com`).
+
