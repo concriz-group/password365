@@ -12,8 +12,8 @@ publish = false
 # Ed25519 only: the RSA and ECDSA stacks have open timing advisories
 # (RUSTSEC-2023-0071 in rsa, RUSTSEC-2026-0387 in crypto-bigint 0.5).
 ssh-key = { version = "0.6.7", default-features = false, features = ["std", "ed25519", "encryption"] }
-ssh-encoding = { version = "0.2.0", features = ["alloc"] }
-signature = "2.2.0"
+ssh-encoding = { version = "0.3.0", features = ["alloc"] }
+signature = "3.0.0"
 thiserror.workspace = true
 
 [dev-dependencies]
