@@ -219,9 +219,12 @@ fn every_unlock_has_its_own_number() {
 
 #[test]
 fn only_the_user_postpones_the_idle_lock() {
+    // Ten seconds of idle time, so a slow machine taking a second or two to unlock (a loaded CI
+    // runner) cannot skew the timeline the test sets up.
+    const IDLE: i64 = 10_000;
     let dir = tempfile::tempdir().unwrap();
     let mut cfg = config(&dir);
-    cfg.auto_lock_ms = 1_000;
+    cfg.auto_lock_ms = IDLE;
     let mut app = AppService::new(cfg, Box::new(MemorySecretKeyStore::default()));
     app.create_account(PW.into(), &PW.into()).unwrap();
     let t0 = Timestamp::now().as_millis();
@@ -230,21 +233,22 @@ fn only_the_user_postpones_the_idle_lock() {
     app.vaults().unwrap();
     app.generate(&GenerateRequest::Pin { digits: 6 }).unwrap();
     assert!(
-        app.check_auto_lock(at(t0 + 1_500)),
+        app.check_auto_lock(at(t0 + IDLE + 5_000)),
         "locked despite the calls"
     );
     app.unlock(PW.into(), None).unwrap();
     let t1 = Timestamp::now().as_millis();
-    app.user_active(at(t1 + 800));
+    app.user_active(at(t1 + 8_000));
+    assert!(app.status().unlocked, "the user typed: still unlocked");
     assert!(
-        !app.check_auto_lock(at(t1 + 1_500)),
+        !app.check_auto_lock(at(t1 + 15_000)),
         "the user typed: postponed"
     );
-    assert!(app.check_auto_lock(at(t1 + 1_900)));
+    assert!(app.check_auto_lock(at(t1 + 19_000)));
     // Activity after the idle time is over locks instead of reviving.
     app.unlock(PW.into(), None).unwrap();
     let t2 = Timestamp::now().as_millis();
-    app.user_active(at(t2 + 5_000));
+    app.user_active(at(t2 + 50_000));
     assert!(!app.status().unlocked);
 }
 
