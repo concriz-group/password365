@@ -272,5 +272,13 @@
     "none": "Open this page from the QR code on your computer, with this iPhone's camera.",
     "noApp": "Don't have the app yet? Password365 for iPhone is coming to the App Store. Install it, then scan the code again.",
     "how": "The code never leaves your devices: it is in the part of the address that is not sent to any server."
+  },
+  "joinPage": {
+    "title": "Add this device to your vault",
+    "lead": "A new device showed this code. Open it with the iPhone that has your vault, then tap the button to continue.",
+    "open": "Open Password365",
+    "none": "Open this page from the QR code a new device shows, with the camera of the iPhone that has your vault.",
+    "noApp": "Don't have the app yet? Password365 for iPhone is coming to the App Store.",
+    "how": "The code never leaves your devices: it is in the part of the address that is not sent to any server."
   }
 }

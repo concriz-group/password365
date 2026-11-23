@@ -272,5 +272,13 @@
     "none": "Abra esta página pelo QR code do seu computador, com a câmera deste iPhone.",
     "noApp": "Ainda não tem o app? O Password365 para iPhone está chegando à App Store. Instale e escaneie o código de novo.",
     "how": "O código nunca sai dos seus dispositivos: ele fica na parte do endereço que não é enviada a nenhum servidor."
+  },
+  "joinPage": {
+    "title": "Adicione este dispositivo ao seu cofre",
+    "lead": "Um dispositivo novo mostrou este código. Abra-o no iPhone que tem o seu cofre e toque no botão para continuar.",
+    "open": "Abrir o Password365",
+    "none": "Abra esta página pelo QR code que um dispositivo novo mostra, com a câmera do iPhone que tem o seu cofre.",
+    "noApp": "Ainda não tem o app? O Password365 para iPhone está chegando à App Store.",
+    "how": "O código nunca sai dos seus dispositivos: ele fica na parte do endereço que não é enviada a nenhum servidor."
   }
 }

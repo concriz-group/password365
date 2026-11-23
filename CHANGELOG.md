@@ -5,13 +5,26 @@ release page and the app's update notice show the section of the new version.
 
 ## [Unreleased]
 
-## [0.1.4] — 2026-11-23
+## [0.1.5] — 2026-11-23
 
 ### Added
-- A login saved for one of a brand's country sites is now offered on the others (`amazon.com` on
-  `amazon.es`, Google, Microsoft, Apple, eBay, PayPal and more; the list is `templates/equivalent-domains.json`).
+- **Pairing works in every direction.** A new computer or phone now shows its own QR code on the
+  "Set up with another device" screen, and a device that has the vault scans it (Devices › Add a
+  device on the phone; on a computer, paste the code the new device shows). Showing the code from
+  the device that has the vault, and scanning or pasting it on the new one, still works too.
+- A login saved for one of a brand's country sites is offered on the others (`amazon.com` on
+  `amazon.es`, Google, Microsoft, Apple, eBay, PayPal and more; the list is
+  `templates/equivalent-domains.json`). The first time it is used on such a site, the app asks for a
+  confirmation and then remembers the site (kept sealed in the vault, on this device only).
 - A website written with a wildcard ending (`amazon.*`) on a login matches that exact name under any
   domain ending, and never look-alikes.
+
+### Changed
+- The extension's popup and inline menu mark a related-site login ("First time with this login on
+  this site") and ask once before filling it.
+
+### Security
+- Updated the `url` library (RUSTSEC-2026-0592).
 
 ## [0.1.3] — 2026-11-21
 
