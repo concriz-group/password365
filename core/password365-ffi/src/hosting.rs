@@ -241,3 +241,53 @@ mod tests {
         });
     }
 }
+
+#[cfg(test)]
+mod new_device_tests {
+    use std::sync::Arc;
+
+    use crate::tests::{MemoryKeeper, PASSWORD, vault};
+
+    #[test]
+    fn a_new_phone_shows_a_code_and_a_phone_with_the_vault_scans_it() {
+        let (dir_a, dir_b) = (tempfile::tempdir().unwrap(), tempfile::tempdir().unwrap());
+        let host = vault(&dir_a, Arc::new(MemoryKeeper::default()));
+        host.create_account(PASSWORD.into(), PASSWORD.into())
+            .unwrap();
+        let guest = vault(&dir_b, Arc::new(MemoryKeeper::default()));
+
+        let shown = guest.join_show_code().unwrap();
+        assert!(
+            shown
+                .link
+                .starts_with("https://password365.app/join#PASSWORD365-PAIR:1:")
+        );
+        std::thread::scope(|scope| {
+            let new_device = scope.spawn(|| guest.join_accept());
+            host.pairing_connect(shown.link.clone()).unwrap();
+            let digits = new_device.join().unwrap().unwrap();
+            let host = &host;
+            let approving = scope.spawn(move || host.pairing_approve(digits));
+            guest.join_wait().unwrap();
+            guest
+                .join_finish(PASSWORD.into(), "New phone".into(), false)
+                .unwrap();
+            assert_eq!(approving.join().unwrap().unwrap().name, "New phone");
+        });
+        assert!(guest.status().unlocked);
+        assert_eq!(guest.devices().unwrap().len(), 1);
+    }
+
+    #[test]
+    fn leaving_the_screen_stops_the_code() {
+        let dir = tempfile::tempdir().unwrap();
+        let guest = vault(&dir, Arc::new(MemoryKeeper::default()));
+        guest.join_show_code().unwrap();
+        std::thread::scope(|scope| {
+            let waiting = scope.spawn(|| guest.join_accept());
+            std::thread::sleep(std::time::Duration::from_millis(200));
+            guest.join_cancel();
+            assert!(waiting.join().unwrap().is_err());
+        });
+    }
+}

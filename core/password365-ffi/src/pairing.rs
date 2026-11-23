@@ -9,7 +9,7 @@ use std::sync::{Arc, Mutex};
 
 use password365_app::devices::{DeviceDto, net_error};
 use password365_app::reach::reach;
-use password365_net::pairing::Joining;
+use password365_net::pairing::{JoinListener, Joining};
 use zeroize::Zeroizing;
 
 use crate::{Failure, Password365, Result};
@@ -28,6 +28,9 @@ pub trait Discovery: Send + Sync {
 pub(crate) struct JoinState {
     joining: Option<Joining>,
     bundle: Option<Zeroizing<Vec<u8>>>,
+    /// This (new) device is showing a code and waiting for the device with the vault to scan it.
+    listener: Option<JoinListener>,
+    cancel: std::sync::Arc<std::sync::atomic::AtomicBool>,
 }
 
 pub(crate) type JoinSlot = Mutex<JoinState>;
@@ -169,8 +172,43 @@ impl Password365 {
         Ok(())
     }
 
+    /// This NEW device shows a code for the device that has the vault to scan (the other way to
+    /// pair): a QR link and its plain text. Then `join_accept`, `join_wait` and `join_finish`.
+    pub fn join_show_code(&self) -> Result<crate::hosting::PairingInvite> {
+        self.join_cancel();
+        let ip = password365_net::pairing::local_ip().map_err(net_error)?;
+        let listener = JoinListener::open(ip).map_err(net_error)?;
+        let invite = crate::hosting::PairingInvite {
+            link: listener.invite_link(),
+            code: listener.invite_code(),
+        };
+        let mut slot = self.join_slot();
+        slot.cancel = std::sync::Arc::new(std::sync::atomic::AtomicBool::new(false));
+        slot.listener = Some(listener);
+        Ok(invite)
+    }
+
+    /// Waits until the device with the vault scans the code and connects (blocks: call it off the
+    /// main thread); returns the six digits to show here, which its person types there.
+    pub fn join_accept(&self) -> Result<String> {
+        let (listener, cancel) = {
+            let mut slot = self.join_slot();
+            (
+                slot.listener.take().ok_or_else(step_missing)?,
+                std::sync::Arc::clone(&slot.cancel),
+            )
+        };
+        let joining = listener.accept_cancellable(&cancel).map_err(net_error)?;
+        let shown = joining.verification_code().to_owned();
+        self.join_slot().joining = Some(joining);
+        Ok(shown)
+    }
+
     /// Gives up a join (the codes did not match, or the user went back).
     pub fn join_cancel(&self) {
+        self.join_slot()
+            .cancel
+            .store(true, std::sync::atomic::Ordering::Relaxed);
         let state = std::mem::take(&mut *self.join_slot());
         if let Some(joining) = state.joining {
             let _ = joining.cancel();
