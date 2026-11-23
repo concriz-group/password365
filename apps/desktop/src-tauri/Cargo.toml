@@ -28,7 +28,7 @@ password365-model = { path = "../../../core/password365-model" }
 password365-vault = { path = "../../../core/password365-vault" }
 password365-bridge = { path = "../../../core/password365-bridge" }
 password365-net = { path = "../../../core/password365-net" }
-qrcode = { version = "0.14.1", default-features = false, features = ["svg"] }
+qrcode = { version = "0.15.0", default-features = false, features = ["svg"] }
 zeroize = "1.9.1"
 keyring = "4.2.0"
 enigo = "0.6.1"
