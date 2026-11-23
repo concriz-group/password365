@@ -6,23 +6,23 @@ import { article, faqPage, organization } from "../../seo";
 
 export function getStaticPaths() {
   return languages.flatMap((l) =>
-    guides.map((g) => ({ params: { lang: l.path || undefined, slug: g.slug }, props: { tag: l.tag, key: g.key, slug: g.slug, modified: g.modified } })),
+    guides.map((g) => ({ params: { lang: l.path || undefined, slug: g.slug }, props: { tag: l.tag, key: g.key, slug: g.slug, modified: g.modified, group: g.group } })),
   );
 }
 
 interface Section { h: string; p?: string[]; ul?: string[] }
 interface Guide {
   title: string; description: string; lead: string; sections: Section[];
-  table?: { caption: string; head: string[]; rows: string[][] }; tableAfter?: number; faq?: { q: string; a: string }[]; note?: string;
+  table?: { caption: string; head: string[]; rows: string[][] }; tableAfter?: number; sources?: { label: string; url: string }[]; faq?: { q: string; a: string }[]; note?: string;
 }
-const { tag, key, slug, modified } = Astro.props as { tag: string; key: string; slug: string; modified: string };
+const { tag, key, slug, modified, group } = Astro.props as { tag: string; key: string; slug: string; modified: string; group: string };
 const t = translator(tag);
 // This language's guide, or the English one if a translation is missing.
 const pick = (code: string) => (catalog(code) as any).guides?.[key] as Guide | undefined;
 const g = (pick(tag) ?? pick("en"))!;
 const url = new URL(href(tag, slug), Astro.site).toString();
 const jsonLd = [organization, article({ title: g.title, description: g.description, url, language: tag, modified }), ...(g.faq?.length ? [faqPage(g.faq)] : [])];
-const others = guides.filter((o) => o.slug !== slug);
+const others = guides.filter((o) => o.slug !== slug && o.group === group);
 ---
 <Base tag={tag} page={slug} title={g.title} description={g.description} jsonLd={jsonLd}>
   <section class="page article">
@@ -46,6 +46,12 @@ const others = guides.filter((o) => o.slug !== slug);
           )}
         </>
       ))}
+      {g.sources && g.sources.length > 0 && (
+        <>
+          <h2>{t("guides.sources")}</h2>
+          <ul class="sources">{g.sources.map((s) => <li><a href={s.url} rel="noopener" target="_blank">{s.label}</a></li>)}</ul>
+        </>
+      )}
       {g.note && <p class="note">{g.note}</p>}
       {g.faq && g.faq.length > 0 && (
         <>
@@ -55,8 +61,11 @@ const others = guides.filter((o) => o.slug !== slug);
       )}
       <p><a class="button primary" href={href(tag, "download")}>{t("guides.cta")}</a></p>
       <div class="related">
-        <h2>{t("guides.more")}</h2>
-        <ul>{others.map((o) => <li><a href={href(tag, o.slug)}>{t(`guides.${o.key}.title`)}</a></li>)}</ul>
+        <h2>{t(group === "compare" ? "guides.compareAll" : "guides.moreInfo")}</h2>
+        <ul>
+          {group === "compare" && <li><a href={href(tag, "compare")}>{t("compare.title")}</a></li>}
+          {others.map((o) => <li><a href={href(tag, o.slug)}>{t(`guides.${o.key}.title`)}</a></li>)}
+        </ul>
       </div>
     </div>
   </section>

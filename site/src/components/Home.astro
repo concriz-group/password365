@@ -221,12 +221,16 @@ const choices = JSON.stringify({
   <div class="wrap">
     <h2 class="center">{t("guides.title")}</h2>
     <div class="platforms guides">
-      {guides.map((g) => (
+      {guides.filter((g) => g.group === "info").map((g) => (
         <a class="card platform" href={href(tag, g.slug)}>
           <h3>{t(`guides.${g.key}.title`)}</h3>
           <p>{t(`guides.${g.key}.teaser`)}</p>
         </a>
       ))}
+      <a class="card platform" href={href(tag, "compare")}>
+        <h3>{t("compare.card")}</h3>
+        <p>{t("compare.description")}</p>
+      </a>
     </div>
   </div>
 </section>

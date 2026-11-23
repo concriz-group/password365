@@ -46,7 +46,7 @@ test("every templated key resolves for the lists on the home page", () => {
 });
 
 test("every guide page has its texts, lists of the same length and the same table in every language", () => {
-  const guides = ["noCloud", "alternative", "importing", "sync", "keepass", "passkeys"];
+  const guides = ["noCloud", "alternative", "importing", "sync", "keepass", "passkeys", "apple", "chrome", "proton", "enpass"];
   for (const file of readdirSync(dir)) {
     const g = load(file).guides;
     for (const key of guides) {
@@ -54,6 +54,8 @@ test("every guide page has its texts, lists of the same length and the same tabl
       for (const field of ["title", "teaser", "description", "lead"]) assert.ok(guide[field], `${file} ${key}.${field}`);
       assert.ok(guide.sections.length >= 4, `${file} ${key} sections`);
       assert.ok(guide.faq.length >= 2, `${file} ${key} faq`);
+      // The comparisons made from official pages list them as sources.
+      if (["apple", "chrome", "proton", "enpass"].includes(key)) assert.ok(guide.sources?.length >= 2, `${file} ${key} sources`);
       if (guide.table) for (const row of guide.table.rows) assert.equal(row.length, guide.table.head.length, `${file} ${key} table row`);
     }
   }

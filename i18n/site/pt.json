@@ -251,7 +251,8 @@
     "company": "Password365",
     "privacy": "Privacidade",
     "rights": "© {year} Password365",
-    "source": "Código-fonte"
+    "source": "Código-fonte",
+    "compare": "Comparar"
   },
   "notFound": {
     "title": "Página não encontrada",
@@ -752,6 +753,481 @@
           "a": "Sim, se esse app exporta no Credential Exchange Format (CXF), que o Password365 importa."
         }
       ]
-    }
+    },
+    "apple": {
+      "title": "Password365 vs Apple Senhas: embutido ou independente?",
+      "teaser": "Grátis e embutido nos aparelhos Apple, versus um cofre que não pertence a nenhuma plataforma.",
+      "description": "Password365 comparado ao app Senhas da Apple (Chaveiro do iCloud): plataformas, sincronização, compartilhamento, conta e código aberto. Onde o app da Apple é a melhor escolha e onde não é.",
+      "lead": "O app Senhas da Apple vem com iPhone, iPad e Mac, não custa nada e funciona bem dentro do mundo Apple. O Password365 é um app à parte, que não depende da plataforma nem da nuvem de uma empresa. Veja onde cada um se encaixa.",
+      "sections": [
+        {
+          "h": "A diferença principal",
+          "p": [
+            "O Senhas da Apple mantém suas senhas em sincronia pelo iCloud, com a sua conta Apple, e faz parte do sistema operacional. O Password365 não tem conta nem nuvem: o cofre vive nos seus aparelhos, que sincronizam direto. No Windows, as senhas da Apple chegam por meio do iCloud para Windows e de uma extensão de navegador, não de um app completo."
+          ]
+        },
+        {
+          "h": "Onde o Senhas da Apple está à frente",
+          "ul": [
+            "Já vem no seu iPhone, iPad e Mac, grátis, sem nada para instalar e com integração profunda com o Safari e o sistema.",
+            "Compartilhamento de senhas e chaves de acesso com outras pessoas, por grupos compartilhados.",
+            "Sincronização pela internet, via iCloud, de qualquer rede.",
+            "Respaldo de uma empresa muito grande, com atualizações entregues junto com o sistema."
+          ]
+        },
+        {
+          "h": "Onde o Password365 pode servir melhor",
+          "ul": [
+            "Você usa Windows ou Linux e quer um app de computador completo, não só uma extensão de navegador.",
+            "Você não quer o cofre preso a uma conta Apple nem guardado na nuvem de uma empresa.",
+            "Você quer código aberto: o núcleo, o app de computador e a extensão do navegador são publicados (GPL-3.0).",
+            "Você quer o mesmo app e o mesmo cofre em todos os computadores que tem."
+          ]
+        },
+        {
+          "h": "Migrando do Senhas da Apple",
+          "p": [
+            "O Senhas da Apple exporta suas senhas num arquivo CSV, e o Password365 importa CSV. iPhone e Mac também entregam as senhas no Credential Exchange Format (CXF), que o Password365 importa, chaves de acesso inclusas. Veja o guia de importação."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Verificado em novembro de 2026 em informações públicas. Os recursos mudam: confirme no site da Apple.",
+        "head": [
+          "",
+          "Password365",
+          "Senhas da Apple"
+        ],
+        "rows": [
+          [
+            "Exige conta",
+            "Não",
+            "Sim (uma conta Apple, para sincronizar pelo iCloud)"
+          ],
+          [
+            "Onde ficam as senhas",
+            "Só nos seus aparelhos",
+            "Mantidas em sincronia pelo iCloud"
+          ],
+          [
+            "Plataformas",
+            "Mac, Windows, Linux, e Chrome, Edge, Firefox. iPhone em breve, Android em desenvolvimento",
+            "iPhone, iPad, Mac; Windows pelo iCloud para Windows e uma extensão de navegador"
+          ],
+          [
+            "Código aberto",
+            "Núcleo, app de computador e extensão (GPL-3.0)",
+            "Não"
+          ],
+          [
+            "Compartilhamento com outras pessoas",
+            "Não",
+            "Sim (grupos compartilhados)"
+          ],
+          [
+            "Chaves de acesso e códigos de uso único",
+            "Sim",
+            "Sim"
+          ],
+          [
+            "Preço",
+            "Grátis no computador e no navegador; o app de iPhone é por assinatura",
+            "Incluído nos aparelhos Apple"
+          ]
+        ]
+      },
+      "tableAfter": 0,
+      "sources": [
+        {
+          "label": "Apple: Use o app Senhas para criar, gerenciar e compartilhar senhas e chaves de acesso nos dispositivos Apple",
+          "url": "https://support.apple.com/en-gb/120758"
+        },
+        {
+          "label": "Apple: Preencher senhas do iCloud automaticamente num navegador no Windows",
+          "url": "https://support.apple.com/guide/icloud-windows/icw76039ec0f"
+        }
+      ],
+      "note": "Apple, iPhone, iPad, Mac e iCloud são marcas da Apple Inc. O Password365 não é afiliado à Apple.",
+      "faq": [
+        {
+          "q": "O Senhas da Apple é mais seguro que o Password365?",
+          "a": "O app da Apple faz parte do sistema operacional e é usado por muita gente; o Password365 é mais novo e ainda não teve auditoria independente. Eles protegem as senhas de jeitos diferentes, então compare o que importa para você: plataforma, conta, nuvem e código aberto."
+        },
+        {
+          "q": "Posso usar os dois?",
+          "a": "Sim. Importe uma cópia das suas senhas no Password365 para testar e mantenha o Senhas da Apple até ter certeza."
+        },
+        {
+          "q": "Minhas chaves de acesso vêm junto?",
+          "a": "Se você as levar por um arquivo Credential Exchange (CXF), sim. Nem todo app exporta chaves de acesso, então confira antes de apagar os originais."
+        }
+      ]
+    },
+    "chrome": {
+      "title": "Password365 vs o gerenciador de senhas do Chrome (Google)",
+      "teaser": "Um recurso do navegador preso à conta Google, versus um app que funciona em vários navegadores.",
+      "description": "Password365 comparado ao Gerenciador de Senhas do Google no Chrome e no Android: onde ficam as senhas, sincronização, chaves de acesso, conta e navegadores. Quando cada um faz sentido.",
+      "lead": "Muita gente guarda as senhas no Chrome sem nunca ter escolhido isso: ele oferece salvar e preenche. O Password365 é um cofre à parte, que funciona no Chrome, no Edge e no Firefox e fica nos seus próprios aparelhos. Veja como diferem.",
+      "sections": [
+        {
+          "h": "A diferença principal",
+          "p": [
+            "O Chrome salva as senhas na sua conta Google e as sincroniza pelo Chrome Sync. Dá para ativar a criptografia no dispositivo, para as senhas só abrirem nos seus próprios aparelhos; depois de ativada, não pode ser removida. Sem ela, a chave fica na sua conta Google. O Password365 não tem conta nem nuvem: o cofre é criptografado nos seus aparelhos, que sincronizam direto."
+          ]
+        },
+        {
+          "h": "Onde o gerenciador do Chrome está à frente",
+          "ul": [
+            "Nada para instalar: já vem no Chrome e no Android, e é grátis.",
+            "Sincronização pela internet, pela conta Google, em qualquer rede.",
+            "Chaves de acesso sincronizam entre o Chrome no computador, o Android e o iOS, protegidas de ponta a ponta.",
+            "Familiar e automático: oferece salvar e preenche as senhas enquanto você navega."
+          ]
+        },
+        {
+          "h": "Onde o Password365 pode servir melhor",
+          "ul": [
+            "Você usa mais de um navegador, ou alterna entre Chrome, Edge e Firefox.",
+            "Você não quer as senhas presas a uma conta Google nem guardadas na nuvem de uma empresa.",
+            "Você quer um cofre separado do navegador, com uma Chave Secreta além da senha mestra.",
+            "Você quer senhas fracas, repetidas e inseguras apontadas num só lugar (Watchtower), com notas, cartões e códigos de uso único no mesmo cofre."
+          ]
+        },
+        {
+          "h": "Migrando do Chrome",
+          "p": [
+            "O Chrome exporta suas senhas para um arquivo CSV (Configurações, Preenchimento automático e senhas, Gerenciador de Senhas do Google), e o Password365 o importa. Apague o arquivo depois: é uma cópia legível de todas as senhas. Veja o guia de importação."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Verificado em novembro de 2026 em informações públicas. Os recursos mudam: confirme no site do Google.",
+        "head": [
+          "",
+          "Password365",
+          "Chrome (Gerenciador de Senhas do Google)"
+        ],
+        "rows": [
+          [
+            "Exige conta",
+            "Não",
+            "Sim (uma conta Google, para sincronizar)"
+          ],
+          [
+            "Onde ficam as senhas",
+            "Só nos seus aparelhos",
+            "Na sua conta Google (opcionalmente trancadas com criptografia no dispositivo)"
+          ],
+          [
+            "Onde funciona",
+            "Chrome, Edge e Firefox, e apps próprios",
+            "Embutido no Chrome e no Android"
+          ],
+          [
+            "Código aberto",
+            "Núcleo, app de computador e extensão (GPL-3.0)",
+            "Não (um serviço do Google)"
+          ],
+          [
+            "Chaves de acesso",
+            "Sim",
+            "Sim, sincronizadas de ponta a ponta"
+          ],
+          [
+            "Preço",
+            "Grátis no computador e no navegador; o app de iPhone é por assinatura",
+            "Grátis"
+          ]
+        ]
+      },
+      "tableAfter": 0,
+      "sources": [
+        {
+          "label": "Google: Primeiros passos com a criptografia no dispositivo",
+          "url": "https://support.google.com/accounts/answer/11350823"
+        },
+        {
+          "label": "Google: Sincronize chaves de acesso com segurança entre seus dispositivos",
+          "url": "https://blog.google/innovation-and-ai/technology/safety-security/google-password-manager-passkeys-update-september-2024/"
+        }
+      ],
+      "note": "Google e Chrome são marcas da Google LLC. O Password365 não é afiliado ao Google.",
+      "faq": [
+        {
+          "q": "É arriscado guardar senhas no navegador?",
+          "a": "Depende de quem pode usar o seu computador e a sua conta Google. Um cofre separado, com senha mestra própria, adiciona uma barreira, mas não é garantia. Proteja a conta e o computador de qualquer forma."
+        },
+        {
+          "q": "O Password365 funciona no Chrome?",
+          "a": "Sim, pela extensão para Chrome, que preenche senhas e salva as novas. Também funciona no Edge e no Firefox."
+        },
+        {
+          "q": "Posso manter os dois?",
+          "a": "Pode, mas desative o salvamento de senhas no Chrome para só um deles oferecer salvar, ou você acabará com duas cópias."
+        }
+      ]
+    },
+    "proton": {
+      "title": "Password365 vs Proton Pass: dois gerenciadores focados em privacidade",
+      "teaser": "Os dois são abertos e voltados à privacidade; um sincroniza pela nuvem da Proton, o outro direto.",
+      "description": "Password365 comparado ao Proton Pass: código aberto, auditorias, conta, sincronização em nuvem, aliases e compartilhamento. Onde o Proton Pass está à frente e onde o Password365 segue outro caminho.",
+      "lead": "Proton Pass e Password365 têm muito em comum: privacidade em primeiro lugar, código aberto, criptografia de ponta a ponta. A grande diferença é a nuvem. O Proton Pass sincroniza por uma conta Proton e pelos servidores da Proton; o Password365 não tem conta e sincroniza os aparelhos direto.",
+      "sections": [
+        {
+          "h": "O que têm em comum",
+          "ul": [
+            "Privacidade em primeiro lugar, com cofres criptografados de ponta a ponta.",
+            "Código aberto.",
+            "Chaves de acesso e códigos de uso único.",
+            "Extensões de navegador."
+          ]
+        },
+        {
+          "h": "A diferença principal",
+          "p": [
+            "O Proton Pass exige uma conta Proton e guarda o seu cofre criptografado nos servidores da Proton, o que facilita a sincronização de qualquer rede e torna o compartilhamento possível. O Password365 não tem conta nem servidor: o cofre fica nos seus aparelhos, que sincronizam direto na sua rede."
+          ]
+        },
+        {
+          "h": "Onde o Proton Pass está à frente",
+          "ul": [
+            "Auditorias de segurança independentes com relatórios públicos, de uma empresa com longo histórico em privacidade.",
+            "Sincronização pela internet, de qualquer rede, com apps de computador, celular e web, e extensões de navegador.",
+            "Compartilhamento com outras pessoas e aliases de e-mail que escondem o seu endereço real.",
+            "Um plano grátis com logins e notas ilimitados (alguns recursos, como aliases e logins com código de uso único, são limitados)."
+          ]
+        },
+        {
+          "h": "Onde o Password365 pode servir melhor",
+          "ul": [
+            "Você não quer conta nenhuma, nem gratuita.",
+            "Você não quer o cofre criptografado no servidor de nenhuma empresa, nem de uma focada em privacidade.",
+            "Seus aparelhos sincronizam direto, sem nuvem no meio.",
+            "O app de computador e a extensão do navegador são grátis."
+          ]
+        },
+        {
+          "h": "Migrando do Proton Pass",
+          "p": [
+            "O Proton Pass exporta seus dados para um arquivo (como CSV), e o Password365 importa CSV. Veja o guia de importação."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Verificado em novembro de 2026 em informações públicas. Os recursos mudam: confirme no site da Proton.",
+        "head": [
+          "",
+          "Password365",
+          "Proton Pass"
+        ],
+        "rows": [
+          [
+            "Exige conta",
+            "Não",
+            "Sim (uma conta Proton, grátis ou paga)"
+          ],
+          [
+            "Onde fica o cofre criptografado",
+            "Só nos seus aparelhos",
+            "Nos servidores da Proton, criptografado de ponta a ponta"
+          ],
+          [
+            "Como os aparelhos sincronizam",
+            "Direto, na mesma rede",
+            "Pela nuvem da Proton"
+          ],
+          [
+            "Código aberto",
+            "Núcleo, app de computador e extensão (GPL-3.0)",
+            "Sim (a Proton diz que seus apps são de código aberto)"
+          ],
+          [
+            "Auditoria de segurança independente",
+            "Ainda não",
+            "Sim, com relatórios públicos"
+          ],
+          [
+            "Compartilhamento com outras pessoas",
+            "Não",
+            "Sim"
+          ],
+          [
+            "Apps",
+            "Mac, Windows, Linux, e Chrome, Edge, Firefox. iPhone em breve, Android em desenvolvimento",
+            "Computador, celular, web e extensões de navegador"
+          ],
+          [
+            "Preço",
+            "Grátis no computador e no navegador; o app de iPhone é por assinatura",
+            "Plano grátis (com limites) e planos pagos"
+          ]
+        ]
+      },
+      "tableAfter": 1,
+      "sources": [
+        {
+          "label": "Proton: segurança do Proton Pass",
+          "url": "https://proton.me/pass/security"
+        },
+        {
+          "label": "Proton: preços e planos do Proton Pass",
+          "url": "https://proton.me/pass/pricing"
+        }
+      ],
+      "note": "Proton e Proton Pass são marcas da Proton AG. O Password365 não é afiliado à Proton.",
+      "faq": [
+        {
+          "q": "Qual é mais privado, o Proton Pass ou o Password365?",
+          "a": "Os dois buscam privacidade. A diferença é onde o cofre vive: o Proton Pass guarda uma cópia criptografada nos servidores da Proton; o Password365 a guarda só nos seus aparelhos. O melhor para você depende de valorizar a sincronização fácil de qualquer lugar ou não ter servidor nenhum."
+        },
+        {
+          "q": "O Password365 é auditado como o Proton Pass?",
+          "a": "Não. O Proton Pass tem auditorias independentes com relatórios públicos; o Password365 ainda não teve uma. Os dois são de código aberto, então você pode ler o código."
+        },
+        {
+          "q": "Posso importar do Proton Pass?",
+          "a": "Sim, a partir do arquivo que o Proton Pass exporta (por exemplo CSV). Veja o guia de importação."
+        }
+      ]
+    },
+    "enpass": {
+      "title": "Password365 vs Enpass: um cofre local, duas formas de sincronizar",
+      "teaser": "Os dois guardam o cofre nos seus aparelhos; sincronizam de jeitos diferentes.",
+      "description": "Password365 comparado ao Enpass: cofres locais, como os aparelhos sincronizam (sua própria nuvem ou Wi-Fi contra pareamento direto), código aberto, auditorias e preço.",
+      "lead": "O Enpass é o mais próximo em espírito: o cofre fica nos seus aparelhos, não nos servidores de uma empresa. As diferenças estão em como os aparelhos sincronizam e no que é aberto. Veja a comparação.",
+      "sections": [
+        {
+          "h": "O que têm em comum",
+          "ul": [
+            "O cofre fica nos seus próprios aparelhos, não nos servidores da empresa.",
+            "Você decide como ele é sincronizado.",
+            "Senhas e chaves de acesso."
+          ]
+        },
+        {
+          "h": "Como a sincronização difere",
+          "p": [
+            "O Enpass sincroniza por um serviço de nuvem que você escolhe (como iCloud, Dropbox, Google Drive, OneDrive, Box ou WebDAV) e também pode sincronizar por Wi-Fi entre aparelhos na mesma rede. O Password365 sincroniza direto entre aparelhos pareados na sua rede, sem nenhum drive na nuvem, e não tem conta."
+          ]
+        },
+        {
+          "h": "Onde o Enpass está à frente",
+          "ul": [
+            "Anos de mercado, com apps já nas lojas de celular e de computador.",
+            "Mais opções de sincronização, inclusive pela internet, por um serviço de nuvem que você já usa.",
+            "Recursos acumulados ao longo do tempo, e uma opção de compra única em algumas versões."
+          ]
+        },
+        {
+          "h": "Onde o Password365 pode servir melhor",
+          "ul": [
+            "Código aberto: o núcleo, o app de computador e a extensão do navegador são publicados (GPL-3.0). O código do Enpass não é aberto.",
+            "Pareamento por QR code e sincronização direta, sem drive na nuvem para configurar ou em que confiar.",
+            "O app de computador e a extensão do navegador são grátis."
+          ]
+        },
+        {
+          "h": "Migrando do Enpass",
+          "p": [
+            "O Enpass exporta o seu cofre para um arquivo (por exemplo CSV), e o Password365 importa CSV. Veja o guia de importação."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Verificado em novembro de 2026 em informações públicas. Os recursos mudam: confirme no site do Enpass.",
+        "head": [
+          "",
+          "Password365",
+          "Enpass"
+        ],
+        "rows": [
+          [
+            "Onde fica o cofre",
+            "Só nos seus aparelhos",
+            "Nos seus aparelhos"
+          ],
+          [
+            "Como os aparelhos sincronizam",
+            "Direto entre aparelhos pareados, na mesma rede",
+            "Por um serviço de nuvem que você escolhe, ou por Wi-Fi na mesma rede"
+          ],
+          [
+            "Código aberto",
+            "Núcleo, app de computador e extensão (GPL-3.0)",
+            "Não"
+          ],
+          [
+            "Auditoria de segurança independente",
+            "Ainda não",
+            "Uma auditoria publicada cobre parte do produto; veja no Enpass"
+          ],
+          [
+            "Apps",
+            "Mac, Windows, Linux, e Chrome, Edge, Firefox. iPhone em breve, Android em desenvolvimento",
+            "Apps para computador e celular"
+          ],
+          [
+            "Preço",
+            "Grátis no computador e no navegador; o app de iPhone é por assinatura",
+            "Versões grátis e pagas: assinatura e, em algumas versões, compra única"
+          ]
+        ]
+      },
+      "tableAfter": 1,
+      "sources": [
+        {
+          "label": "Enpass na App Store",
+          "url": "https://apps.apple.com/us/app/enpass-password-manager/id732710998?mt=12"
+        },
+        {
+          "label": "Enpass: gerenciador de senhas offline",
+          "url": "https://www.enpass.io/offline"
+        }
+      ],
+      "note": "Enpass é marca de seu proprietário. O Password365 não é afiliado ao Enpass.",
+      "faq": [
+        {
+          "q": "O Enpass é offline?",
+          "a": "O cofre fica guardado nos seus aparelhos, e a sincronização é opcional, por um serviço que você escolhe. Veja no Enpass os detalhes de cada opção."
+        },
+        {
+          "q": "Posso migrar do Enpass?",
+          "a": "Sim. Exporte do Enpass para um arquivo e importe no Password365. Apague o arquivo depois."
+        },
+        {
+          "q": "Qual é mais privado?",
+          "a": "Os dois mantêm o cofre nos seus aparelhos. O Password365 acrescenta código aberto e sincronização direta, sem drive na nuvem; o Enpass está há mais tempo no mercado."
+        }
+      ]
+    },
+    "sources": "Fontes",
+    "compareAll": "Todas as comparações",
+    "moreInfo": "Mais guias"
+  },
+  "compare": {
+    "title": "Compare o Password365 com outros gerenciadores de senhas",
+    "description": "Comparações honestas do Password365 com 1Password, Bitwarden, KeePassXC, Senhas da Apple, o gerenciador do Chrome, Proton Pass e Enpass: o que é diferente, onde eles estão à frente e para quem cada um serve.",
+    "lead": "Nenhum gerenciador de senhas é o melhor para todo mundo. Estas páginas dizem onde o Password365 difere dos outros mais populares, e onde eles estão à frente. Cada comparação informa quando foi verificada e liga às fontes.",
+    "honestTitle": "Como mantemos as comparações honestas",
+    "honest": [
+      "Cada página lista onde o outro produto está à frente, não só onde o Password365 está.",
+      "Dizemos quando conferimos e ligamos às páginas oficiais que usamos.",
+      "Não citamos valores, que mudam, nem falamos de incidentes de segurança: não é disso que se trata.",
+      "Achou um erro? Avise pela página de suporte e nós corrigimos."
+    ],
+    "listTitle": "As comparações",
+    "chooseTitle": "Qual você deve escolher?",
+    "choose": "Se você compartilha senhas com outras pessoas, ou precisa sincronizar de qualquer lugar, um gerenciador em nuvem serve melhor hoje. Se quer sem conta e sem nuvem, e aceita sincronizar na sua própria rede, experimente o Password365. Cada página termina dizendo para quem serve.",
+    "faq": [
+      {
+        "q": "Qual gerenciador de senhas devo escolher?",
+        "a": "O que combina com o seu jeito de trabalhar. Compartilhar com outros ou sincronizar de qualquer lugar: um gerenciador em nuvem. Sem conta, sem nuvem, código aberto: experimente o Password365. Dá para testar com uma cópia das suas senhas e manter o gerenciador atual."
+      },
+      {
+        "q": "Estas comparações são independentes?",
+        "a": "Não: nós fazemos o Password365. Por isso cada página lista onde o outro produto está à frente, diz quando foi verificada e liga às fontes, para você conferir por conta própria."
+      }
+    ],
+    "card": "Compare o Password365"
   }
 }

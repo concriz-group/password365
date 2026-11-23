@@ -1,0 +1,37 @@
+---
+import Base from "../../layouts/Base.astro";
+import { catalog, href, languagePaths, translator } from "../../i18n";
+import { guides } from "../../guides";
+import { faqPage, organization } from "../../seo";
+export const getStaticPaths = languagePaths;
+const { tag } = Astro.props;
+const t = translator(tag);
+const pick = (code: string) => (catalog(code) as any).compare as { honest: string[]; faq: { q: string; a: string }[] };
+const c = pick(tag) ?? pick("en");
+const list = guides.filter((g) => g.group === "compare");
+const jsonLd = [organization, faqPage(c.faq)];
+---
+<Base tag={tag} page="compare" title={t("compare.title")} description={t("compare.description")} jsonLd={jsonLd}>
+  <section class="page article">
+    <div class="wrap prose">
+      <h1>{t("compare.title")}</h1>
+      <p class="lead">{t("compare.lead")}</p>
+      <h2>{t("compare.listTitle")}</h2>
+      <div class="platforms guides">
+        {list.map((g) => (
+          <a class="card platform" href={href(tag, g.slug)}>
+            <h3>{t(`guides.${g.key}.title`)}</h3>
+            <p>{t(`guides.${g.key}.teaser`)}</p>
+          </a>
+        ))}
+      </div>
+      <h2>{t("compare.chooseTitle")}</h2>
+      <p>{t("compare.choose")}</p>
+      <h2>{t("compare.honestTitle")}</h2>
+      <ul>{c.honest.map((item) => <li>{item}</li>)}</ul>
+      <h2>{t("guides.faqTitle")}</h2>
+      <div class="faq">{c.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+      <p><a class="button primary" href={href(tag, "download")}>{t("guides.cta")}</a></p>
+    </div>
+  </section>
+</Base>

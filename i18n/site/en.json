@@ -251,7 +251,8 @@
     "company": "Password365",
     "privacy": "Privacy",
     "rights": "© {year} Password365",
-    "source": "Source code"
+    "source": "Source code",
+    "compare": "Compare"
   },
   "notFound": {
     "title": "Page not found",
@@ -752,6 +753,481 @@
           "a": "Yes, if that app can export in the Credential Exchange Format (CXF), which Password365 imports."
         }
       ]
-    }
+    },
+    "apple": {
+      "title": "Password365 vs Apple Passwords: built in or independent?",
+      "teaser": "Free and built into Apple devices, versus a vault that belongs to no platform.",
+      "description": "Password365 compared with Apple Passwords (iCloud Keychain): platforms, sync, sharing, accounts and open source. Where Apple's app is the better choice and where it is not.",
+      "lead": "Apple Passwords comes with iPhone, iPad and Mac, costs nothing and works well inside Apple's world. Password365 is a separate app that does not depend on one company's platform or cloud. Here is where each fits.",
+      "sections": [
+        {
+          "h": "The main difference",
+          "p": [
+            "Apple Passwords keeps your passwords in sync through iCloud, using your Apple Account, and is part of the operating system. Password365 has no account and no cloud: the vault lives on your devices and they sync directly. On Windows, Apple's passwords reach you through iCloud for Windows and a browser extension, not a full app."
+          ]
+        },
+        {
+          "h": "Where Apple Passwords is ahead",
+          "ul": [
+            "It is already on your iPhone, iPad and Mac, free, with nothing to install and deep integration with Safari and the system.",
+            "Sharing passwords and passkeys with other people through shared groups.",
+            "Sync over the internet through iCloud, from any network.",
+            "Backed by a very large company, with updates delivered with the operating system."
+          ]
+        },
+        {
+          "h": "Where Password365 may suit you better",
+          "ul": [
+            "You use Windows or Linux and want a full desktop app there, not only a browser extension.",
+            "You do not want your vault tied to an Apple Account or kept on a company's cloud.",
+            "You want open source code: the core, the desktop app and the browser extension are published (GPL-3.0).",
+            "You want the same app and the same vault on every computer you own."
+          ]
+        },
+        {
+          "h": "Moving from Apple Passwords",
+          "p": [
+            "Apple Passwords can export your passwords as a CSV file, and Password365 imports CSV files. iPhone and Mac can also hand passwords over in the Credential Exchange Format (CXF), which Password365 imports, passkeys included. See the import guide."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Checked in November 2026 from public information. Features change: confirm on Apple's website.",
+        "head": [
+          "",
+          "Password365",
+          "Apple Passwords"
+        ],
+        "rows": [
+          [
+            "Account required",
+            "No",
+            "Yes (an Apple Account, for iCloud sync)"
+          ],
+          [
+            "Where passwords are stored",
+            "Only on your own devices",
+            "Kept in sync through iCloud"
+          ],
+          [
+            "Platforms",
+            "Mac, Windows, Linux, and Chrome, Edge, Firefox. iPhone coming soon, Android in development",
+            "iPhone, iPad, Mac; Windows through iCloud for Windows and a browser extension"
+          ],
+          [
+            "Open source",
+            "Core, desktop app and browser extension (GPL-3.0)",
+            "No"
+          ],
+          [
+            "Sharing with other people",
+            "No",
+            "Yes (shared groups)"
+          ],
+          [
+            "Passkeys and one-time codes",
+            "Yes",
+            "Yes"
+          ],
+          [
+            "Price",
+            "Free on computer and browser; the iPhone app is a subscription",
+            "Included with Apple devices"
+          ]
+        ]
+      },
+      "tableAfter": 0,
+      "sources": [
+        {
+          "label": "Apple: Use the Passwords app to create, manage, and share passwords and passkeys across Apple devices",
+          "url": "https://support.apple.com/en-gb/120758"
+        },
+        {
+          "label": "Apple: Autofill iCloud passwords in a web browser on your Windows computer",
+          "url": "https://support.apple.com/guide/icloud-windows/icw76039ec0f"
+        }
+      ],
+      "note": "Apple, iPhone, iPad, Mac and iCloud are trademarks of Apple Inc. Password365 is not affiliated with Apple.",
+      "faq": [
+        {
+          "q": "Is Apple Passwords safer than Password365?",
+          "a": "Apple's app is part of the operating system and used by very many people; Password365 is newer and has not had an independent audit. They protect passwords in different ways, so compare what matters to you: platform, account, cloud and open code."
+        },
+        {
+          "q": "Can I use both?",
+          "a": "Yes. Import a copy of your passwords into Password365 to try it, and keep Apple Passwords until you are sure."
+        },
+        {
+          "q": "Will my passkeys come along?",
+          "a": "If you move them with a Credential Exchange (CXF) file, yes. Not every app can export passkeys, so check before deleting the originals."
+        }
+      ]
+    },
+    "chrome": {
+      "title": "Password365 vs the Chrome (Google) password manager",
+      "teaser": "A browser feature tied to your Google Account, versus an app that works across browsers.",
+      "description": "Password365 compared with the Google Password Manager in Chrome and Android: where passwords live, sync, passkeys, accounts and browsers. When each makes sense.",
+      "lead": "Many people keep their passwords in Chrome without ever choosing to: it offers to save them and fills them in. Password365 is a separate vault that works in Chrome, Edge and Firefox and stays on your own devices. Here is how they differ.",
+      "sections": [
+        {
+          "h": "The main difference",
+          "p": [
+            "Chrome saves passwords to your Google Account and syncs them through Chrome Sync. You can add on-device encryption, so the passwords open only on your own devices; once turned on, it cannot be removed. Without it, the key is kept in your Google Account. Password365 has no account and no cloud: the vault is encrypted on your devices and they sync directly."
+          ]
+        },
+        {
+          "h": "Where the Chrome password manager is ahead",
+          "ul": [
+            "Nothing to install: it is built into Chrome and Android, and it is free.",
+            "Sync over the internet through your Google Account, on any network.",
+            "Passkeys sync between Chrome on desktop, Android and iOS, protected end to end.",
+            "Familiar and automatic: it offers to save and fill passwords as you browse."
+          ]
+        },
+        {
+          "h": "Where Password365 may suit you better",
+          "ul": [
+            "You use more than one browser, or switch between Chrome, Edge and Firefox.",
+            "You do not want your passwords tied to a Google Account or kept in a company's cloud.",
+            "You want a vault that is separate from the browser, with a Secret Key as well as a master password.",
+            "You want weak, reused and unsecured passwords reported in one place (Watchtower), with notes, cards and one-time codes in the same vault."
+          ]
+        },
+        {
+          "h": "Moving from Chrome",
+          "p": [
+            "Chrome can export your passwords to a CSV file (Settings, Autofill and passwords, Google Password Manager), and Password365 imports it. Delete the file afterwards: it is a readable copy of every password. See the import guide."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Checked in November 2026 from public information. Features change: confirm on Google's website.",
+        "head": [
+          "",
+          "Password365",
+          "Chrome (Google Password Manager)"
+        ],
+        "rows": [
+          [
+            "Account required",
+            "No",
+            "Yes (a Google Account, to sync)"
+          ],
+          [
+            "Where passwords are stored",
+            "Only on your own devices",
+            "In your Google Account (optionally locked with on-device encryption)"
+          ],
+          [
+            "Where it works",
+            "Chrome, Edge and Firefox, and its own apps",
+            "Built into Chrome and Android"
+          ],
+          [
+            "Open source",
+            "Core, desktop app and browser extension (GPL-3.0)",
+            "No (a Google service)"
+          ],
+          [
+            "Passkeys",
+            "Yes",
+            "Yes, synced end to end"
+          ],
+          [
+            "Price",
+            "Free on computer and browser; the iPhone app is a subscription",
+            "Free"
+          ]
+        ]
+      },
+      "tableAfter": 0,
+      "sources": [
+        {
+          "label": "Google: Get started with on-device encryption",
+          "url": "https://support.google.com/accounts/answer/11350823"
+        },
+        {
+          "label": "Google: Sync passkeys securely across your devices",
+          "url": "https://blog.google/innovation-and-ai/technology/safety-security/google-password-manager-passkeys-update-september-2024/"
+        }
+      ],
+      "note": "Google and Chrome are trademarks of Google LLC. Password365 is not affiliated with Google.",
+      "faq": [
+        {
+          "q": "Is it risky to keep passwords in the browser?",
+          "a": "It depends on who can use your computer and your Google Account. A separate vault with its own master password adds a barrier, but it is not a guarantee. Protect the account and the computer in either case."
+        },
+        {
+          "q": "Does Password365 work in Chrome?",
+          "a": "Yes, through its Chrome extension, which fills in passwords and saves new ones. It also works in Edge and Firefox."
+        },
+        {
+          "q": "Can I keep both?",
+          "a": "You can, but turn off password saving in Chrome so only one of them offers to save, or you will end up with two copies."
+        }
+      ]
+    },
+    "proton": {
+      "title": "Password365 vs Proton Pass: two privacy-first password managers",
+      "teaser": "Both are open and privacy-minded; one syncs through Proton's cloud, the other directly.",
+      "description": "Password365 compared with Proton Pass: open source, audits, accounts, cloud sync, aliases and sharing. Where Proton Pass is ahead and where Password365 takes a different route.",
+      "lead": "Proton Pass and Password365 share a lot: privacy first, open source, end-to-end encryption. The big difference is the cloud. Proton Pass syncs through a Proton account and Proton's servers, while Password365 has no account and syncs your devices directly.",
+      "sections": [
+        {
+          "h": "What they have in common",
+          "ul": [
+            "Privacy-first, end-to-end encrypted vaults.",
+            "Open source code.",
+            "Passkeys and one-time codes.",
+            "Browser extensions."
+          ]
+        },
+        {
+          "h": "The main difference",
+          "p": [
+            "Proton Pass needs a Proton account and keeps your encrypted vault on Proton's servers, which makes sync easy from any network and makes sharing possible. Password365 has no account and no server: the vault stays on your devices and they sync directly on your network."
+          ]
+        },
+        {
+          "h": "Where Proton Pass is ahead",
+          "ul": [
+            "Independent security audits with public reports, from a company with a long track record in privacy.",
+            "Sync over the internet, from any network, with apps for desktop, mobile and web, and browser extensions.",
+            "Sharing with other people, and email aliases that hide your real address.",
+            "A free plan with unlimited logins and notes (some features, such as aliases and one-time-code logins, are limited)."
+          ]
+        },
+        {
+          "h": "Where Password365 may suit you better",
+          "ul": [
+            "You want no account at all, not even a free one.",
+            "You do not want your encrypted vault on any company's server, including a privacy-focused one.",
+            "Your devices sync directly, with no cloud involved.",
+            "The desktop app and the browser extension are free."
+          ]
+        },
+        {
+          "h": "Moving from Proton Pass",
+          "p": [
+            "Proton Pass exports your data to a file (such as CSV), and Password365 imports CSV files. See the import guide."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Checked in November 2026 from public information. Features change: confirm on Proton's website.",
+        "head": [
+          "",
+          "Password365",
+          "Proton Pass"
+        ],
+        "rows": [
+          [
+            "Account required",
+            "No",
+            "Yes (a Proton account, free or paid)"
+          ],
+          [
+            "Where the encrypted vault is stored",
+            "Only on your own devices",
+            "On Proton's servers, end-to-end encrypted"
+          ],
+          [
+            "How devices sync",
+            "Directly, on the same network",
+            "Through Proton's cloud"
+          ],
+          [
+            "Open source",
+            "Core, desktop app and browser extension (GPL-3.0)",
+            "Yes (Proton says its apps are open source)"
+          ],
+          [
+            "Independent security audit",
+            "Not yet",
+            "Yes, with public reports"
+          ],
+          [
+            "Sharing with other people",
+            "No",
+            "Yes"
+          ],
+          [
+            "Apps",
+            "Mac, Windows, Linux, and Chrome, Edge, Firefox. iPhone coming soon, Android in development",
+            "Desktop, mobile, web and browser extensions"
+          ],
+          [
+            "Price",
+            "Free on computer and browser; the iPhone app is a subscription",
+            "Free plan (with limits) and paid plans"
+          ]
+        ]
+      },
+      "tableAfter": 1,
+      "sources": [
+        {
+          "label": "Proton: Proton Pass security",
+          "url": "https://proton.me/pass/security"
+        },
+        {
+          "label": "Proton: Proton Pass pricing and plans",
+          "url": "https://proton.me/pass/pricing"
+        }
+      ],
+      "note": "Proton and Proton Pass are trademarks of Proton AG. Password365 is not affiliated with Proton.",
+      "faq": [
+        {
+          "q": "Is Proton Pass or Password365 more private?",
+          "a": "Both aim at privacy. The difference is where the vault lives: Proton Pass keeps an encrypted copy on Proton's servers, while Password365 keeps it only on your devices. Which is better for you depends on whether you value easy sync from anywhere or having no server at all."
+        },
+        {
+          "q": "Is Password365 audited like Proton Pass?",
+          "a": "No. Proton Pass has independent audits with public reports; Password365 has not had one yet. Both are open source, so you can read the code."
+        },
+        {
+          "q": "Can I import from Proton Pass?",
+          "a": "Yes, from the file Proton Pass exports (for example CSV). See the import guide."
+        }
+      ]
+    },
+    "enpass": {
+      "title": "Password365 vs Enpass: a local vault, two ways to sync",
+      "teaser": "Both keep the vault on your devices; they sync it differently.",
+      "description": "Password365 compared with Enpass: local vaults, how devices sync (your own cloud or Wi-Fi versus direct pairing), open source, audits and price.",
+      "lead": "Enpass is the closest in spirit: the vault is kept on your devices, not on a company's servers. The differences are in how devices sync and in what is open. Here is how they compare.",
+      "sections": [
+        {
+          "h": "What they have in common",
+          "ul": [
+            "The vault is kept on your own devices, not on the company's servers.",
+            "You decide how it is synced.",
+            "Passwords and passkeys."
+          ]
+        },
+        {
+          "h": "How sync differs",
+          "p": [
+            "Enpass syncs through a cloud service you choose (such as iCloud, Dropbox, Google Drive, OneDrive, Box or WebDAV) and can also sync over Wi-Fi between devices on the same network. Password365 syncs directly between paired devices on your network, with no cloud drive involved, and has no account."
+          ]
+        },
+        {
+          "h": "Where Enpass is ahead",
+          "ul": [
+            "Years in the market, with apps already on the phone and computer stores.",
+            "More sync choices, including over the internet through a cloud service you already use.",
+            "Features built up over time, and a one-time purchase option for some versions."
+          ]
+        },
+        {
+          "h": "Where Password365 may suit you better",
+          "ul": [
+            "Open source: the core, the desktop app and the browser extension are published (GPL-3.0). Enpass's code is not open.",
+            "Pairing with a QR code and direct sync, with no cloud drive to set up or trust.",
+            "The desktop app and the browser extension are free."
+          ]
+        },
+        {
+          "h": "Moving from Enpass",
+          "p": [
+            "Enpass can export your vault to a file (for example CSV), and Password365 imports CSV files. See the import guide."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Checked in November 2026 from public information. Features change: confirm on Enpass's website.",
+        "head": [
+          "",
+          "Password365",
+          "Enpass"
+        ],
+        "rows": [
+          [
+            "Where the vault is stored",
+            "Only on your own devices",
+            "On your own devices"
+          ],
+          [
+            "How devices sync",
+            "Directly between paired devices, on the same network",
+            "Through a cloud service you choose, or over Wi-Fi on the same network"
+          ],
+          [
+            "Open source",
+            "Core, desktop app and browser extension (GPL-3.0)",
+            "No"
+          ],
+          [
+            "Independent security audit",
+            "Not yet",
+            "A published audit covers part of the product; see Enpass"
+          ],
+          [
+            "Apps",
+            "Mac, Windows, Linux, and Chrome, Edge, Firefox. iPhone coming soon, Android in development",
+            "Apps for computers and phones"
+          ],
+          [
+            "Price",
+            "Free on computer and browser; the iPhone app is a subscription",
+            "Free and paid versions: a subscription and, for some versions, a one-time purchase"
+          ]
+        ]
+      },
+      "tableAfter": 1,
+      "sources": [
+        {
+          "label": "Enpass on the App Store",
+          "url": "https://apps.apple.com/us/app/enpass-password-manager/id732710998?mt=12"
+        },
+        {
+          "label": "Enpass: offline password manager",
+          "url": "https://www.enpass.io/offline"
+        }
+      ],
+      "note": "Enpass is a trademark of its owner. Password365 is not affiliated with Enpass.",
+      "faq": [
+        {
+          "q": "Is Enpass offline?",
+          "a": "Its vault is stored on your devices, and sync is optional through a service you choose. See Enpass for the details of each option."
+        },
+        {
+          "q": "Can I move from Enpass?",
+          "a": "Yes. Export from Enpass to a file and import it into Password365. Delete the file afterwards."
+        },
+        {
+          "q": "Which is more private?",
+          "a": "Both keep the vault on your devices. Password365 adds open code and direct sync with no cloud drive involved; Enpass has been on the market for longer."
+        }
+      ]
+    },
+    "sources": "Sources",
+    "compareAll": "All comparisons",
+    "moreInfo": "More guides"
+  },
+  "compare": {
+    "title": "Compare Password365 with other password managers",
+    "description": "Honest comparisons of Password365 with 1Password, Bitwarden, KeePassXC, Apple Passwords, the Chrome password manager, Proton Pass and Enpass: what is different, where they are ahead, and who each one suits.",
+    "lead": "No password manager is best for everyone. These pages say where Password365 differs from other popular ones, and where they are ahead. Each comparison states when it was checked and links to the sources.",
+    "honestTitle": "How we keep them honest",
+    "honest": [
+      "Each page lists where the other product is ahead, not only where Password365 is.",
+      "We say when we checked, and link to the official pages we used.",
+      "We do not quote prices, which change, or discuss security incidents: that is not what these pages are about.",
+      "Found a mistake? Tell us on the support page and we will fix it."
+    ],
+    "listTitle": "The comparisons",
+    "chooseTitle": "Which one should you choose?",
+    "choose": "If you share passwords with other people, or need to sync from anywhere, a cloud manager fits you better today. If you want no account and no cloud, and accept syncing on your own network, try Password365. Each page ends with who it suits.",
+    "faq": [
+      {
+        "q": "Which password manager should I choose?",
+        "a": "The one that fits how you work. Share with others or sync from anywhere: a cloud manager. No account, no cloud, open code: try Password365. You can test it with a copy of your passwords and keep your current manager."
+      },
+      {
+        "q": "Are these comparisons independent?",
+        "a": "No: we make Password365. That is why each page lists where the other product is ahead, says when it was checked and links to the sources, so you can verify it yourself."
+      }
+    ],
+    "card": "Compare Password365"
   }
 }
