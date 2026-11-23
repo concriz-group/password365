@@ -9,7 +9,8 @@ const load = (file) => JSON.parse(readFileSync(new URL(file, dir), "utf8"));
 const flat = (node, prefix = "") =>
   Object.entries(node).flatMap(([k, v]) => (typeof v === "object" ? flat(v, `${prefix}${k}.`) : [[`${prefix}${k}`, v]]));
 const english = new Map(flat(load("en.json")));
-const placeholders = (text) => [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
+// Numbers (like a position in a guide) have no placeholders; only text does.
+const placeholders = (text) => (typeof text === "string" ? [...text.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort() : []);
 
 for (const file of readdirSync(dir).filter((f) => f !== "en.json")) {
   test(`${file} has the same keys and placeholders as English`, () => {
@@ -42,4 +43,18 @@ test("every templated key resolves for the lists on the home page", () => {
   };
   for (const [pattern, parts] of Object.entries(groups))
     for (const part of parts) assert.ok(english.has(pattern.replace("{}", part)), pattern.replace("{}", part));
+});
+
+test("every guide page has its texts, lists of the same length and the same table in every language", () => {
+  const guides = ["noCloud", "alternative", "importing", "sync"];
+  for (const file of readdirSync(dir)) {
+    const g = load(file).guides;
+    for (const key of guides) {
+      const guide = g[key];
+      for (const field of ["title", "teaser", "description", "lead"]) assert.ok(guide[field], `${file} ${key}.${field}`);
+      assert.ok(guide.sections.length >= 4, `${file} ${key} sections`);
+      assert.ok(guide.faq.length >= 2, `${file} ${key} faq`);
+      if (guide.table) for (const row of guide.table.rows) assert.equal(row.length, guide.table.head.length, `${file} ${key} table row`);
+    }
+  }
 });
