@@ -5,6 +5,14 @@ release page and the app's update notice show the section of the new version.
 
 ## [Unreleased]
 
+## [0.1.6] — 2026-11-23
+
+### Added
+- **Review duplicates** (sidebar, below Watchtower): logins that look like one account stored more
+  than once, with the same username on the same site or on a brand's other country sites. Pick the
+  login to keep; the others' websites, tags, notes and one-time password are added to it, a
+  different password goes into its password history, and the rest move to Recently Deleted.
+
 ## [0.1.5] — 2026-11-23
 
 ### Added
