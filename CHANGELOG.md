@@ -5,6 +5,14 @@ release page and the app's update notice show the section of the new version.
 
 ## [Unreleased]
 
+## [0.1.4] — 2026-11-23
+
+### Added
+- A login saved for one of a brand's country sites is now offered on the others (`amazon.com` on
+  `amazon.es`, Google, Microsoft, Apple, eBay, PayPal and more; the list is `templates/equivalent-domains.json`).
+- A website written with a wildcard ending (`amazon.*`) on a login matches that exact name under any
+  domain ending, and never look-alikes.
+
 ## [0.1.3] — 2026-11-21
 
 ### Fixed
