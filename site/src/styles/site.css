@@ -176,7 +176,7 @@ section.dark .card .icon { background: #2a1d12; color: var(--accent); }
 .logos-note { color: var(--muted); margin-top: 18px; }
 
 /* Platforms */
-.platforms { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 48px; }
+.platforms { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr)); margin-top: 48px; }
 .platform { text-align: center; padding: 36px 24px; }
 .platform h3 { margin-bottom: 4px; }
 .platform p { color: var(--muted); }

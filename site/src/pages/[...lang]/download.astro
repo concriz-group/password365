@@ -13,6 +13,7 @@ const rows = [
   { icon: "globe", name: t("download.extension"), text: t("download.extensionText"), link: site.stores.chrome ?? download("Password365-extension-Chromium.zip") },
   { icon: "globe", name: t("download.extensionFirefox"), text: t("download.extensionManual"), link: site.stores.firefox ?? download("Password365-extension-Firefox.zip") },
   { icon: "phone", name: t("download.ios"), text: t("download.iosText"), link: site.stores.appStore },
+  { icon: "phone", name: t("download.android"), text: t("download.androidText"), link: null, label: t("download.inDevelopment") },
 ];
 ---
 <Base tag={tag} page="download" title={t("download.title")}>
@@ -29,7 +30,7 @@ const rows = [
             </div>
             {r.link
               ? <a class="button primary" href={r.link}>{t("nav.download")}</a>
-              : <span class="button disabled">{t("download.soon")}</span>}
+              : <span class="button disabled">{r.label ?? t("download.soon")}</span>}
           </div>
         ))}
       </div>

@@ -20,7 +20,7 @@
     "lead": "Password365 mantiene tus contraseñas, llaves de acceso y códigos de verificación sincronizados entre tu ordenador, tu móvil y tu tableta — sin ponerlos nunca en un servidor que no controlas. Sin cuenta, sin nube.",
     "primary": "Descargar para Mac",
     "secondary": "Mira cómo funciona",
-    "note": "Gratis para Mac, Windows y Linux. iPhone y iPad muy pronto.",
+    "note": "Gratis para Mac, Windows y Linux. iPhone y iPad muy pronto. Android en desarrollo.",
     "primaryWindows": "Descargar para Windows",
     "primaryLinux": "Descargar para Linux"
   },
@@ -138,7 +138,9 @@
     "browsers": "Chrome, Edge y Firefox",
     "browsersNote": "Extensión gratuita",
     "iphone": "iPhone y iPad",
-    "iphoneNote": "Muy pronto en la App Store"
+    "iphoneNote": "Muy pronto en la App Store",
+    "android": "Android",
+    "androidNote": "En desarrollo"
   },
   "faq": {
     "title": "Preguntas",
@@ -174,7 +176,10 @@
     "soon": "Muy pronto",
     "notYet": "Aún no disponible",
     "extensionFirefox": "Extensión para Firefox",
-    "extensionManual": "Hasta las tiendas: descomprímela y cárgala como extensión sin empaquetar (modo desarrollador)."
+    "extensionManual": "Hasta las tiendas: descomprímela y cárgala como extensión sin empaquetar (modo desarrollador).",
+    "android": "Password365 para Android",
+    "androidText": "Autorrelleno en navegadores y apps, sincronizado con tu ordenador.",
+    "inDevelopment": "En desarrollo"
   },
   "securityPage": {
     "title": "Seguridad",

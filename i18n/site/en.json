@@ -20,7 +20,7 @@
     "lead": "Password365 keeps your passwords, passkeys and one-time codes in sync across your computer, phone and tablet — without ever putting them on a server you don't control. No account, no cloud.",
     "primary": "Download for Mac",
     "secondary": "See how it works",
-    "note": "Free for Mac, Windows and Linux. iPhone and iPad coming soon.",
+    "note": "Free for Mac, Windows and Linux. iPhone and iPad coming soon. Android in development.",
     "primaryWindows": "Download for Windows",
     "primaryLinux": "Download for Linux"
   },
@@ -138,7 +138,9 @@
     "browsers": "Chrome, Edge and Firefox",
     "browsersNote": "Free extension",
     "iphone": "iPhone and iPad",
-    "iphoneNote": "Coming soon to the App Store"
+    "iphoneNote": "Coming soon to the App Store",
+    "android": "Android",
+    "androidNote": "In development"
   },
   "faq": {
     "title": "Questions",
@@ -174,7 +176,10 @@
     "soon": "Coming soon",
     "notYet": "Not available yet",
     "extensionFirefox": "Browser extension for Firefox",
-    "extensionManual": "Until the store listings: unzip it and load it as an unpacked extension (developer mode)."
+    "extensionManual": "Until the store listings: unzip it and load it as an unpacked extension (developer mode).",
+    "android": "Password365 for Android",
+    "androidText": "AutoFill in browsers and apps, synced with your computer.",
+    "inDevelopment": "In development"
   },
   "securityPage": {
     "title": "Security",
