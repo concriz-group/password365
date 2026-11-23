@@ -260,10 +260,10 @@
   },
   "open": {
     "title": "Open source, checked in the open",
-    "lead": "You should not have to take our word for it. All of Password365's code is public, so anyone can read it, build it and check what it does with your passwords.",
+    "lead": "You should not have to take our word for it. The core that holds and protects your passwords is public, and so are the desktop app and the browser extension: anyone can read them, build them and check what they do with your passwords.",
     "code": {
       "title": "Read the code",
-      "text": "The apps, the browser extension and the cryptography are published on GitHub under the GPL-3.0 license: free to use, study and share."
+      "text": "The core (cryptography, vault and sync), the desktop app and the browser extension are published on GitHub under the GPL-3.0 license: free to use, study and share. The iPhone and Android apps are built on that same core; the code of their screens is not published."
     },
     "verify": {
       "title": "Verify it",

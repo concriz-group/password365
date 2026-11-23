@@ -260,10 +260,10 @@
   },
   "open": {
     "title": "Código aberto, verificável por todos",
-    "lead": "Você não precisa acreditar na nossa palavra. Todo o código do Password365 é público: qualquer pessoa pode ler, compilar e conferir o que ele faz com as suas senhas.",
+    "lead": "Você não precisa acreditar na nossa palavra. O núcleo que guarda e protege as suas senhas é público, assim como o app de computador e a extensão do navegador: qualquer pessoa pode ler, compilar e conferir o que eles fazem com as suas senhas.",
     "code": {
       "title": "Leia o código",
-      "text": "Os apps, a extensão de navegador e a criptografia estão publicados no GitHub sob a licença GPL-3.0: livres para usar, estudar e compartilhar."
+      "text": "O núcleo (criptografia, cofre e sincronização), o app de computador e a extensão do navegador estão publicados no GitHub sob a licença GPL-3.0: livres para usar, estudar e compartilhar. Os apps de iPhone e Android usam esse mesmo núcleo; o código das telas deles não é publicado."
     },
     "verify": {
       "title": "Verifique",
