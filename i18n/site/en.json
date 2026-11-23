@@ -2,8 +2,8 @@
   "meta": {
     "lang": "en",
     "name": "English",
-    "title": "Password365 — Not your server, not your passwords.",
-    "description": "Passwords, passkeys and one-time codes in an encrypted vault that stays on your devices. No account, no cloud: your computer and your phone sync directly.",
+    "title": "Password365 — Password manager without cloud or account",
+    "description": "Password365 (Password 365) is an open-source password manager with no cloud and no account. Passwords, passkeys and one-time codes stay on your devices and sync directly, 365 days a year.",
     "downloadDescription": "Download Password365 for Mac, Windows and Linux, plus the Chrome, Edge and Firefox extension. Free, open source, no account.",
     "supportDescription": "Get started with Password365, set up your phone and browser, and what to do if you are locked out. Contact the team.",
     "privacyDescription": "What Password365 collects (nothing about your passwords), what stays on your devices, and the one optional network check."
@@ -158,11 +158,13 @@
     "q4": "Does Password365 use the internet at all?",
     "a4": "Only if you turn on the check for passwords found in data breaches (off by default). It sends the first 5 characters of a hash of each password, never the password itself.",
     "q5": "Can I move my data out later?",
-    "a5": "Yes. Export everything to CSV or to the Credential Exchange Format (CXF), which other password managers can import, passkeys included."
+    "a5": "Yes. Export everything to CSV or to the Credential Exchange Format (CXF), which other password managers can import, passkeys included.",
+    "q6": "Why is it called Password365?",
+    "a6": "Because your passwords are needed every day. Password365 is built to work 365 days a year: it keeps working offline, there is no account that can expire or be suspended, and no server whose outage can lock you out. You may also see the name written Password 365."
   },
   "cta": {
     "title": "Take your passwords back.",
-    "text": "Free on your computer. No account needed.",
+    "text": "Free on your computer. No account needed. Works 365 days a year, even offline.",
     "button": "Download Password365"
   },
   "download": {
@@ -583,6 +585,171 @@
         {
           "q": "What if I remove a device?",
           "a": "Remove it in Devices. It is refused on the next sync and keeps only the copy it already had, protected by your master password."
+        }
+      ]
+    },
+    "keepass": {
+      "title": "Password365 vs KeePassXC: two ways to keep your passwords off the cloud",
+      "teaser": "Both avoid a company cloud. How sync, phones and setup differ.",
+      "description": "Password365 and KeePassXC both keep your passwords out of a company's cloud. How they differ in sync, phone apps, setup and features, and who each one suits.",
+      "lead": "KeePassXC is a well-known open-source password manager that keeps your passwords in a file on your computer. Password365 shares the idea (no account, no company cloud) but handles sync and phones differently. Here is how they compare.",
+      "sections": [
+        {
+          "h": "What they have in common",
+          "ul": [
+            "No account, and no company server holds your passwords.",
+            "Open source.",
+            "Your passwords are encrypted on your own device.",
+            "Free on the computer."
+          ]
+        },
+        {
+          "h": "How they differ",
+          "p": [
+            "KeePassXC keeps everything in one database file (.kdbx) that you manage. To use it on more than one device, you put that file in a folder that something else syncs, such as a cloud drive or a file-sync tool, and on a phone you use a separate app that opens KeePass files. Password365 syncs your devices for you, directly, and has its own phone apps, so there is no file to move or merge by hand."
+          ]
+        },
+        {
+          "h": "Where KeePassXC is ahead",
+          "ul": [
+            "A long public track record, a large community and many compatible apps and plugins.",
+            "Your vault is one file you can back up, move and open in many programs.",
+            "Fine control for advanced users: key files, hardware keys and custom database settings.",
+            "Works with any sync method you already trust, including over the internet."
+          ]
+        },
+        {
+          "h": "Where Password365 may suit you better",
+          "ul": [
+            "Sync between devices is built in, with no file to keep in a cloud folder.",
+            "Phone apps made for the same vault, with AutoFill (iPhone coming soon, Android in development).",
+            "A Secret Key as well as the master password, and an Emergency Kit to print.",
+            "Pairing with a QR code instead of copying files."
+          ]
+        },
+        {
+          "h": "Moving from KeePassXC",
+          "p": [
+            "Password365 imports KeePass and KeePassXC databases (.kdbx). Try it with a copy and keep your file until you are sure."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Checked in November 2026 from each project's public information. Features change: confirm on their websites.",
+        "head": [
+          "",
+          "Password365",
+          "KeePassXC"
+        ],
+        "rows": [
+          [
+            "Account required",
+            "No",
+            "No"
+          ],
+          [
+            "Open source",
+            "Core, desktop app and browser extension (GPL-3.0)",
+            "Yes"
+          ],
+          [
+            "Where passwords are stored",
+            "Encrypted, on your own devices",
+            "In a database file you choose"
+          ],
+          [
+            "How devices sync",
+            "Built in, directly, on the same network",
+            "You sync the file yourself (cloud drive or file-sync tool)"
+          ],
+          [
+            "Phone apps",
+            "Its own apps (iPhone coming soon, Android in development)",
+            "No official phone app; other apps open KeePass files"
+          ],
+          [
+            "Browser extension",
+            "Chrome, Edge, Firefox",
+            "Yes"
+          ],
+          [
+            "Passkeys and one-time codes",
+            "Yes",
+            "Yes"
+          ],
+          [
+            "Track record",
+            "New: early releases, no independent audit yet",
+            "Many years of public use"
+          ]
+        ]
+      },
+      "tableAfter": 1,
+      "note": "KeePass and KeePassXC are names of their respective projects. Password365 is not affiliated with them.",
+      "faq": [
+        {
+          "q": "Can I import my KeePassXC database?",
+          "a": "Yes. Password365 imports .kdbx files. Use a copy and keep your original until you are sure."
+        },
+        {
+          "q": "Do I still need to sync a file?",
+          "a": "No. Password365 syncs your paired devices directly, so there is no file to put in a cloud folder."
+        },
+        {
+          "q": "Is Password365 safer than KeePassXC?",
+          "a": "We cannot say that. KeePassXC has a much longer public track record. Password365 is newer and has not had an independent audit yet. Both are open source, so you can check."
+        }
+      ]
+    },
+    "passkeys": {
+      "title": "Passkeys and one-time codes: how Password365 stores them",
+      "teaser": "What they are, why they help, and where they live in your vault.",
+      "description": "What passkeys and one-time codes (TOTP) are, why they are safer than a password alone, and how Password365 saves them and fills them in on your computer and phone.",
+      "lead": "A password can be guessed, reused or stolen. Passkeys and one-time codes add protection. Password365 keeps both next to your logins, in the same encrypted vault.",
+      "sections": [
+        {
+          "h": "What is a passkey?",
+          "p": [
+            "A passkey replaces a password with a pair of cryptographic keys. The site keeps one half and your device keeps the other. There is nothing to type, nothing to guess, and nothing a fake website can trick you into giving away.",
+            "Where a site supports passkeys, you create one instead of a password and sign in with your fingerprint, your face or your device password."
+          ]
+        },
+        {
+          "h": "What is a one-time code?",
+          "p": [
+            "A one-time code (TOTP) is the six-digit number that changes every 30 seconds in an authenticator app. It is a second step after your password. Password365 can hold the setup key, show the current code next to the login and fill it in for you."
+          ]
+        },
+        {
+          "h": "How Password365 handles them",
+          "ul": [
+            "Passkeys are saved in your vault and used from the browser extension and, on iPhone, from AutoFill.",
+            "They sync between your paired devices like everything else, with no account in between.",
+            "You can export passkeys in the Credential Exchange Format (CXF) and import them from apps that support it.",
+            "Codes are generated on your device, and the setup key stays in your vault."
+          ]
+        },
+        {
+          "h": "Good to know",
+          "ul": [
+            "Passkeys work only on sites that support them. Many sites still need a password too.",
+            "Keep your Emergency Kit and back up your vault: if you lose every device, a passkey that exists only there is lost with them.",
+            "Keeping the one-time code in the same place as the password is convenient, but anyone who opens your vault gets both. A strong master password and the Secret Key are what protect the vault."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "Can I use Password365 as an authenticator app?",
+          "a": "Yes. It generates one-time codes for the logins that have them."
+        },
+        {
+          "q": "Does it sync passkeys between my computer and phone?",
+          "a": "Yes, as part of the vault, when the devices are paired and can reach each other on the same network."
+        },
+        {
+          "q": "Can I move my passkeys from another app?",
+          "a": "Yes, if that app can export in the Credential Exchange Format (CXF), which Password365 imports."
         }
       ]
     }

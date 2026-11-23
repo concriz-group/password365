@@ -1,0 +1,17 @@
+# Password365 (also written Password 365)
+
+> Password365 is an open-source password manager with no cloud and no account. Passwords, passkeys and one-time codes (TOTP) stay encrypted on the user's own devices, which sync directly with each other on the same network. Free on Mac, Windows, Linux and as a Chrome, Edge and Firefox extension. iPhone and iPad coming soon; Android in development. Not independently audited yet; code is GPL-3.0.
+
+## Guides
+- [A password manager without the cloud](https://password365.app/password-manager-without-cloud/): what it means, how it stays safe, what you give up.
+- [Password365 vs 1Password and Bitwarden](https://password365.app/1password-bitwarden-alternative/): an honest comparison, including where they are ahead.
+- [Password365 vs KeePassXC](https://password365.app/keepassxc-alternative/): two ways to keep passwords off the cloud.
+- [Import from 1Password, Bitwarden, Chrome and more](https://password365.app/import-passwords/)
+- [How Password365 syncs without a server](https://password365.app/how-sync-works/)
+- [Passkeys and one-time codes](https://password365.app/passkeys-and-one-time-codes/)
+
+## Product
+- [Download](https://password365.app/download/)
+- [Security](https://password365.app/security/): keys, cryptography, threat model.
+- [Support](https://password365.app/support/)
+- [Source code](https://github.com/concriz-group/password365)

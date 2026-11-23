@@ -2,8 +2,8 @@
   "meta": {
     "lang": "pt",
     "name": "Português",
-    "title": "Password365 — Não é seu servidor, não são suas senhas.",
-    "description": "Senhas, chaves de acesso e códigos de verificação num cofre criptografado que fica nos seus aparelhos. Sem conta, sem nuvem: o computador e o celular sincronizam direto.",
+    "title": "Password365 — Gerenciador de senhas sem nuvem e sem conta",
+    "description": "Password365 (Password 365) é um gerenciador de senhas de código aberto, sem nuvem e sem conta. Senhas, chaves de acesso e códigos de uso único ficam nos seus aparelhos e sincronizam direto, 365 dias por ano.",
     "downloadDescription": "Baixe o Password365 para Mac, Windows e Linux, e a extensão para Chrome, Edge e Firefox. Grátis, código aberto, sem conta.",
     "supportDescription": "Comece a usar o Password365, configure o celular e o navegador, e saiba o que fazer se ficar sem acesso. Fale com a equipe.",
     "privacyDescription": "O que o Password365 coleta (nada das suas senhas), o que fica nos seus aparelhos e a única verificação opcional pela rede."
@@ -158,11 +158,13 @@
     "q4": "O Password365 usa a internet?",
     "a4": "Só se você ligar a verificação de senhas vazadas (desligada por padrão). Ela envia os 5 primeiros caracteres de um hash de cada senha, nunca a senha.",
     "q5": "Posso levar os meus dados embora depois?",
-    "a5": "Sim. Exporte tudo para CSV ou para o formato de troca de credenciais (CXF), que outros gerenciadores de senhas importam, com chaves de acesso e tudo."
+    "a5": "Sim. Exporte tudo para CSV ou para o formato de troca de credenciais (CXF), que outros gerenciadores de senhas importam, com chaves de acesso e tudo.",
+    "q6": "Por que se chama Password365?",
+    "a6": "Porque você precisa das suas senhas todos os dias. O Password365 foi feito para funcionar 365 dias por ano: continua funcionando offline, não há conta que possa expirar ou ser suspensa, e nenhum servidor cuja queda deixe você sem acesso. O nome também pode ser escrito Password 365."
   },
   "cta": {
     "title": "Retome o controle das suas senhas.",
-    "text": "Grátis no computador. Sem precisar de conta.",
+    "text": "Grátis no computador. Sem precisar de conta. Funciona 365 dias por ano, até offline.",
     "button": "Baixar o Password365"
   },
   "download": {
@@ -583,6 +585,171 @@
         {
           "q": "E se eu remover um aparelho?",
           "a": "Remova em Dispositivos. Ele é recusado na próxima sincronização e fica só com a cópia que já tinha, protegida pela sua senha mestra."
+        }
+      ]
+    },
+    "keepass": {
+      "title": "Password365 vs KeePassXC: duas formas de manter suas senhas fora da nuvem",
+      "teaser": "Os dois evitam a nuvem de uma empresa. Como sincronização, celulares e configuração diferem.",
+      "description": "Password365 e KeePassXC mantêm suas senhas fora da nuvem de uma empresa. Como diferem em sincronização, apps de celular, configuração e recursos, e para quem cada um serve.",
+      "lead": "O KeePassXC é um gerenciador de senhas de código aberto conhecido, que guarda suas senhas num arquivo no seu computador. O Password365 compartilha a ideia (sem conta, sem nuvem de empresa), mas trata sincronização e celulares de outro jeito. Veja a comparação.",
+      "sections": [
+        {
+          "h": "O que têm em comum",
+          "ul": [
+            "Sem conta, e nenhum servidor de empresa guarda suas senhas.",
+            "Código aberto.",
+            "Suas senhas são criptografadas no seu próprio aparelho.",
+            "Grátis no computador."
+          ]
+        },
+        {
+          "h": "Como diferem",
+          "p": [
+            "O KeePassXC guarda tudo num único arquivo de banco de dados (.kdbx) que você administra. Para usar em mais de um aparelho, você coloca esse arquivo numa pasta que outra coisa sincroniza, como um drive na nuvem ou uma ferramenta de sincronização de arquivos, e no celular usa um app separado que abre arquivos do KeePass. O Password365 sincroniza os aparelhos por você, direto, e tem apps próprios de celular, então não há arquivo para levar ou mesclar à mão."
+          ]
+        },
+        {
+          "h": "Onde o KeePassXC está à frente",
+          "ul": [
+            "Um longo histórico público, uma comunidade grande e muitos apps e plugins compatíveis.",
+            "Seu cofre é um arquivo que você pode copiar, mover e abrir em vários programas.",
+            "Controle fino para usuários avançados: arquivos-chave, chaves de hardware e ajustes do banco de dados.",
+            "Funciona com qualquer método de sincronização em que você já confia, inclusive pela internet."
+          ]
+        },
+        {
+          "h": "Onde o Password365 pode servir melhor",
+          "ul": [
+            "A sincronização entre aparelhos já vem pronta, sem arquivo numa pasta na nuvem.",
+            "Apps de celular feitos para o mesmo cofre, com preenchimento automático (iPhone em breve, Android em desenvolvimento).",
+            "Uma Chave Secreta além da senha mestra, e um Kit de Emergência para imprimir.",
+            "Pareamento por QR code em vez de copiar arquivos."
+          ]
+        },
+        {
+          "h": "Migrando do KeePassXC",
+          "p": [
+            "O Password365 importa bancos do KeePass e do KeePassXC (.kdbx). Teste com uma cópia e mantenha o seu arquivo até ter certeza."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Verificado em novembro de 2026 nas informações públicas de cada projeto. Os recursos mudam: confirme nos sites deles.",
+        "head": [
+          "",
+          "Password365",
+          "KeePassXC"
+        ],
+        "rows": [
+          [
+            "Exige conta",
+            "Não",
+            "Não"
+          ],
+          [
+            "Código aberto",
+            "Núcleo, app de computador e extensão (GPL-3.0)",
+            "Sim"
+          ],
+          [
+            "Onde ficam as senhas",
+            "Criptografadas, nos seus aparelhos",
+            "Num arquivo de banco de dados que você escolhe"
+          ],
+          [
+            "Como os aparelhos sincronizam",
+            "Nativo, direto, na mesma rede",
+            "Você sincroniza o arquivo (drive na nuvem ou ferramenta de sincronização)"
+          ],
+          [
+            "Apps de celular",
+            "Apps próprios (iPhone em breve, Android em desenvolvimento)",
+            "Sem app oficial de celular; outros apps abrem arquivos do KeePass"
+          ],
+          [
+            "Extensão de navegador",
+            "Chrome, Edge, Firefox",
+            "Sim"
+          ],
+          [
+            "Chaves de acesso e códigos de uso único",
+            "Sim",
+            "Sim"
+          ],
+          [
+            "Histórico",
+            "Novo: primeiras versões, ainda sem auditoria independente",
+            "Muitos anos de uso público"
+          ]
+        ]
+      },
+      "tableAfter": 1,
+      "note": "KeePass e KeePassXC são nomes dos respectivos projetos. O Password365 não é afiliado a eles.",
+      "faq": [
+        {
+          "q": "Posso importar meu banco do KeePassXC?",
+          "a": "Sim. O Password365 importa arquivos .kdbx. Use uma cópia e mantenha o original até ter certeza."
+        },
+        {
+          "q": "Ainda preciso sincronizar um arquivo?",
+          "a": "Não. O Password365 sincroniza seus aparelhos pareados direto, então não há arquivo para pôr numa pasta na nuvem."
+        },
+        {
+          "q": "O Password365 é mais seguro que o KeePassXC?",
+          "a": "Não podemos dizer isso. O KeePassXC tem um histórico público bem mais longo. O Password365 é mais novo e ainda não teve auditoria independente. Os dois são de código aberto, então você pode conferir."
+        }
+      ]
+    },
+    "passkeys": {
+      "title": "Chaves de acesso e códigos de uso único: como o Password365 os guarda",
+      "teaser": "O que são, por que ajudam e onde ficam no seu cofre.",
+      "description": "O que são chaves de acesso e códigos de uso único (TOTP), por que são mais seguros que só a senha, e como o Password365 os guarda e preenche no computador e no celular.",
+      "lead": "Uma senha pode ser adivinhada, reutilizada ou roubada. Chaves de acesso e códigos de uso único acrescentam proteção. O Password365 guarda os dois junto dos seus logins, no mesmo cofre criptografado.",
+      "sections": [
+        {
+          "h": "O que é uma chave de acesso?",
+          "p": [
+            "Uma chave de acesso (passkey) troca a senha por um par de chaves criptográficas. O site guarda uma metade e o seu aparelho guarda a outra. Não há o que digitar, o que adivinhar, nem o que um site falso consiga fazer você entregar.",
+            "Onde o site aceita chaves de acesso, você cria uma no lugar da senha e entra com a digital, o rosto ou a senha do aparelho."
+          ]
+        },
+        {
+          "h": "O que é um código de uso único?",
+          "p": [
+            "Um código de uso único (TOTP) é o número de seis dígitos que muda a cada 30 segundos num app autenticador. É uma segunda etapa depois da senha. O Password365 pode guardar a chave de configuração, mostrar o código atual junto do login e preenchê-lo por você."
+          ]
+        },
+        {
+          "h": "Como o Password365 trata isso",
+          "ul": [
+            "As chaves de acesso ficam no seu cofre e são usadas pela extensão do navegador e, no iPhone, pelo Preenchimento Automático.",
+            "Elas sincronizam entre os aparelhos pareados como todo o resto, sem conta no meio.",
+            "Você pode exportar chaves de acesso no Credential Exchange Format (CXF) e importá-las de apps que o suportam.",
+            "Os códigos são gerados no seu aparelho, e a chave de configuração fica no seu cofre."
+          ]
+        },
+        {
+          "h": "Bom saber",
+          "ul": [
+            "Chaves de acesso só funcionam em sites que as aceitam. Muitos ainda exigem senha também.",
+            "Guarde o Kit de Emergência e faça backup do cofre: se você perder todos os aparelhos, uma chave de acesso que só existe neles se perde junto.",
+            "Deixar o código de uso único no mesmo lugar da senha é prático, mas quem abrir o seu cofre leva os dois. Uma senha mestra forte e a Chave Secreta é que protegem o cofre."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "Posso usar o Password365 como app autenticador?",
+          "a": "Sim. Ele gera códigos de uso único para os logins que os têm."
+        },
+        {
+          "q": "Ele sincroniza chaves de acesso entre o computador e o celular?",
+          "a": "Sim, como parte do cofre, quando os aparelhos estão pareados e se alcançam na mesma rede."
+        },
+        {
+          "q": "Posso trazer minhas chaves de acesso de outro app?",
+          "a": "Sim, se esse app exporta no Credential Exchange Format (CXF), que o Password365 importa."
         }
       ]
     }

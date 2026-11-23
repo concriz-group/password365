@@ -2,8 +2,8 @@
   "meta": {
     "lang": "es",
     "name": "Español",
-    "title": "Password365 — No es tu servidor, no son tus contraseñas.",
-    "description": "Contraseñas, llaves de acceso y códigos de verificación en una caja fuerte cifrada que se queda en tus dispositivos. Sin cuenta, sin nube: tu ordenador y tu móvil se sincronizan directamente.",
+    "title": "Password365 — Gestor de contraseñas sin nube ni cuenta",
+    "description": "Password365 (Password 365) es un gestor de contraseñas de código abierto, sin nube y sin cuenta. Contraseñas, llaves de acceso y códigos de un solo uso se quedan en tus dispositivos y sincronizan directamente, los 365 días del año.",
     "downloadDescription": "Descarga Password365 para Mac, Windows y Linux, y la extensión para Chrome, Edge y Firefox. Gratis, código abierto, sin cuenta.",
     "supportDescription": "Empieza con Password365, configura tu móvil y tu navegador, y qué hacer si te quedas sin acceso. Contacta con el equipo.",
     "privacyDescription": "Qué recopila Password365 (nada de tus contraseñas), qué se queda en tus dispositivos y la única comprobación opcional por red."
@@ -158,11 +158,13 @@
     "q4": "¿Password365 usa internet?",
     "a4": "Solo si activas la comprobación de contraseñas filtradas (desactivada por defecto). Envía los 5 primeros caracteres de un hash de cada contraseña, nunca la contraseña.",
     "q5": "¿Puedo llevarme mis datos más adelante?",
-    "a5": "Sí. Exporta todo a CSV o al formato de intercambio de credenciales (CXF), que otros gestores de contraseñas pueden importar, llaves de acceso incluidas."
+    "a5": "Sí. Exporta todo a CSV o al formato de intercambio de credenciales (CXF), que otros gestores de contraseñas pueden importar, llaves de acceso incluidas.",
+    "q6": "¿Por qué se llama Password365?",
+    "a6": "Porque necesitas tus contraseñas todos los días. Password365 está hecho para funcionar los 365 días del año: sigue funcionando sin conexión, no hay cuenta que pueda caducar o ser suspendida, ni servidor cuya caída te deje fuera. El nombre también puede escribirse Password 365."
   },
   "cta": {
     "title": "Recupera el control de tus contraseñas.",
-    "text": "Gratis en tu ordenador. Sin necesidad de cuenta.",
+    "text": "Gratis en tu ordenador. Sin necesidad de cuenta. Funciona los 365 días del año, incluso sin conexión.",
     "button": "Descargar Password365"
   },
   "download": {
@@ -583,6 +585,171 @@
         {
           "q": "¿Y si quito un dispositivo?",
           "a": "Quítalo en Dispositivos. Se le rechaza en la siguiente sincronización y conserva solo la copia que ya tenía, protegida por tu contraseña maestra."
+        }
+      ]
+    },
+    "keepass": {
+      "title": "Password365 frente a KeePassXC: dos formas de mantener tus contraseñas fuera de la nube",
+      "teaser": "Ambos evitan la nube de una empresa. En qué difieren la sincronización, los móviles y la configuración.",
+      "description": "Password365 y KeePassXC mantienen tus contraseñas fuera de la nube de una empresa. En qué difieren en sincronización, apps de móvil, configuración y funciones, y para quién sirve cada uno.",
+      "lead": "KeePassXC es un conocido gestor de contraseñas de código abierto que guarda tus contraseñas en un archivo de tu ordenador. Password365 comparte la idea (sin cuenta, sin nube de empresa), pero trata la sincronización y los móviles de otra manera. Así se comparan.",
+      "sections": [
+        {
+          "h": "Lo que tienen en común",
+          "ul": [
+            "Sin cuenta, y ningún servidor de empresa guarda tus contraseñas.",
+            "Código abierto.",
+            "Tus contraseñas se cifran en tu propio dispositivo.",
+            "Gratis en el ordenador."
+          ]
+        },
+        {
+          "h": "En qué se diferencian",
+          "p": [
+            "KeePassXC guarda todo en un único archivo de base de datos (.kdbx) que tú administras. Para usarlo en más de un dispositivo, pones ese archivo en una carpeta que sincroniza otra cosa, como una nube o una herramienta de sincronización de archivos, y en el móvil usas una app aparte que abre archivos de KeePass. Password365 sincroniza tus dispositivos por ti, directamente, y tiene sus propias apps de móvil, así que no hay archivo que mover ni fusionar a mano."
+          ]
+        },
+        {
+          "h": "Dónde KeePassXC va por delante",
+          "ul": [
+            "Una larga trayectoria pública, una gran comunidad y muchas apps y complementos compatibles.",
+            "Tu bóveda es un archivo que puedes copiar, mover y abrir en muchos programas.",
+            "Control fino para usuarios avanzados: archivos de clave, llaves de hardware y ajustes de la base de datos.",
+            "Funciona con cualquier método de sincronización en el que ya confíes, también por internet."
+          ]
+        },
+        {
+          "h": "Dónde Password365 puede encajar mejor",
+          "ul": [
+            "La sincronización entre dispositivos viene integrada, sin archivo en una carpeta en la nube.",
+            "Apps de móvil hechas para la misma bóveda, con autorrelleno (iPhone muy pronto, Android en desarrollo).",
+            "Una Clave Secreta además de la contraseña maestra, y un Kit de Emergencia para imprimir.",
+            "Emparejamiento con código QR en lugar de copiar archivos."
+          ]
+        },
+        {
+          "h": "Si vienes de KeePassXC",
+          "p": [
+            "Password365 importa bases de KeePass y KeePassXC (.kdbx). Pruébalo con una copia y conserva tu archivo hasta estar seguro."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Comprobado en noviembre de 2026 con la información pública de cada proyecto. Las funciones cambian: confírmalo en sus sitios web.",
+        "head": [
+          "",
+          "Password365",
+          "KeePassXC"
+        ],
+        "rows": [
+          [
+            "Requiere cuenta",
+            "No",
+            "No"
+          ],
+          [
+            "Código abierto",
+            "Núcleo, app de ordenador y extensión (GPL-3.0)",
+            "Sí"
+          ],
+          [
+            "Dónde se guardan las contraseñas",
+            "Cifradas, en tus dispositivos",
+            "En un archivo de base de datos que eliges"
+          ],
+          [
+            "Cómo sincronizan los dispositivos",
+            "Integrado, directamente, en la misma red",
+            "Sincronizas tú el archivo (nube o herramienta de sincronización)"
+          ],
+          [
+            "Apps de móvil",
+            "Apps propias (iPhone muy pronto, Android en desarrollo)",
+            "Sin app oficial de móvil; otras apps abren archivos de KeePass"
+          ],
+          [
+            "Extensión de navegador",
+            "Chrome, Edge, Firefox",
+            "Sí"
+          ],
+          [
+            "Llaves de acceso y códigos de un solo uso",
+            "Sí",
+            "Sí"
+          ],
+          [
+            "Trayectoria",
+            "Nuevo: primeras versiones, aún sin auditoría independiente",
+            "Muchos años de uso público"
+          ]
+        ]
+      },
+      "tableAfter": 1,
+      "note": "KeePass y KeePassXC son nombres de sus respectivos proyectos. Password365 no está afiliado a ellos.",
+      "faq": [
+        {
+          "q": "¿Puedo importar mi base de KeePassXC?",
+          "a": "Sí. Password365 importa archivos .kdbx. Usa una copia y conserva el original hasta estar seguro."
+        },
+        {
+          "q": "¿Sigo necesitando sincronizar un archivo?",
+          "a": "No. Password365 sincroniza tus dispositivos emparejados directamente, así que no hay archivo que poner en una carpeta en la nube."
+        },
+        {
+          "q": "¿Es Password365 más seguro que KeePassXC?",
+          "a": "No podemos decirlo. KeePassXC tiene una trayectoria pública mucho más larga. Password365 es más nuevo y aún no ha tenido una auditoría independiente. Ambos son de código abierto, así que puedes comprobarlo."
+        }
+      ]
+    },
+    "passkeys": {
+      "title": "Llaves de acceso y códigos de un solo uso: cómo los guarda Password365",
+      "teaser": "Qué son, por qué ayudan y dónde viven en tu bóveda.",
+      "description": "Qué son las llaves de acceso y los códigos de un solo uso (TOTP), por qué son más seguros que solo la contraseña, y cómo Password365 los guarda y los rellena en el ordenador y el móvil.",
+      "lead": "Una contraseña puede adivinarse, reutilizarse o robarse. Las llaves de acceso y los códigos de un solo uso añaden protección. Password365 guarda ambos junto a tus accesos, en la misma bóveda cifrada.",
+      "sections": [
+        {
+          "h": "¿Qué es una llave de acceso?",
+          "p": [
+            "Una llave de acceso (passkey) sustituye la contraseña por un par de claves criptográficas. El sitio guarda una mitad y tu dispositivo la otra. No hay nada que escribir, nada que adivinar y nada que un sitio falso pueda hacerte entregar.",
+            "Donde un sitio admite llaves de acceso, creas una en lugar de una contraseña e inicias sesión con tu huella, tu cara o la contraseña del dispositivo."
+          ]
+        },
+        {
+          "h": "¿Qué es un código de un solo uso?",
+          "p": [
+            "Un código de un solo uso (TOTP) es el número de seis dígitos que cambia cada 30 segundos en una app de autenticación. Es un segundo paso después de la contraseña. Password365 puede guardar la clave de configuración, mostrar el código actual junto al acceso y rellenarlo por ti."
+          ]
+        },
+        {
+          "h": "Cómo lo trata Password365",
+          "ul": [
+            "Las llaves de acceso se guardan en tu bóveda y se usan desde la extensión del navegador y, en iPhone, desde el Autorrelleno.",
+            "Se sincronizan entre tus dispositivos emparejados como todo lo demás, sin cuenta de por medio.",
+            "Puedes exportar llaves de acceso en el Credential Exchange Format (CXF) e importarlas desde apps que lo admiten.",
+            "Los códigos se generan en tu dispositivo, y la clave de configuración se queda en tu bóveda."
+          ]
+        },
+        {
+          "h": "Conviene saber",
+          "ul": [
+            "Las llaves de acceso solo funcionan en sitios que las admiten. Muchos siguen pidiendo también contraseña.",
+            "Guarda tu Kit de Emergencia y haz copia de seguridad de la bóveda: si pierdes todos los dispositivos, una llave de acceso que solo existe en ellos se pierde con ellos.",
+            "Tener el código de un solo uso en el mismo lugar que la contraseña es cómodo, pero quien abra tu bóveda se lleva ambos. Una contraseña maestra fuerte y la Clave Secreta son lo que protege la bóveda."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "¿Puedo usar Password365 como app de autenticación?",
+          "a": "Sí. Genera códigos de un solo uso para los accesos que los tienen."
+        },
+        {
+          "q": "¿Sincroniza las llaves de acceso entre el ordenador y el móvil?",
+          "a": "Sí, como parte de la bóveda, cuando los dispositivos están emparejados y se alcanzan en la misma red."
+        },
+        {
+          "q": "¿Puedo traer mis llaves de acceso desde otra app?",
+          "a": "Sí, si esa app exporta en el Credential Exchange Format (CXF), que Password365 importa."
         }
       ]
     }

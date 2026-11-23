@@ -4,6 +4,8 @@ export const guides = [
   { slug: "1password-bitwarden-alternative", key: "alternative", modified: "2026-11-23" },
   { slug: "import-passwords", key: "importing", modified: "2026-11-23" },
   { slug: "how-sync-works", key: "sync", modified: "2026-11-23" },
+  { slug: "keepassxc-alternative", key: "keepass", modified: "2026-11-23" },
+  { slug: "passkeys-and-one-time-codes", key: "passkeys", modified: "2026-11-23" },
 ] as const;
 
 /** The pages every language has (besides the guides). */

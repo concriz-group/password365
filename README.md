@@ -2,10 +2,14 @@
 
 **Not your server, not your passwords.**
 
-Password365 is a password manager that keeps your passwords, passkeys and one-time codes in an
+Password365 (also written Password 365) is an open-source password manager that keeps your passwords, passkeys and one-time codes in an
 encrypted vault **on your own devices**. Your computer, phone and tablet sync **directly with each
 other** — on your network or with a file you carry — never through a server. No account, no cloud,
 no tracking.
+
+Built to work 365 days a year: offline, with no account that can expire and no server whose outage can lock you out.
+Compare it with [1Password and Bitwarden](https://password365.app/1password-bitwarden-alternative/) or
+[KeePassXC](https://password365.app/keepassxc-alternative/).
 
 [Website](https://password365.app) · [Download](https://github.com/concriz-group/password365/releases/latest) ·
 [Security](docs/crypto-spec.md) · [Report a bug](https://github.com/concriz-group/password365/issues/new/choose)

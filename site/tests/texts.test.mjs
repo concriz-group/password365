@@ -46,7 +46,7 @@ test("every templated key resolves for the lists on the home page", () => {
 });
 
 test("every guide page has its texts, lists of the same length and the same table in every language", () => {
-  const guides = ["noCloud", "alternative", "importing", "sync"];
+  const guides = ["noCloud", "alternative", "importing", "sync", "keepass", "passkeys"];
   for (const file of readdirSync(dir)) {
     const g = load(file).guides;
     for (const key of guides) {
