@@ -17,6 +17,7 @@ pub mod browser;
 pub mod cxf_export;
 pub mod devices;
 pub mod dto;
+pub mod duplicate_review;
 pub mod duplicates;
 pub mod emergency_kit;
 pub mod erase;

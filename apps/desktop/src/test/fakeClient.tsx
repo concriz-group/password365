@@ -10,7 +10,7 @@ export function fakeClient(overrides: Partial<Record<keyof Client, unknown>> = {
   const methods = [
     "status", "createAccount", "unlock", "lock", "changeMasterPassword",
     "vaults", "createVault", "renameVault", "deleteVault",
-    "items", "item", "reveal", "totpCode", "createItem", "updateItem", "deleteItem", "markReviewed", "tags", "setFavorite", "archivedItems", "setArchived", "moveItem", "wifiQr", "itemIcons", "sshKeys", "breachedPasswords", "import1pux", "importBitwarden", "importKdbx", "copySecret", "attachFile", "saveAttachment", "openAttachment", "removeAttachment", "removePasskey", "exportCxf", "importCxf", "sshAnswer", "duplicateItem", "hideQuickAccess", "openInApp", "categories", "revealField", "watchtower", "autoType", "profile", "setProfile",
+    "items", "item", "reveal", "totpCode", "createItem", "updateItem", "deleteItem", "markReviewed", "tags", "setFavorite", "archivedItems", "setArchived", "moveItem", "wifiQr", "itemIcons", "sshKeys", "breachedPasswords", "import1pux", "importBitwarden", "importKdbx", "copySecret", "attachFile", "saveAttachment", "openAttachment", "removeAttachment", "removePasskey", "exportCxf", "importCxf", "sshAnswer", "duplicateItem", "hideQuickAccess", "openInApp", "categories", "revealField", "watchtower", "duplicateGroups", "mergeDuplicates", "autoType", "profile", "setProfile",
     "deletedItems", "restoreItem", "deletePermanently",
     "generate", "importCsv", "exportCsv", "settings", "updateSettings", "printPage", "revealSecretKey", "eraseVault", "joinShowCode", "joinAcceptScan", "connectNewDevice", "saveEmergencyKit", "pendingPasswordChange", "adoptMasterPassword",
     "exportBackup", "backupInfo", "restoreBackup",

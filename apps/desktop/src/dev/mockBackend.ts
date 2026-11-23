@@ -382,6 +382,34 @@ export function createMockBackend(): Invoke {
         return null;
       case "auto_type":
         return fail("io", "auto-type needs the desktop app");
+      case "duplicate_groups": {
+        const logins = items.filter((i) => i.kind === "login" && !i.archived);
+        const byUser = new Map<string, Stored[]>();
+        for (const i of logins) {
+          const site = (i.urls?.[0] ?? "").replace(/^https?:\/\/(www\.)?/, "").split("/")[0]!.split(".")[0]!;
+          const key = `${site}|${(i.username ?? "").toLowerCase()}`;
+          byUser.set(key, [...(byUser.get(key) ?? []), i]);
+        }
+        return [...byUser.values()]
+          .filter((g) => g.length > 1)
+          .map((g) => ({
+            site: (g[0]!.urls?.[0] ?? "").replace(/^https?:\/\/(www\.)?/, "").split("/")[0]!,
+            username: g[0]!.username ?? "",
+            same_password: new Set(g.map((i) => i.password)).size === 1,
+            members: g.map((i) => ({ id: i.id, title: i.title, urls: i.urls ?? [], updated_at: Date.now(), password_group: [...new Set(g.map((x) => x.password))].indexOf(i.password), has_totp: !!i.totp, has_notes: !!i.notes, history: 0 })),
+          }));
+      }
+      case "merge_duplicates": {
+        const { keep, others } = args as { keep: string; others: string[] };
+        const kept = items.find((i) => i.id === keep)!;
+        for (const id of others) {
+          const other = items.find((i) => i.id === id);
+          if (!other) continue;
+          kept.urls = [...new Set([...(kept.urls ?? []), ...(other.urls ?? [])])];
+          other.archived = true;
+        }
+        return others.length;
+      }
       case "watchtower": {
         const ref = (i: Stored) => ({ id: i.id, title: i.title, kind: i.kind });
         const active = items.filter((i) => !i.archived);

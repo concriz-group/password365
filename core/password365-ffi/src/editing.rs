@@ -316,6 +316,22 @@ impl Password365 {
         Ok(self.app().remove_duplicate_logins()? as u64)
     }
 
+    /// Logins that look like one account stored more than once, for the review screen.
+    pub fn duplicate_groups(&self) -> Result<Vec<DuplicateGroupView>> {
+        Ok(self
+            .app()
+            .duplicate_groups()?
+            .into_iter()
+            .map(Into::into)
+            .collect())
+    }
+
+    /// Merges `others` into `keep` (their websites and missing details are added to it) and moves
+    /// them to Recently Deleted; returns how many were merged.
+    pub fn merge_duplicates(&self, keep: String, others: Vec<String>) -> Result<u64> {
+        Ok(self.app().merge_duplicates(&keep, &others)? as u64)
+    }
+
     /// Erases the vault on this device for good: the store, the quick-unlock copy and the Secret
     /// Key. Works while locked (a forgotten master password must not trap the vault). The app
     /// asks first, clears its own Face ID key and starts over.
@@ -379,5 +395,63 @@ impl Password365 {
             value: out.value,
             strength: out.strength.to_owned(),
         })
+    }
+}
+
+/// One login of a group of duplicates.
+#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+pub struct DuplicateMemberView {
+    /// Item id.
+    pub id: String,
+    /// Title.
+    pub title: String,
+    /// Websites.
+    pub urls: Vec<String>,
+    /// Last change (ms since epoch).
+    pub updated_at: i64,
+    /// Members with the same number have the same password.
+    pub password_group: u64,
+    /// Has a one-time password.
+    pub has_totp: bool,
+    /// Has notes.
+    pub has_notes: bool,
+    /// Earlier passwords kept.
+    pub history: u64,
+}
+
+/// Logins that look like the same account.
+#[derive(Debug, Clone, PartialEq, Eq, uniffi::Record)]
+pub struct DuplicateGroupView {
+    /// The site the group is about.
+    pub site: String,
+    /// The username they share.
+    pub username: String,
+    /// The members, the suggested one to keep first.
+    pub members: Vec<DuplicateMemberView>,
+    /// Every member has the same password.
+    pub same_password: bool,
+}
+
+impl From<password365_app::duplicate_review::DuplicateGroup> for DuplicateGroupView {
+    fn from(g: password365_app::duplicate_review::DuplicateGroup) -> Self {
+        Self {
+            site: g.site,
+            username: g.username,
+            same_password: g.same_password,
+            members: g
+                .members
+                .into_iter()
+                .map(|m| DuplicateMemberView {
+                    id: m.id,
+                    title: m.title,
+                    urls: m.urls,
+                    updated_at: m.updated_at,
+                    password_group: m.password_group as u64,
+                    has_totp: m.has_totp,
+                    has_notes: m.has_notes,
+                    history: m.history as u64,
+                })
+                .collect(),
+        }
     }
 }

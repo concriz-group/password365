@@ -723,3 +723,36 @@ fn locking_as_soon_as_the_app_leaves_is_a_setting_that_is_kept() {
         .unwrap();
     assert_eq!(again.mobile_settings().auto_lock_minutes, 5);
 }
+
+#[test]
+fn duplicates_are_listed_and_merged_through_the_ffi() {
+    let dir = tempfile::tempdir().unwrap();
+    let p = vault(&dir, std::sync::Arc::new(MemoryKeeper::default()));
+    p.create_account(PASSWORD.into(), PASSWORD.into()).unwrap();
+    let add = |title: &str, url: &str| {
+        p.create_item(ItemDraft {
+            kind: "login".into(),
+            title: title.into(),
+            username: "ana".into(),
+            password: "pw".into(),
+            totp: String::new(),
+            notes: String::new(),
+            urls: vec![url.into()],
+            tags: vec![],
+            favorite: false,
+            region: String::new(),
+            fields: vec![],
+            version: 0,
+        })
+        .unwrap()
+    };
+    let es = add("amazon.es", "https://amazon.es");
+    let com = add("amazon.com", "https://amazon.com");
+    let groups = p.duplicate_groups().unwrap();
+    assert_eq!(groups.len(), 1);
+    assert!(groups[0].same_password && groups[0].members.len() == 2);
+    assert_eq!(p.merge_duplicates(es.clone(), vec![com]).unwrap(), 1);
+    assert!(p.duplicate_groups().unwrap().is_empty());
+    let kept = p.edit_draft(es).unwrap();
+    assert_eq!(kept.urls.len(), 2, "both websites on the login that stays");
+}

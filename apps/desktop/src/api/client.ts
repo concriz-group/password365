@@ -29,6 +29,7 @@ import type {
   TotpCode,
   Vault,
   Watchtower,
+  DuplicateGroup,
   UpdateInfo,
   HelpTopic,
 } from "./types";
@@ -104,6 +105,8 @@ export function createClient(invoke: Invoke) {
     /** Brings the main window forward, on item `id` (or just the app, to unlock). */
     openInApp: (id: string | null) => call<void>("open_in_app", { id }),
     watchtower: () => call<Watchtower>("watchtower"),
+    duplicateGroups: () => call<DuplicateGroup[]>("duplicate_groups"),
+    mergeDuplicates: (keep: string, others: string[]) => call<number>("merge_duplicates", { keep, others }),
     categories: () => call<Category[]>("categories"),
     revealField: (id: string, label: string) => call<string | null>("reveal_field", { id, label }),
     archivedItems: (query: string) => call<ItemSummary[]>("archived_items", { query }),

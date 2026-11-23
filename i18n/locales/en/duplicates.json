@@ -1,0 +1,16 @@
+{
+  "title": "Review duplicates",
+  "checking": "Looking for duplicates…",
+  "intro": "Logins that look like the same account stored more than once: the same username on the same site, or on a brand's other country sites. Pick the one to keep: the others' websites are added to it and they move to Recently Deleted, where you can restore them for 30 days.",
+  "none": "No duplicates found.",
+  "samePassword": "All have the same password.",
+  "differentPasswords": "The passwords are different: check before merging.",
+  "differentHint": "The other passwords are not lost: they go into the password history of the login you keep.",
+  "suggested": "Suggested",
+  "changed": "changed {date}",
+  "hasTotp": "one-time password",
+  "hasNotes": "notes",
+  "passwordNumber": "password {n}",
+  "open": "Open",
+  "merge": "Merge into the selected login ({n} to Recently Deleted)"
+}

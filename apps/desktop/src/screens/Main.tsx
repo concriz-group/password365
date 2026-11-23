@@ -16,6 +16,7 @@ import { ItemList } from "../components/ItemList";
 import { NewItemPicker } from "../components/NewItemPicker";
 import { ProfilePanel } from "../components/ProfilePanel";
 import { WatchtowerPanel } from "../components/WatchtowerPanel";
+import { DuplicatesPanel } from "../components/DuplicatesPanel";
 import { useCategories } from "../hooks/useCategories";
 import { RecentlyDeleted } from "../components/RecentlyDeleted";
 import { SettingsPanel } from "../components/SettingsPanel";
@@ -41,6 +42,7 @@ type Pane =
   | { kind: "settings" }
   | { kind: "deleted" }
   | { kind: "watchtower" }
+  | { kind: "duplicates" }
   | { kind: "profile" }
   | { kind: "autotype"; choice: AutoTypeChoice }
   | { kind: "devices" };
@@ -185,18 +187,20 @@ export function Main({ onLocked, subscribeSync, subscribeAutoType, subscribeOpen
           category={data.category}
           onCategory={(kind) => {
             data.setCategory(kind);
-            if (pane.kind === "deleted" || pane.kind === "watchtower" || pane.kind === "profile") close();
+            if (pane.kind === "deleted" || pane.kind === "watchtower" || pane.kind === "duplicates" || pane.kind === "profile") close();
           }}
           selected={data.scope}
           onSelect={(scope) => {
             data.setScope(scope);
-            if (pane.kind === "deleted" || pane.kind === "watchtower" || pane.kind === "profile") close();
+            if (pane.kind === "deleted" || pane.kind === "watchtower" || pane.kind === "duplicates" || pane.kind === "profile") close();
           }}
           onCreate={createVault}
           showingDeleted={pane.kind === "deleted"}
           onShowDeleted={() => setPane({ kind: "deleted" })}
           showingWatchtower={pane.kind === "watchtower"}
           onShowWatchtower={() => setPane({ kind: "watchtower" })}
+          showingDuplicates={pane.kind === "duplicates"}
+          onShowDuplicates={() => setPane({ kind: "duplicates" })}
           showingProfile={pane.kind === "profile"}
           onShowProfile={() => setPane({ kind: "profile" })}
         />
@@ -260,6 +264,9 @@ export function Main({ onLocked, subscribeSync, subscribeAutoType, subscribeOpen
           )}
           {pane.kind === "watchtower" && (
             <WatchtowerPanel onOpenItem={(id) => setPane({ kind: "view", id })} refreshKey={syncs} />
+          )}
+          {pane.kind === "duplicates" && (
+            <DuplicatesPanel onOpenItem={(id) => setPane({ kind: "view", id })} onMerged={() => void data.reload()} refreshKey={syncs} />
           )}
           {pane.kind === "deleted" && <RecentlyDeleted onRestored={() => void data.reload()} />}
           {pane.kind === "devices" && (

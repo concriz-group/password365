@@ -10,5 +10,6 @@
   "tags": "Etiquetas",
   "archive": "Arquivo",
   "recentlyDeleted": "Excluídos recentemente",
-  "categories": "Categorias"
+  "categories": "Categorias",
+  "duplicates": "Revisar duplicados"
 }

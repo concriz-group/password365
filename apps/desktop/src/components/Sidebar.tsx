@@ -22,19 +22,22 @@ interface Props {
   /** Watchtower is open (no vault is highlighted then). */
   showingWatchtower?: boolean;
   onShowWatchtower?: () => void;
+  /** Review duplicates is open (no vault is highlighted then). */
+  showingDuplicates?: boolean;
+  onShowDuplicates?: () => void;
   /** Profile is open (no vault is highlighted then). */
   showingProfile?: boolean;
   onShowProfile?: () => void;
 }
 
 /** Navigation like 1Password's: Profile, All Items, Favorites, Watchtower, vaults (+ new), tags, Archive, Recently Deleted. */
-export function Sidebar({ vaults, tags = [], categories = [], category = null, onCategory, selected, onSelect, onCreate, showingDeleted = false, onShowDeleted, showingWatchtower = false, onShowWatchtower, showingProfile = false, onShowProfile }: Props) {
+export function Sidebar({ vaults, tags = [], categories = [], category = null, onCategory, selected, onSelect, onCreate, showingDeleted = false, onShowDeleted, showingWatchtower = false, onShowWatchtower, showingDuplicates = false, onShowDuplicates, showingProfile = false, onShowProfile }: Props) {
   const t = useT();
   const [adding, setAdding] = useState(false);
   const [name, setName] = useState("");
   const total = vaults.reduce((sum, v) => sum + v.item_count, 0);
 
-  const special = showingDeleted || showingWatchtower || showingProfile;
+  const special = showingDeleted || showingWatchtower || showingDuplicates || showingProfile;
   const navClass = (scope: Scope) => (!special && sameScope(selected, scope) ? "nav active" : "nav");
 
   async function submit(e: FormEvent) {
@@ -60,6 +63,11 @@ export function Sidebar({ vaults, tags = [], categories = [], category = null, o
       {onShowWatchtower && (
         <button type="button" className={showingWatchtower ? "nav active" : "nav"} onClick={onShowWatchtower}>
           {t("sidebar.watchtower")}
+        </button>
+      )}
+      {onShowDuplicates && (
+        <button type="button" className={showingDuplicates ? "nav active" : "nav"} onClick={onShowDuplicates}>
+          {t("sidebar.duplicates")}
         </button>
       )}
       {onCategory && categories.length > 0 && (

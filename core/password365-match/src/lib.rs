@@ -11,5 +11,5 @@
 mod matching;
 mod site;
 
-pub use matching::{MatchLevel, fill_allowed, match_level};
+pub use matching::{MatchLevel, family, fill_allowed, match_level};
 pub use site::Site;

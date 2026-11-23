@@ -1,0 +1,16 @@
+{
+  "title": "Revisar duplicados",
+  "checking": "Buscando duplicados…",
+  "intro": "Accesos que parecen la misma cuenta guardada más de una vez: el mismo usuario en el mismo sitio, o en los sitios de otros países de la misma marca. Elige cuál conservar: los sitios de los demás se suman a él y pasan a Eliminados recientemente, donde puedes restaurarlos durante 30 días.",
+  "none": "No se encontraron duplicados.",
+  "samePassword": "Todos tienen la misma contraseña.",
+  "differentPasswords": "Las contraseñas son distintas: comprueba antes de unir.",
+  "differentHint": "Las otras contraseñas no se pierden: van al historial de contraseñas del acceso que se conserva.",
+  "suggested": "Sugerido",
+  "changed": "cambiado {date}",
+  "hasTotp": "contraseña de un solo uso",
+  "hasNotes": "notas",
+  "passwordNumber": "contraseña {n}",
+  "open": "Abrir",
+  "merge": "Unir en el acceso seleccionado ({n} pasan a Eliminados recientemente)"
+}

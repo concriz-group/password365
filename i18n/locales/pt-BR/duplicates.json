@@ -1,0 +1,16 @@
+{
+  "title": "Revisar duplicados",
+  "checking": "Procurando duplicados…",
+  "intro": "Logins que parecem ser a mesma conta guardada mais de uma vez: o mesmo usuário no mesmo site, ou nos sites de outros países da mesma marca. Escolha qual manter: os sites dos outros são somados a ele e eles vão para Excluídos recentemente, onde dá para restaurar por 30 dias.",
+  "none": "Nenhum duplicado encontrado.",
+  "samePassword": "Todos têm a mesma senha.",
+  "differentPasswords": "As senhas são diferentes: confira antes de juntar.",
+  "differentHint": "As outras senhas não se perdem: vão para o histórico de senhas do login que ficar.",
+  "suggested": "Sugerido",
+  "changed": "alterado em {date}",
+  "hasTotp": "senha de uso único",
+  "hasNotes": "notas",
+  "passwordNumber": "senha {n}",
+  "open": "Abrir",
+  "merge": "Juntar no login selecionado ({n} vão para Excluídos recentemente)"
+}

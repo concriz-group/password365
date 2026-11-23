@@ -318,6 +318,27 @@ export interface ItemRef {
 }
 
 /** The Watchtower report (computed on this device). */
+export interface DuplicateMember {
+  id: string;
+  title: string;
+  urls: string[];
+  updated_at: number;
+  /** Members with the same number have the same password. */
+  password_group: number;
+  has_totp: boolean;
+  has_notes: boolean;
+  history: number;
+}
+
+/** Logins that look like the same account stored more than once. */
+export interface DuplicateGroup {
+  site: string;
+  username: string;
+  /** The suggested login to keep is first. */
+  members: DuplicateMember[];
+  same_password: boolean;
+}
+
 export interface Watchtower {
   /** 0–1000; null when no item has a password. */
   score: number | null;

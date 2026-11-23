@@ -217,6 +217,22 @@ pub fn watchtower(
 }
 
 #[tauri::command]
+pub fn duplicate_groups(
+    state: State<'_, SharedState>,
+) -> Result<Vec<password365_app::duplicate_review::DuplicateGroup>> {
+    state.with(password365_app::AppService::duplicate_groups)
+}
+
+#[tauri::command]
+pub fn merge_duplicates(
+    state: State<'_, SharedState>,
+    keep: String,
+    others: Vec<String>,
+) -> Result<usize> {
+    state.with(|s| s.merge_duplicates(&keep, &others))
+}
+
+#[tauri::command]
 pub fn categories() -> Vec<password365_app::dto::CategoryDto> {
     password365_app::AppService::categories()
 }

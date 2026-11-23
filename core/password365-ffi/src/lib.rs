@@ -31,7 +31,10 @@ mod pairing;
 mod security;
 mod sync_files;
 mod watchtower;
-pub use editing::{Category, FieldDraft, Generated, ItemDraft, Recipe, TemplateField};
+pub use editing::{
+    Category, DuplicateGroupView, DuplicateMemberView, FieldDraft, Generated, ItemDraft, Recipe,
+    TemplateField,
+};
 pub use importing::ImportResult;
 pub use pairing::{Device, SyncSummary};
 pub use security::MobileSettings;

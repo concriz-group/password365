@@ -44,6 +44,17 @@ fn equivalent_groups() -> &'static HashMap<String, usize> {
     })
 }
 
+/// The account family of `site`: the listed brand's group (`amazon.es` and `amazon.com` share one)
+/// or, for any other site, its own registrable domain. Two sites with the same family are one
+/// account for the purpose of finding duplicates.
+#[must_use]
+pub fn family(site: &Site) -> String {
+    equivalent_groups().get(&site.registrable).map_or_else(
+        || site.registrable.clone(),
+        |group| format!("family:{group}"),
+    )
+}
+
 /// Whether two registrable domains are listed as the same account.
 fn equivalent(a: &str, b: &str) -> bool {
     let groups = equivalent_groups();

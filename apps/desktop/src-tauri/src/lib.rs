@@ -191,6 +191,8 @@ pub fn run() {
             commands::duplicate_item,
             commands::categories,
             commands::watchtower,
+            commands::duplicate_groups,
+            commands::merge_duplicates,
             commands::auto_type,
             commands::profile,
             commands::set_profile,
