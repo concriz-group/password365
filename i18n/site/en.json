@@ -3,7 +3,10 @@
     "lang": "en",
     "name": "English",
     "title": "Password365 — Not your server, not your passwords.",
-    "description": "Passwords, passkeys and one-time codes in an encrypted vault that stays on your devices. No account, no cloud: your computer and your phone sync directly."
+    "description": "Passwords, passkeys and one-time codes in an encrypted vault that stays on your devices. No account, no cloud: your computer and your phone sync directly.",
+    "downloadDescription": "Download Password365 for Mac, Windows and Linux, plus the Chrome, Edge and Firefox extension. Free, open source, no account.",
+    "supportDescription": "Get started with Password365, set up your phone and browser, and what to do if you are locked out. Contact the team.",
+    "privacyDescription": "What Password365 collects (nothing about your passwords), what stays on your devices, and the one optional network check."
   },
   "nav": {
     "features": "Features",
@@ -236,7 +239,9 @@
     "start4": "On your iPhone, choose “Set up with another device” and scan the QR code shown on your computer, in Devices.",
     "recoverTitle": "If you are locked out",
     "recover1": "You need your master password and your Secret Key. The Secret Key is on your Emergency Kit, and in Settings on any device that is still signed in.",
-    "recover2": "Nobody, including us, can reset your master password."
+    "recover2": "Nobody, including us, can reset your master password.",
+    "discussTitle": "Join the discussion on GitHub",
+    "discussText": "Ask a question, share an idea or show what you built. Bugs go to Issues."
   },
   "footer": {
     "tagline": "The password manager without a cloud.",
@@ -268,7 +273,8 @@
     },
     "github": "View the code on GitHub",
     "contribute": "How to contribute",
-    "specs": "Security specifications"
+    "specs": "Security specifications",
+    "discuss": "Join the discussion on GitHub"
   },
   "pairPage": {
     "title": "Add this iPhone to your computer's vault",
@@ -285,5 +291,300 @@
     "none": "Open this page from the QR code a new device shows, with the camera of the iPhone that has your vault.",
     "noApp": "Don't have the app yet? Password365 for iPhone is coming to the App Store.",
     "how": "The code never leaves your devices: it is in the part of the address that is not sent to any server."
+  },
+  "guides": {
+    "title": "Guides",
+    "updated": "Last checked: {date}",
+    "faqTitle": "Questions",
+    "cta": "Download Password365",
+    "more": "More guides",
+    "noCloud": {
+      "title": "A password manager without the cloud",
+      "teaser": "What it means, how it stays safe, and what you give up.",
+      "description": "A password manager with no cloud and no account: your encrypted vault stays on your own devices, which sync directly. How it works, what it protects against, and its limits.",
+      "lead": "Most password managers keep a copy of your encrypted vault on their servers so your devices can stay in sync. A password manager without the cloud does the same job without that copy: the vault lives only on your devices.",
+      "sections": [
+        {
+          "h": "What “without the cloud” means",
+          "p": [
+            "There is no Password365 account and no Password365 server that holds your vault. You create the vault on your computer, protect it with a master password and a Secret Key, and add your phone and browser by pairing them with the computer.",
+            "Your devices then keep each other up to date directly, over your own network. Nothing about your passwords is sent to us."
+          ]
+        },
+        {
+          "h": "Why people choose it",
+          "ul": [
+            "A server that stores millions of vaults is worth attacking. If it is breached, the attackers get encrypted vaults they can try to open for as long as they like. With no copy on a server, there is nothing to take.",
+            "No account to lose, no subscription that can lock you out of your own passwords, and no company whose outage, sale or change of terms affects you.",
+            "It keeps working with no internet connection."
+          ]
+        },
+        {
+          "h": "Is it safe?",
+          "p": [
+            "Your vault is encrypted before it is saved, using your master password and a Secret Key generated on your device. Both are needed to open it. The code is open (GPL-3.0), and the cryptography and the sync protocol are written down, with a threat model.",
+            "One thing to be clear about: Password365 has not had an independent security audit yet. Established managers such as 1Password and Bitwarden have been audited and have years in the field. If an audit matters to you, that is a fair reason to wait."
+          ]
+        },
+        {
+          "h": "What you give up",
+          "ul": [
+            "Syncing needs your devices to reach each other, which today means the same network. There is no sync over the internet.",
+            "No sharing with other people (family or team vaults) yet.",
+            "If you lose every device and your Emergency Kit, nobody can recover your vault, including us. Keep the Emergency Kit and back up your vault from the app.",
+            "The iPhone app is coming soon and Android is in development."
+          ]
+        },
+        {
+          "h": "Who it is for",
+          "p": [
+            "People who want control of their own data, work mostly on a computer or two and a phone, and prefer fewer moving parts. If you need to share passwords with a team, or sync over the internet from anywhere, a cloud manager fits better today."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "Does Password365 need an account?",
+          "a": "No. There is no account. You create a vault on your own device."
+        },
+        {
+          "q": "Where is my vault stored?",
+          "a": "Only on your own devices, encrypted. There is no copy on a Password365 server."
+        },
+        {
+          "q": "Can I still use it on my phone and in my browser?",
+          "a": "Yes. You pair the phone and the browser extension with your computer, and they keep each other in sync directly. The iPhone app is coming soon; Android is in development."
+        },
+        {
+          "q": "What if I lose my computer?",
+          "a": "If another paired device still has your vault, you can set up a new one from it. Otherwise you need your Emergency Kit (it holds your Secret Key) and a backup of your vault."
+        }
+      ]
+    },
+    "alternative": {
+      "title": "Password365 vs 1Password and Bitwarden: an honest comparison",
+      "teaser": "Where it differs from 1Password and Bitwarden, and where they are ahead.",
+      "description": "Password365 compared with 1Password and Bitwarden: accounts, where the vault lives, sync, open source, audits and sharing. Where each one is the better choice.",
+      "lead": "1Password and Bitwarden are mature, widely trusted password managers. Password365 is newer and takes a different route: no account and no cloud. This page says where that matters and where they are simply ahead.",
+      "sections": [
+        {
+          "h": "The main difference",
+          "p": [
+            "1Password and Bitwarden keep your encrypted vault on their servers (Bitwarden also lets you host your own) and sync your devices through them. You need an account. Password365 has no account and no server: the vault stays on your devices, which sync directly with each other."
+          ]
+        },
+        {
+          "h": "Where Password365 may suit you better",
+          "ul": [
+            "You do not want your encrypted vault on anyone else's server.",
+            "You want no account to create, no email to confirm, and nothing that can be suspended.",
+            "You want open code: the core, the desktop app and the browser extension are published under GPL-3.0 (1Password is closed source).",
+            "The computer and browser versions are free."
+          ]
+        },
+        {
+          "h": "Where 1Password and Bitwarden are ahead",
+          "ul": [
+            "Independent security audits and years of public track record. Password365 has not had an audit yet.",
+            "Sharing with family and teams, and administration tools for companies.",
+            "Sync over the internet, from any network, and apps already on both phone stores.",
+            "Wider browser and platform coverage, and larger support teams."
+          ]
+        },
+        {
+          "h": "How to decide",
+          "p": [
+            "If you share passwords with other people, need to sync from anywhere, or want an audited product today, choose 1Password or Bitwarden. If you want to keep the vault on your own devices and accept syncing on your network, try Password365. You can test it without leaving your current manager: Password365 imports 1Password and Bitwarden exports."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Checked in November 2026 from each product's public information. Features change: confirm on their websites.",
+        "head": [
+          "",
+          "Password365",
+          "1Password",
+          "Bitwarden"
+        ],
+        "rows": [
+          [
+            "Account required",
+            "No",
+            "Yes",
+            "Yes"
+          ],
+          [
+            "Where the encrypted vault is stored",
+            "Only on your own devices",
+            "On 1Password's servers and your devices",
+            "On Bitwarden's servers (or a server you host) and your devices"
+          ],
+          [
+            "How devices sync",
+            "Directly, on the same network",
+            "Through 1Password's cloud",
+            "Through Bitwarden's cloud, or your own server"
+          ],
+          [
+            "Open source",
+            "Core, desktop app and browser extension (GPL-3.0)",
+            "No",
+            "Yes (server and clients)"
+          ],
+          [
+            "Independent security audit",
+            "Not yet",
+            "Yes",
+            "Yes"
+          ],
+          [
+            "Sharing with family or teams",
+            "No",
+            "Yes",
+            "Yes"
+          ],
+          [
+            "Apps",
+            "Mac, Windows, Linux, and Chrome, Edge, Firefox. iPhone coming soon, Android in development",
+            "Mac, Windows, Linux, iPhone, Android and browsers",
+            "Mac, Windows, Linux, iPhone, Android and browsers"
+          ],
+          [
+            "Price",
+            "Free on computer and browser; the iPhone app is a subscription",
+            "Subscription",
+            "Free plan and paid plans"
+          ]
+        ]
+      },
+      "note": "1Password and Bitwarden are trademarks of their owners. Password365 is not affiliated with them.",
+      "faq": [
+        {
+          "q": "Can I move from 1Password or Bitwarden?",
+          "a": "Yes. Password365 imports a 1Password export (1PUX), a Bitwarden export and a KeePass file, plus CSV files from browsers. See the import guide."
+        },
+        {
+          "q": "Is Password365 as secure as 1Password or Bitwarden?",
+          "a": "We cannot claim that. It uses established cryptography and is open source, but it has not had an independent audit, and they have. Read the security page and the threat model, and decide."
+        },
+        {
+          "q": "Can I use it alongside my current manager?",
+          "a": "Yes. Import a copy of your passwords to try it, and keep the other manager until you are sure."
+        }
+      ],
+      "tableAfter": 0
+    },
+    "importing": {
+      "title": "Import your passwords from 1Password, Bitwarden, Chrome and more",
+      "teaser": "Move your logins, cards, notes and passkeys in a few clicks.",
+      "description": "How to import passwords into Password365 from 1Password, Bitwarden, KeePass, Chrome, Safari, Firefox, Edge or a CSV or CXF file, and why to delete the export afterwards.",
+      "lead": "Password365 reads exports from the password managers and browsers most people use. Logins, cards, notes, passkeys and attachments come along where the export includes them.",
+      "sections": [
+        {
+          "h": "What you can import",
+          "ul": [
+            "1Password: an export file (.1pux)",
+            "Bitwarden: its exported file",
+            "KeePass and KeePassXC: a .kdbx database",
+            "Chrome, Edge, Firefox and Safari: the passwords CSV they export",
+            "Other apps: a CSV file, or a Credential Exchange (CXF) file, which can include passkeys"
+          ]
+        },
+        {
+          "h": "Steps",
+          "ul": [
+            "Export from your current app or browser. Look for Export in its settings and choose a format from the list above.",
+            "On your computer, open Password365 and choose Import in the toolbar. Pick the file.",
+            "Check the result screen: it tells you how many items were new and how many were already in your vault.",
+            "Your other devices need nothing: the imported items sync from the computer."
+          ]
+        },
+        {
+          "h": "Delete the export file afterwards",
+          "p": [
+            "An export is a readable copy of your passwords. Delete it as soon as the import is done and empty the trash. Do not send it by email or leave it in a cloud folder."
+          ]
+        },
+        {
+          "h": "If something looks wrong",
+          "ul": [
+            "Duplicates: Password365 skips an item that is already in the vault. If the same account came from two sources, use Review duplicates in the sidebar to merge them.",
+            "Missing items: not every export includes every kind of item. Check what the source exported."
+          ]
+        },
+        {
+          "h": "Going the other way",
+          "p": [
+            "You can export everything from Password365 to CSV or to the Credential Exchange Format, so your data is never locked in."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "Is it safe to import?",
+          "a": "The import runs on your device and nothing is uploaded. The risk is the export file itself, so delete it afterwards."
+        },
+        {
+          "q": "Can I import passkeys?",
+          "a": "Yes, through a Credential Exchange (CXF) file, or an export that includes them."
+        }
+      ]
+    },
+    "sync": {
+      "title": "How Password365 syncs without a server",
+      "teaser": "Pair once, then your devices update each other directly.",
+      "description": "How Password365 keeps your devices in sync with no cloud: pairing with a QR code, encrypted direct connections on your network, and what happens when devices are apart.",
+      "lead": "Password365 syncs your computer, phone and browser without a server in between. Devices find each other on your network, prove who they are, and exchange only what changed.",
+      "sections": [
+        {
+          "h": "Pair once",
+          "p": [
+            "Pairing connects two devices. One shows a QR code and the other scans it with its camera (or you paste the code). The new device then shows six digits, which you type on the device that already has your vault. That check makes sure you are pairing your own device, not a stranger's on the same network.",
+            "The code works once and expires after five minutes."
+          ]
+        },
+        {
+          "h": "What travels, and how",
+          "ul": [
+            "Every connection between paired devices is encrypted and authenticated (a modern secure-channel handshake), and each device only accepts devices it has paired with.",
+            "Your vault is already encrypted before it is saved, and changes are exchanged encrypted.",
+            "Nothing goes through our servers, because there are none for your vault."
+          ]
+        },
+        {
+          "h": "When devices are apart",
+          "p": [
+            "Each device keeps working on its own with everything it has. The next time two paired devices can reach each other on the same network, they exchange what changed. If two devices changed the same item, the newest change is kept and the other password goes into the item's history."
+          ]
+        },
+        {
+          "h": "No shared network?",
+          "p": [
+            "You can also move changes with a sync file: save it on one device and open it on the other, for example by AirDrop. The file is for one specific paired device."
+          ]
+        },
+        {
+          "h": "The limits",
+          "ul": [
+            "Today devices must reach each other on the same network. There is no sync over the internet.",
+            "A new device needs a device that already has the vault to pair with."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "Do I need Wi-Fi?",
+          "a": "Your devices need to be on the same network to sync. Between syncs, each one works on its own, offline."
+        },
+        {
+          "q": "Does anything go through your servers?",
+          "a": "No. We run no servers for your vault."
+        },
+        {
+          "q": "What if I remove a device?",
+          "a": "Remove it in Devices. It is refused on the next sync and keeps only the copy it already had, protected by your master password."
+        }
+      ]
+    }
   }
 }

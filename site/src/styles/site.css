@@ -222,3 +222,18 @@ section.dark .card .icon { background: #2a1d12; color: var(--accent); }
 /* Anchored sections clear the sticky header. */
 section[id] { scroll-margin-top: 68px; }
 .site-footer .brand { color: var(--ink); }
+
+/* Guides: cards that are links, and the article pages */
+.guides { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.guides .card { text-align: left; text-decoration: none; color: inherit; padding: 28px 24px; }
+.guides .card:hover { border-color: var(--accent, #ff7900); }
+.guides h3 { margin-bottom: 8px; }
+.article .updated { color: var(--muted); font-size: 0.95rem; margin-top: -8px; }
+.article table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 0.97rem; }
+.article th, .article td { text-align: left; vertical-align: top; padding: 12px 14px; border-bottom: 1px solid var(--border, #e5e0d8); }
+.article thead th { border-bottom: 2px solid var(--border, #e5e0d8); }
+.article tbody th { font-weight: 700; width: 24%; }
+.article .table-scroll { overflow-x: auto; }
+.article .note { color: var(--muted); font-size: 0.92rem; }
+.article .related ul { padding-left: 1.2em; }
+.article .faq details { margin: 10px 0; }

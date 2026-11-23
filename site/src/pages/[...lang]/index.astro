@@ -1,8 +1,12 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Home from "../../components/Home.astro";
-import { languagePaths } from "../../i18n";
+import { languagePaths, translator } from "../../i18n";
+import { faqPage, organization, softwareApplication, website } from "../../seo";
 export const getStaticPaths = languagePaths;
 const { tag } = Astro.props;
+const t = translator(tag);
+const faq = [0, 1, 2, 3, 4, 5].map((n) => ({ q: t(`faq.q${n}`), a: t(`faq.a${n}`) }));
+const jsonLd = [organization, website(t("meta.description"), tag), softwareApplication(t("meta.description"), tag), faqPage(faq)];
 ---
-<Base tag={tag}><Home tag={tag} /></Base>
+<Base tag={tag} jsonLd={jsonLd}><Home tag={tag} /></Base>

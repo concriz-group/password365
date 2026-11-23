@@ -3,7 +3,10 @@
     "lang": "es",
     "name": "Español",
     "title": "Password365 — No es tu servidor, no son tus contraseñas.",
-    "description": "Contraseñas, llaves de acceso y códigos de verificación en una caja fuerte cifrada que se queda en tus dispositivos. Sin cuenta, sin nube: tu ordenador y tu móvil se sincronizan directamente."
+    "description": "Contraseñas, llaves de acceso y códigos de verificación en una caja fuerte cifrada que se queda en tus dispositivos. Sin cuenta, sin nube: tu ordenador y tu móvil se sincronizan directamente.",
+    "downloadDescription": "Descarga Password365 para Mac, Windows y Linux, y la extensión para Chrome, Edge y Firefox. Gratis, código abierto, sin cuenta.",
+    "supportDescription": "Empieza con Password365, configura tu móvil y tu navegador, y qué hacer si te quedas sin acceso. Contacta con el equipo.",
+    "privacyDescription": "Qué recopila Password365 (nada de tus contraseñas), qué se queda en tus dispositivos y la única comprobación opcional por red."
   },
   "nav": {
     "features": "Funciones",
@@ -236,7 +239,9 @@
     "start4": "En tu iPhone, elige “Configurar con otro dispositivo” y escanea el código QR que muestra tu ordenador, en Dispositivos.",
     "recoverTitle": "Si te quedaste sin acceso",
     "recover1": "Necesitas tu contraseña maestra y tu Clave Secreta. La Clave Secreta está en tu Kit de emergencia, y en Ajustes en cualquier dispositivo que siga conectado.",
-    "recover2": "Nadie, ni siquiera nosotros, puede restablecer tu contraseña maestra."
+    "recover2": "Nadie, ni siquiera nosotros, puede restablecer tu contraseña maestra.",
+    "discussTitle": "Participa en la conversación en GitHub",
+    "discussText": "Haz una pregunta, comparte una idea o muestra lo que hiciste. Los errores van en Issues."
   },
   "footer": {
     "tagline": "El gestor de contraseñas sin nube.",
@@ -268,7 +273,8 @@
     },
     "github": "Ver el código en GitHub",
     "contribute": "Cómo contribuir",
-    "specs": "Especificaciones de seguridad"
+    "specs": "Especificaciones de seguridad",
+    "discuss": "Participa en la conversación en GitHub"
   },
   "pairPage": {
     "title": "Añade este iPhone a la bóveda de tu ordenador",
@@ -285,5 +291,300 @@
     "none": "Abre esta página desde el código QR que muestra un dispositivo nuevo, con la cámara del iPhone que tiene tu bóveda.",
     "noApp": "¿Aún no tienes la app? Password365 para iPhone llegará pronto a la App Store.",
     "how": "El código nunca sale de tus dispositivos: va en la parte de la dirección que no se envía a ningún servidor."
+  },
+  "guides": {
+    "title": "Guías",
+    "updated": "Última comprobación: {date}",
+    "faqTitle": "Preguntas",
+    "cta": "Descargar Password365",
+    "more": "Más guías",
+    "noCloud": {
+      "title": "Un gestor de contraseñas sin nube",
+      "teaser": "Qué significa, cómo se mantiene seguro y a qué renuncias.",
+      "description": "Un gestor de contraseñas sin nube y sin cuenta: tu bóveda cifrada se queda solo en tus dispositivos, que sincronizan directamente. Cómo funciona, de qué protege y sus límites.",
+      "lead": "La mayoría de los gestores de contraseñas guarda una copia de tu bóveda cifrada en sus servidores para mantener tus dispositivos sincronizados. Un gestor sin nube hace el mismo trabajo sin esa copia: la bóveda vive solo en tus dispositivos.",
+      "sections": [
+        {
+          "h": "Qué significa “sin nube”",
+          "p": [
+            "No existe una cuenta de Password365 ni un servidor de Password365 que guarde tu bóveda. Creas la bóveda en tu ordenador, la proteges con una contraseña maestra y una Clave Secreta, y añades el móvil y el navegador emparejándolos con el ordenador.",
+            "Después, tus dispositivos se mantienen al día directamente entre sí, por tu propia red. Nada sobre tus contraseñas se nos envía."
+          ]
+        },
+        {
+          "h": "Por qué la gente la elige",
+          "ul": [
+            "Un servidor que guarda millones de bóvedas es un objetivo valioso. Si lo vulneran, los atacantes se llevan bóvedas cifradas e intentan abrirlas todo el tiempo que quieran. Sin copia en un servidor, no hay nada que llevarse.",
+            "Ninguna cuenta que perder, ninguna suscripción que pueda dejarte sin acceso a tus propias contraseñas, y ninguna empresa cuya caída, venta o cambio de condiciones te afecte.",
+            "Sigue funcionando sin conexión a internet."
+          ]
+        },
+        {
+          "h": "¿Es seguro?",
+          "p": [
+            "Tu bóveda se cifra antes de guardarse, con tu contraseña maestra y una Clave Secreta generada en tu dispositivo. Se necesitan las dos para abrirla. El código es abierto (GPL-3.0), y el cifrado y el protocolo de sincronización están documentados, con un modelo de amenazas.",
+            "Una cosa que conviene dejar clara: Password365 todavía no ha pasado una auditoría de seguridad independiente. Gestores consolidados como 1Password y Bitwarden han sido auditados y llevan años en uso. Si la auditoría te importa, es un buen motivo para esperar."
+          ]
+        },
+        {
+          "h": "A qué renuncias",
+          "ul": [
+            "Para sincronizar, tus dispositivos deben alcanzarse, lo que hoy significa estar en la misma red. No hay sincronización por internet.",
+            "Todavía no hay compartición con otras personas (bóvedas familiares o de equipo).",
+            "Si pierdes todos tus dispositivos y tu Kit de Emergencia, nadie puede recuperar tu bóveda, nosotros tampoco. Guarda el Kit de Emergencia y haz copias de seguridad de la bóveda desde la app.",
+            "La app para iPhone llegará pronto y la de Android está en desarrollo."
+          ]
+        },
+        {
+          "h": "Para quién es",
+          "p": [
+            "Para quien quiere controlar sus propios datos, trabaja sobre todo con uno o dos ordenadores y un móvil, y prefiere menos piezas móviles. Si necesitas compartir contraseñas con un equipo o sincronizar por internet desde cualquier sitio, hoy encaja mejor un gestor en la nube."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "¿Password365 necesita una cuenta?",
+          "a": "No. No hay cuenta. Creas la bóveda en tu propio dispositivo."
+        },
+        {
+          "q": "¿Dónde se guarda mi bóveda?",
+          "a": "Solo en tus dispositivos, cifrada. No hay copia en un servidor de Password365."
+        },
+        {
+          "q": "¿Puedo seguir usándolo en el móvil y en el navegador?",
+          "a": "Sí. Emparejas el móvil y la extensión del navegador con tu ordenador, y se mantienen sincronizados directamente. La app para iPhone llegará pronto; la de Android está en desarrollo."
+        },
+        {
+          "q": "¿Y si pierdo el ordenador?",
+          "a": "Si otro dispositivo emparejado aún tiene tu bóveda, puedes configurar uno nuevo desde él. Si no, necesitas tu Kit de Emergencia (guarda tu Clave Secreta) y una copia de seguridad de la bóveda."
+        }
+      ]
+    },
+    "alternative": {
+      "title": "Password365 frente a 1Password y Bitwarden: una comparación honesta",
+      "teaser": "En qué se diferencia de 1Password y Bitwarden, y dónde ellos van por delante.",
+      "description": "Password365 comparado con 1Password y Bitwarden: cuenta, dónde está la bóveda, sincronización, código abierto, auditorías y compartición. Dónde es mejor cada uno.",
+      "lead": "1Password y Bitwarden son gestores de contraseñas maduros y de gran confianza. Password365 es más nuevo y sigue otro camino: sin cuenta y sin nube. Esta página dice dónde eso importa y dónde ellos van simplemente por delante.",
+      "sections": [
+        {
+          "h": "La diferencia principal",
+          "p": [
+            "1Password y Bitwarden guardan tu bóveda cifrada en sus servidores (Bitwarden también permite alojar el tuyo) y sincronizan tus dispositivos a través de ellos. Hace falta una cuenta. Password365 no tiene cuenta ni servidor: la bóveda se queda en tus dispositivos, que sincronizan directamente entre sí."
+          ]
+        },
+        {
+          "h": "Dónde Password365 puede encajar mejor",
+          "ul": [
+            "No quieres tu bóveda cifrada en el servidor de nadie.",
+            "No quieres crear una cuenta, confirmar un correo, ni tener algo que puedan suspender.",
+            "Quieres código abierto: el núcleo, la app de ordenador y la extensión del navegador se publican bajo GPL-3.0 (1Password es de código cerrado).",
+            "Las versiones de ordenador y de navegador son gratuitas."
+          ]
+        },
+        {
+          "h": "Dónde 1Password y Bitwarden van por delante",
+          "ul": [
+            "Auditorías de seguridad independientes y años de trayectoria pública. Password365 aún no ha sido auditado.",
+            "Compartición con familia y equipos, y herramientas de administración para empresas.",
+            "Sincronización por internet, desde cualquier red, y apps ya en las dos tiendas de móviles.",
+            "Mayor cobertura de navegadores y plataformas, y equipos de soporte más grandes."
+          ]
+        },
+        {
+          "h": "Cómo decidir",
+          "p": [
+            "Si compartes contraseñas con otras personas, necesitas sincronizar desde cualquier sitio o quieres un producto auditado hoy, elige 1Password o Bitwarden. Si quieres mantener la bóveda en tus dispositivos y aceptas sincronizar en tu red, prueba Password365. Puedes probarlo sin dejar tu gestor actual: Password365 importa exportaciones de 1Password y de Bitwarden."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Comprobado en noviembre de 2026 con la información pública de cada producto. Las funciones cambian: confírmalo en sus sitios web.",
+        "head": [
+          "",
+          "Password365",
+          "1Password",
+          "Bitwarden"
+        ],
+        "rows": [
+          [
+            "Requiere cuenta",
+            "No",
+            "Sí",
+            "Sí"
+          ],
+          [
+            "Dónde está la bóveda cifrada",
+            "Solo en tus dispositivos",
+            "En los servidores de 1Password y en tus dispositivos",
+            "En los servidores de Bitwarden (o en un servidor tuyo) y en tus dispositivos"
+          ],
+          [
+            "Cómo sincronizan los dispositivos",
+            "Directamente, en la misma red",
+            "A través de la nube de 1Password",
+            "A través de la nube de Bitwarden, o de tu servidor"
+          ],
+          [
+            "Código abierto",
+            "Núcleo, app de ordenador y extensión (GPL-3.0)",
+            "No",
+            "Sí (servidor y clientes)"
+          ],
+          [
+            "Auditoría de seguridad independiente",
+            "Todavía no",
+            "Sí",
+            "Sí"
+          ],
+          [
+            "Compartición con familia o equipos",
+            "No",
+            "Sí",
+            "Sí"
+          ],
+          [
+            "Apps",
+            "Mac, Windows, Linux, y Chrome, Edge, Firefox. iPhone muy pronto, Android en desarrollo",
+            "Mac, Windows, Linux, iPhone, Android y navegadores",
+            "Mac, Windows, Linux, iPhone, Android y navegadores"
+          ],
+          [
+            "Precio",
+            "Gratis en ordenador y navegador; la app de iPhone es por suscripción",
+            "Suscripción",
+            "Plan gratuito y planes de pago"
+          ]
+        ]
+      },
+      "note": "1Password y Bitwarden son marcas de sus respectivos propietarios. Password365 no está afiliado a ellas.",
+      "faq": [
+        {
+          "q": "¿Puedo pasarme desde 1Password o Bitwarden?",
+          "a": "Sí. Password365 importa una exportación de 1Password (1PUX), una de Bitwarden y un archivo de KeePass, además de CSV de navegadores. Mira la guía de importación."
+        },
+        {
+          "q": "¿Es Password365 tan seguro como 1Password o Bitwarden?",
+          "a": "No podemos afirmarlo. Usa criptografía consolidada y es de código abierto, pero no ha tenido una auditoría independiente, y ellos sí. Lee la página de seguridad y el modelo de amenazas y decide."
+        },
+        {
+          "q": "¿Puedo usarlo junto a mi gestor actual?",
+          "a": "Sí. Importa una copia de tus contraseñas para probarlo y conserva el otro gestor hasta estar seguro."
+        }
+      ],
+      "tableAfter": 0
+    },
+    "importing": {
+      "title": "Importa tus contraseñas desde 1Password, Bitwarden, Chrome y más",
+      "teaser": "Lleva tus accesos, tarjetas, notas y llaves de acceso en pocos clics.",
+      "description": "Cómo importar contraseñas a Password365 desde 1Password, Bitwarden, KeePass, Chrome, Safari, Firefox, Edge o un archivo CSV o CXF, y por qué borrar la exportación después.",
+      "lead": "Password365 lee exportaciones de los gestores de contraseñas y navegadores que usa la mayoría. Accesos, tarjetas, notas, llaves de acceso y archivos adjuntos vienen contigo cuando la exportación los incluye.",
+      "sections": [
+        {
+          "h": "Qué puedes importar",
+          "ul": [
+            "1Password: un archivo de exportación (.1pux)",
+            "Bitwarden: el archivo que exporta",
+            "KeePass y KeePassXC: una base .kdbx",
+            "Chrome, Edge, Firefox y Safari: el CSV de contraseñas que exportan",
+            "Otras apps: un archivo CSV, o un archivo Credential Exchange (CXF), que puede incluir llaves de acceso"
+          ]
+        },
+        {
+          "h": "Paso a paso",
+          "ul": [
+            "Exporta desde tu app o navegador actual. Busca Exportar en sus ajustes y elige un formato de la lista anterior.",
+            "En tu ordenador, abre Password365 y elige Importar en la barra de herramientas. Selecciona el archivo.",
+            "Mira la pantalla de resultado: te dice cuántos elementos eran nuevos y cuántos ya estaban en tu bóveda.",
+            "Tus otros dispositivos no necesitan nada: los elementos importados se sincronizan desde el ordenador."
+          ]
+        },
+        {
+          "h": "Borra el archivo de exportación después",
+          "p": [
+            "Una exportación es una copia legible de tus contraseñas. Bórrala en cuanto termine la importación y vacía la papelera. No la envíes por correo ni la dejes en una carpeta en la nube."
+          ]
+        },
+        {
+          "h": "Si algo parece raro",
+          "ul": [
+            "Duplicados: Password365 omite un elemento que ya está en la bóveda. Si la misma cuenta vino de dos fuentes, usa Revisar duplicados en la barra lateral para unirlas.",
+            "Elementos que faltan: no toda exportación incluye todo tipo de elemento. Comprueba qué exportó el origen."
+          ]
+        },
+        {
+          "h": "En el otro sentido",
+          "p": [
+            "Puedes exportar todo desde Password365 a CSV o al Credential Exchange Format, así tus datos nunca quedan atrapados."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "¿Es seguro importar?",
+          "a": "La importación se ejecuta en tu dispositivo y no se sube nada. El riesgo es el propio archivo de exportación, así que bórralo después."
+        },
+        {
+          "q": "¿Puedo importar llaves de acceso?",
+          "a": "Sí, mediante un archivo Credential Exchange (CXF) o una exportación que las incluya."
+        }
+      ]
+    },
+    "sync": {
+      "title": "Cómo sincroniza Password365 sin servidor",
+      "teaser": "Empareja una vez y tus dispositivos se actualizan directamente.",
+      "description": "Cómo Password365 mantiene tus dispositivos sincronizados sin nube: emparejamiento con código QR, conexiones directas y cifradas en tu red, y qué pasa cuando los dispositivos están separados.",
+      "lead": "Password365 sincroniza tu ordenador, tu móvil y tu navegador sin un servidor en medio. Los dispositivos se encuentran en tu red, demuestran quiénes son e intercambian solo lo que cambió.",
+      "sections": [
+        {
+          "h": "Empareja una vez",
+          "p": [
+            "El emparejamiento conecta dos dispositivos. Uno muestra un código QR y el otro lo escanea con la cámara (o pegas el código). El dispositivo nuevo muestra entonces seis dígitos, que escribes en el dispositivo que ya tiene tu bóveda. Esa comprobación asegura que estás emparejando tu dispositivo, no el de un desconocido en la misma red.",
+            "El código vale una sola vez y caduca a los cinco minutos."
+          ]
+        },
+        {
+          "h": "Qué viaja, y cómo",
+          "ul": [
+            "Toda conexión entre dispositivos emparejados está cifrada y autenticada (un handshake moderno de canal seguro), y cada dispositivo solo acepta dispositivos con los que se emparejó.",
+            "Tu bóveda ya está cifrada antes de guardarse, y los cambios se intercambian cifrados.",
+            "Nada pasa por nuestros servidores, porque no hay servidor para tu bóveda."
+          ]
+        },
+        {
+          "h": "Cuando los dispositivos están separados",
+          "p": [
+            "Cada dispositivo sigue funcionando solo con todo lo que tiene. La próxima vez que dos dispositivos emparejados se alcancen en la misma red, intercambian lo que cambió. Si dos dispositivos cambiaron el mismo elemento, se conserva el cambio más reciente y la otra contraseña pasa al historial del elemento."
+          ]
+        },
+        {
+          "h": "¿Sin red en común?",
+          "p": [
+            "También puedes llevar los cambios en un archivo de sincronización: guárdalo en un dispositivo y ábrelo en el otro, por ejemplo con AirDrop. El archivo es para un dispositivo emparejado concreto."
+          ]
+        },
+        {
+          "h": "Los límites",
+          "ul": [
+            "Hoy los dispositivos deben alcanzarse en la misma red. No hay sincronización por internet.",
+            "Un dispositivo nuevo necesita un dispositivo que ya tenga la bóveda para emparejarse."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "¿Necesito Wi-Fi?",
+          "a": "Tus dispositivos deben estar en la misma red para sincronizar. Entre sincronizaciones, cada uno funciona solo, sin conexión."
+        },
+        {
+          "q": "¿Algo pasa por vuestros servidores?",
+          "a": "No. No mantenemos servidores para tu bóveda."
+        },
+        {
+          "q": "¿Y si quito un dispositivo?",
+          "a": "Quítalo en Dispositivos. Se le rechaza en la siguiente sincronización y conserva solo la copia que ya tenía, protegida por tu contraseña maestra."
+        }
+      ]
+    }
   }
 }

@@ -1,0 +1,63 @@
+---
+import Base from "../../layouts/Base.astro";
+import { catalog, href, languages, translator } from "../../i18n";
+import { guides } from "../../guides";
+import { article, faqPage, organization } from "../../seo";
+
+export function getStaticPaths() {
+  return languages.flatMap((l) =>
+    guides.map((g) => ({ params: { lang: l.path || undefined, slug: g.slug }, props: { tag: l.tag, key: g.key, slug: g.slug, modified: g.modified } })),
+  );
+}
+
+interface Section { h: string; p?: string[]; ul?: string[] }
+interface Guide {
+  title: string; description: string; lead: string; sections: Section[];
+  table?: { caption: string; head: string[]; rows: string[][] }; tableAfter?: number; faq?: { q: string; a: string }[]; note?: string;
+}
+const { tag, key, slug, modified } = Astro.props as { tag: string; key: string; slug: string; modified: string };
+const t = translator(tag);
+// This language's guide, or the English one if a translation is missing.
+const pick = (code: string) => (catalog(code) as any).guides?.[key] as Guide | undefined;
+const g = (pick(tag) ?? pick("en"))!;
+const url = new URL(href(tag, slug), Astro.site).toString();
+const jsonLd = [organization, article({ title: g.title, description: g.description, url, language: tag, modified }), ...(g.faq?.length ? [faqPage(g.faq)] : [])];
+const others = guides.filter((o) => o.slug !== slug);
+---
+<Base tag={tag} page={slug} title={g.title} description={g.description} jsonLd={jsonLd}>
+  <section class="page article">
+    <div class="wrap prose">
+      <h1>{g.title}</h1>
+      <p class="lead">{g.lead}</p>
+      <p class="updated">{t("guides.updated", { date: modified })}</p>
+      {g.sections.map((s, index) => (
+        <>
+          <h2>{s.h}</h2>
+          {s.p?.map((text) => <p>{text}</p>)}
+          {s.ul && <ul>{s.ul.map((item) => <li>{item}</li>)}</ul>}
+          {g.table && index === (g.tableAfter ?? g.sections.length - 1) && (
+            <div class="table-scroll">
+              <table>
+                <caption class="note">{g.table.caption}</caption>
+                <thead><tr>{g.table.head.map((h) => <th scope="col">{h}</th>)}</tr></thead>
+                <tbody>{g.table.rows.map(([label, ...cells]) => <tr><th scope="row">{label}</th>{cells.map((c) => <td>{c}</td>)}</tr>)}</tbody>
+              </table>
+            </div>
+          )}
+        </>
+      ))}
+      {g.note && <p class="note">{g.note}</p>}
+      {g.faq && g.faq.length > 0 && (
+        <>
+          <h2>{t("guides.faqTitle")}</h2>
+          <div class="faq">{g.faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
+        </>
+      )}
+      <p><a class="button primary" href={href(tag, "download")}>{t("guides.cta")}</a></p>
+      <div class="related">
+        <h2>{t("guides.more")}</h2>
+        <ul>{others.map((o) => <li><a href={href(tag, o.slug)}>{t(`guides.${o.key}.title`)}</a></li>)}</ul>
+      </div>
+    </div>
+  </section>
+</Base>

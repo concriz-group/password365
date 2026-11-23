@@ -7,7 +7,7 @@ const { tag } = Astro.props;
 const t = translator(tag);
 const email = `<a href="mailto:${site.email}">${site.email}</a>`;
 ---
-<Base tag={tag} page="support" title={t("supportPage.title")}>
+<Base tag={tag} page="support" title={t("supportPage.title")} description={t("meta.supportDescription")}>
   <section class="page">
     <div class="wrap prose">
       <h1>{t("supportPage.title")}</h1>
@@ -16,6 +16,8 @@ const email = `<a href="mailto:${site.email}">${site.email}</a>`;
       <ol>{["start1", "start2", "start3", "start4"].map((i) => <li>{t(`supportPage.${i}`)}</li>)}</ol>
       <h2>{t("supportPage.recoverTitle")}</h2>
       <ul>{["recover1", "recover2"].map((i) => <li>{t(`supportPage.${i}`)}</li>)}</ul>
+      <h2>{t("supportPage.discussTitle")}</h2>
+      <p>{t("supportPage.discussText")} <a href={site.repo + "/discussions"}>{t("open.discuss")} →</a></p>
       <h2>{t("supportPage.contactTitle")}</h2>
       <p set:html={t("supportPage.contact", { email })} />
     </div>

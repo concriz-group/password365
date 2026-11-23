@@ -3,7 +3,10 @@
     "lang": "pt",
     "name": "Português",
     "title": "Password365 — Não é seu servidor, não são suas senhas.",
-    "description": "Senhas, chaves de acesso e códigos de verificação num cofre criptografado que fica nos seus aparelhos. Sem conta, sem nuvem: o computador e o celular sincronizam direto."
+    "description": "Senhas, chaves de acesso e códigos de verificação num cofre criptografado que fica nos seus aparelhos. Sem conta, sem nuvem: o computador e o celular sincronizam direto.",
+    "downloadDescription": "Baixe o Password365 para Mac, Windows e Linux, e a extensão para Chrome, Edge e Firefox. Grátis, código aberto, sem conta.",
+    "supportDescription": "Comece a usar o Password365, configure o celular e o navegador, e saiba o que fazer se ficar sem acesso. Fale com a equipe.",
+    "privacyDescription": "O que o Password365 coleta (nada das suas senhas), o que fica nos seus aparelhos e a única verificação opcional pela rede."
   },
   "nav": {
     "features": "Recursos",
@@ -236,7 +239,9 @@
     "start4": "No iPhone, escolha “Configurar com outro aparelho” e leia o QR code que aparece no computador, em Dispositivos.",
     "recoverTitle": "Se você ficou sem acesso",
     "recover1": "Você precisa da senha mestra e da Chave Secreta. A Chave Secreta está no seu Kit de Emergência, e em Ajustes em qualquer aparelho que ainda esteja conectado.",
-    "recover2": "Ninguém, nem nós, consegue redefinir a sua senha mestra."
+    "recover2": "Ninguém, nem nós, consegue redefinir a sua senha mestra.",
+    "discussTitle": "Participe da discussão no GitHub",
+    "discussText": "Faça uma pergunta, compartilhe uma ideia ou mostre o que você fez. Bugs vão em Issues."
   },
   "footer": {
     "tagline": "O gerenciador de senhas sem nuvem.",
@@ -268,7 +273,8 @@
     },
     "github": "Ver o código no GitHub",
     "contribute": "Como contribuir",
-    "specs": "Especificações de segurança"
+    "specs": "Especificações de segurança",
+    "discuss": "Participe da discussão no GitHub"
   },
   "pairPage": {
     "title": "Adicione este iPhone ao cofre do seu computador",
@@ -285,5 +291,300 @@
     "none": "Abra esta página pelo QR code que um dispositivo novo mostra, com a câmera do iPhone que tem o seu cofre.",
     "noApp": "Ainda não tem o app? O Password365 para iPhone está chegando à App Store.",
     "how": "O código nunca sai dos seus dispositivos: ele fica na parte do endereço que não é enviada a nenhum servidor."
+  },
+  "guides": {
+    "title": "Guias",
+    "updated": "Última verificação: {date}",
+    "faqTitle": "Perguntas",
+    "cta": "Baixar o Password365",
+    "more": "Mais guias",
+    "noCloud": {
+      "title": "Um gerenciador de senhas sem nuvem",
+      "teaser": "O que significa, como se mantém seguro e o que você abre mão.",
+      "description": "Um gerenciador de senhas sem nuvem e sem conta: o cofre criptografado fica só nos seus aparelhos, que sincronizam direto. Como funciona, do que protege e quais são os limites.",
+      "lead": "A maioria dos gerenciadores de senhas guarda uma cópia do seu cofre criptografado nos servidores deles, para os aparelhos ficarem em sincronia. Um gerenciador sem nuvem faz o mesmo trabalho sem essa cópia: o cofre vive só nos seus aparelhos.",
+      "sections": [
+        {
+          "h": "O que “sem nuvem” significa",
+          "p": [
+            "Não existe conta do Password365 nem servidor do Password365 que guarde o seu cofre. Você cria o cofre no computador, protege com uma senha mestra e uma Chave Secreta, e adiciona o celular e o navegador pareando com o computador.",
+            "Depois, seus aparelhos se mantêm atualizados direto entre si, pela sua própria rede. Nada sobre as suas senhas é enviado para nós."
+          ]
+        },
+        {
+          "h": "Por que as pessoas escolhem",
+          "ul": [
+            "Um servidor que guarda milhões de cofres é um alvo valioso. Se for invadido, os atacantes levam cofres criptografados e podem tentar abri-los pelo tempo que quiserem. Sem cópia num servidor, não há o que levar.",
+            "Nenhuma conta para perder, nenhuma assinatura que possa deixar você sem acesso às próprias senhas, e nenhuma empresa cuja queda, venda ou mudança de termos afete você.",
+            "Continua funcionando sem conexão com a internet."
+          ]
+        },
+        {
+          "h": "É seguro?",
+          "p": [
+            "O cofre é criptografado antes de ser salvo, com a sua senha mestra e uma Chave Secreta gerada no seu aparelho. As duas são necessárias para abri-lo. O código é aberto (GPL-3.0), e a criptografia e o protocolo de sincronização estão documentados, com um modelo de ameaças.",
+            "Um ponto a deixar claro: o Password365 ainda não passou por uma auditoria de segurança independente. Gerenciadores consolidados como 1Password e Bitwarden foram auditados e têm anos de uso. Se a auditoria importa para você, esse é um bom motivo para esperar."
+          ]
+        },
+        {
+          "h": "O que você abre mão",
+          "ul": [
+            "Para sincronizar, os aparelhos precisam se alcançar, o que hoje significa estar na mesma rede. Não há sincronização pela internet.",
+            "Ainda não há compartilhamento com outras pessoas (cofres de família ou de equipe).",
+            "Se você perder todos os aparelhos e o Kit de Emergência, ninguém consegue recuperar o cofre, nós inclusive. Guarde o Kit de Emergência e faça backup do cofre pelo app.",
+            "O app para iPhone chega em breve e o de Android está em desenvolvimento."
+          ]
+        },
+        {
+          "h": "Para quem é",
+          "p": [
+            "Para quem quer controle dos próprios dados, usa principalmente um ou dois computadores e um celular, e prefere menos peças móveis. Se você precisa compartilhar senhas com uma equipe ou sincronizar pela internet de qualquer lugar, um gerenciador em nuvem serve melhor hoje."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "O Password365 precisa de conta?",
+          "a": "Não. Não há conta. Você cria o cofre no seu próprio aparelho."
+        },
+        {
+          "q": "Onde o meu cofre fica guardado?",
+          "a": "Só nos seus aparelhos, criptografado. Não há cópia num servidor do Password365."
+        },
+        {
+          "q": "Ainda posso usar no celular e no navegador?",
+          "a": "Sim. Você pareia o celular e a extensão do navegador com o computador, e eles se mantêm em sincronia direto. O app para iPhone chega em breve; o de Android está em desenvolvimento."
+        },
+        {
+          "q": "E se eu perder o computador?",
+          "a": "Se outro aparelho pareado ainda tiver o cofre, você configura um novo a partir dele. Caso contrário, precisa do Kit de Emergência (ele guarda a sua Chave Secreta) e de um backup do cofre."
+        }
+      ]
+    },
+    "alternative": {
+      "title": "Password365 vs 1Password e Bitwarden: uma comparação honesta",
+      "teaser": "Onde ele difere do 1Password e do Bitwarden, e onde eles estão à frente.",
+      "description": "Password365 comparado ao 1Password e ao Bitwarden: conta, onde fica o cofre, sincronização, código aberto, auditorias e compartilhamento. Onde cada um é a melhor escolha.",
+      "lead": "1Password e Bitwarden são gerenciadores de senhas maduros e de ampla confiança. O Password365 é mais novo e segue outro caminho: sem conta e sem nuvem. Esta página diz onde isso importa e onde eles simplesmente estão à frente.",
+      "sections": [
+        {
+          "h": "A diferença principal",
+          "p": [
+            "1Password e Bitwarden guardam o seu cofre criptografado nos servidores deles (o Bitwarden também permite hospedar o seu) e sincronizam os aparelhos por eles. É preciso ter uma conta. O Password365 não tem conta nem servidor: o cofre fica nos seus aparelhos, que sincronizam direto entre si."
+          ]
+        },
+        {
+          "h": "Onde o Password365 pode servir melhor",
+          "ul": [
+            "Você não quer o seu cofre criptografado no servidor de ninguém.",
+            "Você não quer criar conta, confirmar e-mail, nem ter algo que possa ser suspenso.",
+            "Você quer código aberto: o núcleo, o app de computador e a extensão do navegador são publicados sob GPL-3.0 (o 1Password é código fechado).",
+            "As versões de computador e de navegador são grátis."
+          ]
+        },
+        {
+          "h": "Onde 1Password e Bitwarden estão à frente",
+          "ul": [
+            "Auditorias de segurança independentes e anos de histórico público. O Password365 ainda não foi auditado.",
+            "Compartilhamento com família e equipes, e ferramentas de administração para empresas.",
+            "Sincronização pela internet, de qualquer rede, e apps já nas duas lojas de celular.",
+            "Cobertura maior de navegadores e plataformas, e equipes de suporte maiores."
+          ]
+        },
+        {
+          "h": "Como decidir",
+          "p": [
+            "Se você compartilha senhas com outras pessoas, precisa sincronizar de qualquer lugar ou quer um produto auditado hoje, escolha 1Password ou Bitwarden. Se quer manter o cofre nos seus aparelhos e aceita sincronizar na sua rede, experimente o Password365. Dá para testar sem largar o gerenciador atual: o Password365 importa exportações do 1Password e do Bitwarden."
+          ]
+        }
+      ],
+      "table": {
+        "caption": "Verificado em novembro de 2026 nas informações públicas de cada produto. Os recursos mudam: confirme nos sites deles.",
+        "head": [
+          "",
+          "Password365",
+          "1Password",
+          "Bitwarden"
+        ],
+        "rows": [
+          [
+            "Exige conta",
+            "Não",
+            "Sim",
+            "Sim"
+          ],
+          [
+            "Onde fica o cofre criptografado",
+            "Só nos seus aparelhos",
+            "Nos servidores do 1Password e nos seus aparelhos",
+            "Nos servidores do Bitwarden (ou num servidor seu) e nos seus aparelhos"
+          ],
+          [
+            "Como os aparelhos sincronizam",
+            "Direto, na mesma rede",
+            "Pela nuvem do 1Password",
+            "Pela nuvem do Bitwarden, ou pelo seu servidor"
+          ],
+          [
+            "Código aberto",
+            "Núcleo, app de computador e extensão (GPL-3.0)",
+            "Não",
+            "Sim (servidor e clientes)"
+          ],
+          [
+            "Auditoria de segurança independente",
+            "Ainda não",
+            "Sim",
+            "Sim"
+          ],
+          [
+            "Compartilhamento com família ou equipes",
+            "Não",
+            "Sim",
+            "Sim"
+          ],
+          [
+            "Apps",
+            "Mac, Windows, Linux, e Chrome, Edge, Firefox. iPhone em breve, Android em desenvolvimento",
+            "Mac, Windows, Linux, iPhone, Android e navegadores",
+            "Mac, Windows, Linux, iPhone, Android e navegadores"
+          ],
+          [
+            "Preço",
+            "Grátis no computador e no navegador; o app de iPhone é por assinatura",
+            "Assinatura",
+            "Plano grátis e planos pagos"
+          ]
+        ]
+      },
+      "note": "1Password e Bitwarden são marcas de seus respectivos donos. O Password365 não é afiliado a elas.",
+      "faq": [
+        {
+          "q": "Posso migrar do 1Password ou do Bitwarden?",
+          "a": "Sim. O Password365 importa uma exportação do 1Password (1PUX), uma do Bitwarden e um arquivo do KeePass, além de CSV de navegadores. Veja o guia de importação."
+        },
+        {
+          "q": "O Password365 é tão seguro quanto o 1Password ou o Bitwarden?",
+          "a": "Não podemos afirmar isso. Ele usa criptografia consolidada e é código aberto, mas não teve auditoria independente, e eles tiveram. Leia a página de segurança e o modelo de ameaças e decida."
+        },
+        {
+          "q": "Posso usar junto com o meu gerenciador atual?",
+          "a": "Sim. Importe uma cópia das suas senhas para testar e mantenha o outro gerenciador até ter certeza."
+        }
+      ],
+      "tableAfter": 0
+    },
+    "importing": {
+      "title": "Importe suas senhas do 1Password, Bitwarden, Chrome e outros",
+      "teaser": "Leve logins, cartões, notas e chaves de acesso em poucos cliques.",
+      "description": "Como importar senhas para o Password365 a partir do 1Password, Bitwarden, KeePass, Chrome, Safari, Firefox, Edge ou de um arquivo CSV ou CXF, e por que apagar a exportação depois.",
+      "lead": "O Password365 lê exportações dos gerenciadores de senhas e navegadores que a maioria das pessoas usa. Logins, cartões, notas, chaves de acesso e anexos vêm junto quando a exportação os inclui.",
+      "sections": [
+        {
+          "h": "O que você pode importar",
+          "ul": [
+            "1Password: um arquivo de exportação (.1pux)",
+            "Bitwarden: o arquivo que ele exporta",
+            "KeePass e KeePassXC: um banco .kdbx",
+            "Chrome, Edge, Firefox e Safari: o CSV de senhas que eles exportam",
+            "Outros apps: um arquivo CSV, ou um arquivo Credential Exchange (CXF), que pode incluir chaves de acesso"
+          ]
+        },
+        {
+          "h": "Passo a passo",
+          "ul": [
+            "Exporte do seu app ou navegador atual. Procure Exportar nos ajustes dele e escolha um formato da lista acima.",
+            "No computador, abra o Password365 e escolha Importar na barra de ferramentas. Selecione o arquivo.",
+            "Veja a tela de resultado: ela mostra quantos itens eram novos e quantos já estavam no seu cofre.",
+            "Seus outros aparelhos não precisam de nada: os itens importados sincronizam a partir do computador."
+          ]
+        },
+        {
+          "h": "Apague o arquivo de exportação depois",
+          "p": [
+            "Uma exportação é uma cópia legível das suas senhas. Apague-a assim que terminar a importação e esvazie a lixeira. Não envie por e-mail nem deixe numa pasta na nuvem."
+          ]
+        },
+        {
+          "h": "Se algo parecer errado",
+          "ul": [
+            "Duplicados: o Password365 ignora um item que já está no cofre. Se a mesma conta veio de duas fontes, use Revisar duplicados na barra lateral para juntá-las.",
+            "Itens faltando: nem toda exportação inclui todo tipo de item. Confira o que a origem exportou."
+          ]
+        },
+        {
+          "h": "No sentido contrário",
+          "p": [
+            "Você pode exportar tudo do Password365 para CSV ou para o Credential Exchange Format, então seus dados nunca ficam presos."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "É seguro importar?",
+          "a": "A importação roda no seu aparelho e nada é enviado. O risco é o próprio arquivo de exportação, então apague-o depois."
+        },
+        {
+          "q": "Consigo importar chaves de acesso?",
+          "a": "Sim, por um arquivo Credential Exchange (CXF) ou por uma exportação que as inclua."
+        }
+      ]
+    },
+    "sync": {
+      "title": "Como o Password365 sincroniza sem servidor",
+      "teaser": "Pareie uma vez, e seus aparelhos se atualizam direto.",
+      "description": "Como o Password365 mantém seus aparelhos em sincronia sem nuvem: pareamento por QR code, conexões diretas e criptografadas na sua rede, e o que acontece quando os aparelhos estão separados.",
+      "lead": "O Password365 sincroniza o computador, o celular e o navegador sem servidor no meio. Os aparelhos se encontram na sua rede, provam quem são e trocam só o que mudou.",
+      "sections": [
+        {
+          "h": "Pareie uma vez",
+          "p": [
+            "O pareamento conecta dois aparelhos. Um mostra um QR code e o outro o escaneia com a câmera (ou você cola o código). O aparelho novo mostra então seis dígitos, que você digita no aparelho que já tem o cofre. Essa conferência garante que você está pareando o seu aparelho, não o de um desconhecido na mesma rede.",
+            "O código vale uma única vez e expira em cinco minutos."
+          ]
+        },
+        {
+          "h": "O que trafega, e como",
+          "ul": [
+            "Toda conexão entre aparelhos pareados é criptografada e autenticada (um handshake moderno de canal seguro), e cada aparelho só aceita aparelhos com os quais foi pareado.",
+            "O cofre já está criptografado antes de ser salvo, e as alterações são trocadas criptografadas.",
+            "Nada passa pelos nossos servidores, porque não há servidor para o seu cofre."
+          ]
+        },
+        {
+          "h": "Quando os aparelhos estão separados",
+          "p": [
+            "Cada aparelho continua funcionando sozinho com tudo o que tem. Na próxima vez que dois aparelhos pareados se alcançarem na mesma rede, eles trocam o que mudou. Se dois aparelhos alteraram o mesmo item, a alteração mais nova fica e a outra senha vai para o histórico do item."
+          ]
+        },
+        {
+          "h": "Sem rede em comum?",
+          "p": [
+            "Você também pode levar as alterações num arquivo de sincronização: salve em um aparelho e abra no outro, por exemplo por AirDrop. O arquivo é para um aparelho pareado específico."
+          ]
+        },
+        {
+          "h": "Os limites",
+          "ul": [
+            "Hoje os aparelhos precisam se alcançar na mesma rede. Não há sincronização pela internet.",
+            "Um aparelho novo precisa de um aparelho que já tenha o cofre para parear."
+          ]
+        }
+      ],
+      "faq": [
+        {
+          "q": "Preciso de Wi-Fi?",
+          "a": "Seus aparelhos precisam estar na mesma rede para sincronizar. Entre as sincronizações, cada um funciona sozinho, offline."
+        },
+        {
+          "q": "Algo passa pelos servidores de vocês?",
+          "a": "Não. Não mantemos servidores para o seu cofre."
+        },
+        {
+          "q": "E se eu remover um aparelho?",
+          "a": "Remova em Dispositivos. Ele é recusado na próxima sincronização e fica só com a cópia que já tinha, protegida pela sua senha mestra."
+        }
+      ]
+    }
   }
 }
