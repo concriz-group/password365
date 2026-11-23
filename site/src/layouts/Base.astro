@@ -51,8 +51,13 @@ const year = new Date().getFullYear();
     {noindex && <meta name="robots" content="noindex" />}
     {languages.map((l) => <link rel="alternate" hreflang={l.tag} href={new URL(href(l.tag, page), Astro.site).toString()} />)}
     <link rel="alternate" hreflang="x-default" href={new URL(href("en", page), Astro.site).toString()} />
-    <link rel="icon" href="/brand/app-icon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/brand/app-icon-1024.png" />
+    <!-- Icons: the .ico at the root (what crawlers look for first), PNGs in multiples of 48 px (Google's rule), the SVG for browsers. -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" href="/brand/favicon-48.png" type="image/png" sizes="48x48" />
+    <link rel="icon" href="/brand/favicon-96.png" type="image/png" sizes="96x96" />
+    <link rel="icon" href="/brand/favicon-192.png" type="image/png" sizes="192x192" />
+    <link rel="icon" href="/brand/app-icon.svg" type="image/svg+xml" sizes="any" />
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png" />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description ?? t("meta.description")} />
     <meta property="og:type" content="website" />
