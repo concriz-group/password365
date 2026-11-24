@@ -24,5 +24,7 @@
   "missingLogin": "O login indicado foi excluído.",
   "passkey": "Passkey",
   "passkeyFor": "{site} · {user}",
-  "removePasskey": "Remover passkey"
+  "removePasskey": "Remover passkey",
+  "deleteTitle": "Mover \"{title}\" para Excluídos recentemente?",
+  "deleteText": "Fica lá por 30 dias e depois é excluído permanentemente em todos os dispositivos. Até lá você pode restaurá-lo."
 }

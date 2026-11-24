@@ -24,5 +24,7 @@
   "missingLogin": "The login it pointed at was deleted.",
   "passkey": "Passkey",
   "passkeyFor": "{site} · {user}",
-  "removePasskey": "Remove passkey"
+  "removePasskey": "Remove passkey",
+  "deleteTitle": "Move \"{title}\" to Recently Deleted?",
+  "deleteText": "It stays there for 30 days, then is deleted permanently on every device. You can restore it until then."
 }

@@ -112,6 +112,20 @@ describe("ItemDetail", () => {
     expect(props.onDeleted).toHaveBeenCalled();
   });
 
+  it("asks in a popup that names the item, starts on Cancel and closes with Escape or a click outside", async () => {
+    const { client, user } = setup();
+    await user.click(await screen.findByRole("button", { name: "Delete" }));
+    const popup = screen.getByRole("alertdialog");
+    expect(popup).toHaveTextContent("Move \"GitHub\" to Recently Deleted?");
+    expect(screen.getByRole("button", { name: "Cancel" })).toHaveFocus();
+    await user.keyboard("{Escape}");
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Delete" }));
+    await user.click(popup.parentElement as HTMLElement);
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(client.deleteItem).not.toHaveBeenCalled();
+  });
+
   it("shows load and delete errors", async () => {
     setup({ item: vi.fn().mockRejectedValue({ code: "not_found", message: "item not found" }) });
     expect(await screen.findByRole("alert")).toHaveTextContent("item not found");

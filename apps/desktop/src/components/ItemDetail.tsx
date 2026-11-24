@@ -1,3 +1,4 @@
+import { ConfirmDialog } from "./ConfirmDialog";
 import { useEffect, useState } from "react";
 
 import type { Item, Vault } from "../api/types";
@@ -315,21 +316,20 @@ export function ItemDetail({ id, vaultName, onEdit, onDeleted, onArchived, copy,
             {t("itemDetail.archive")}
           </button>
         )}
-        {confirmDelete ? (
-          <>
-            <button type="button" className="danger" onClick={remove}>
-              {t("itemDetail.moveToDeleted")}
-            </button>
-            <button type="button" className="ghost" onClick={() => setConfirmDelete(false)}>
-              {t("common.cancel")}
-            </button>
-          </>
-        ) : (
-          <button type="button" className="ghost" onClick={() => setConfirmDelete(true)}>
-            {t("common.delete")}
-          </button>
-        )}
+        <button type="button" className="ghost" onClick={() => setConfirmDelete(true)}>
+          {t("common.delete")}
+        </button>
       </footer>
+      {confirmDelete && (
+        <ConfirmDialog
+          title={t("itemDetail.deleteTitle", { title: item.title })}
+          text={t("itemDetail.deleteText")}
+          confirmLabel={t("itemDetail.moveToDeleted")}
+          cancelLabel={t("common.cancel")}
+          onConfirm={() => void remove()}
+          onCancel={() => setConfirmDelete(false)}
+        />
+      )}
     </article>
   );
 }

@@ -24,5 +24,7 @@
   "missingLogin": "El inicio de sesión indicado se eliminó.",
   "passkey": "Llave de acceso",
   "passkeyFor": "{site} · {user}",
-  "removePasskey": "Quitar llave de acceso"
+  "removePasskey": "Quitar llave de acceso",
+  "deleteTitle": "¿Mover \"{title}\" a Eliminados recientemente?",
+  "deleteText": "Se queda ahí 30 días y luego se elimina para siempre en todos los dispositivos. Hasta entonces puedes restaurarlo."
 }
