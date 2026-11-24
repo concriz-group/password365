@@ -121,7 +121,7 @@ describe("ItemDetail", () => {
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Delete" }));
-    await user.click(popup.parentElement as HTMLElement);
+    await user.click(screen.getByRole("alertdialog").parentElement as HTMLElement);
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
     expect(client.deleteItem).not.toHaveBeenCalled();
   });
