@@ -12,5 +12,6 @@
   "hasNotes": "notes",
   "passwordNumber": "password {n}",
   "open": "Open",
-  "merge": "Merge into the selected login ({n} to Recently Deleted)"
+  "merge": "Merge into the selected login ({n} to Recently Deleted)",
+  "noMatches": "No duplicates match your search."
 }

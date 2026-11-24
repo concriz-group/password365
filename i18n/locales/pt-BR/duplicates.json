@@ -12,5 +12,6 @@
   "hasNotes": "notas",
   "passwordNumber": "senha {n}",
   "open": "Abrir",
-  "merge": "Juntar no login selecionado ({n} vão para Excluídos recentemente)"
+  "merge": "Juntar no login selecionado ({n} vão para Excluídos recentemente)",
+  "noMatches": "Nenhum duplicado corresponde à busca."
 }

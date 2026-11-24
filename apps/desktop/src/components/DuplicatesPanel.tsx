@@ -26,6 +26,7 @@ export function DuplicatesPanel({ onOpenItem, onMerged, refreshKey = 0 }: Props)
   // Per group (by its first member id): the login chosen to keep.
   const [keep, setKeep] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
 
   const load = useCallback(() => client.duplicateGroups().then(setGroups, setError), [client]);
   useEffect(() => {
@@ -51,15 +52,33 @@ export function DuplicatesPanel({ onOpenItem, onMerged, refreshKey = 0 }: Props)
     }
   }
 
-  if (!groups) return error ? <ErrorMessage error={error} /> : <p className="muted">{t("duplicates.checking")}</p>;
+  // The search matches the site, the username and each login's title or websites (any case).
+  const needle = query.trim().toLowerCase();
+  const shown = !groups || !needle
+    ? groups
+    : groups.filter((g) =>
+        [g.site, g.username, ...g.members.flatMap((m) => [m.title, ...m.urls])].some((text) => text.toLowerCase().includes(needle)),
+      );
+
+  if (!groups || !shown) return error ? <ErrorMessage error={error} /> : <p className="muted">{t("duplicates.checking")}</p>;
 
   return (
     <section className="duplicates" aria-label={t("duplicates.title")}>
       <h1>{t("duplicates.title")}</h1>
       <p className="muted">{t("duplicates.intro")}</p>
       {error ? <ErrorMessage error={error} /> : null}
+      {groups.length > 0 && (
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          aria-label={t("common.search")}
+          placeholder={t("common.search")}
+        />
+      )}
       {groups.length === 0 && <p className="panel-card">{t("duplicates.none")}</p>}
-      {groups.map((group) => {
+      {groups.length > 0 && shown.length === 0 && <p className="panel-card">{t("duplicates.noMatches")}</p>}
+      {shown.map((group) => {
         const id = group.members[0]!.id;
         const kept = keep[id] ?? id;
         return (

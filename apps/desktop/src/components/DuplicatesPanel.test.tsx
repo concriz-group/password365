@@ -43,6 +43,23 @@ describe("DuplicatesPanel", () => {
     expect(screen.getByText("Suggested")).toBeInTheDocument();
   });
 
+  it("searches the groups by site, username, title or website", async () => {
+    const other: DuplicateGroup = { ...group, site: "github.com", username: "bob", members: [member("x", "gh-work"), member("y", "gh-home")] };
+    const { user } = setup([[group, other]]);
+    await screen.findByRole("heading", { name: /amazon\.es/ });
+    const box = screen.getByRole("searchbox", { name: "Search" });
+    await user.type(box, "BOB");
+    expect(screen.queryByRole("heading", { name: /amazon/ })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /github\.com/ })).toBeInTheDocument();
+    await user.clear(box);
+    await user.type(box, "amazon.com.br");
+    expect(screen.getByRole("heading", { name: /amazon\.es/ })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: /github/ })).not.toBeInTheDocument();
+    await user.clear(box);
+    await user.type(box, "zzz");
+    expect(screen.getByText("No duplicates match your search.")).toBeInTheDocument();
+  });
+
   it("merges the others into the one chosen, then reloads", async () => {
     const { client, onMerged, user } = setup();
     await screen.findByRole("heading", { name: /amazon\.es/ });
