@@ -60,3 +60,15 @@ test("every guide page has its texts, lists of the same length and the same tabl
     }
   }
 });
+
+test("the download page has the same steps and questions in every language", () => {
+  const en = load("en.json").download;
+  assert.ok(en.steps.length >= 3 && en.faq.length >= 3);
+  for (const file of readdirSync(dir)) {
+    const d = load(file).download;
+    assert.equal(d.steps.length, en.steps.length, `${file} steps`);
+    assert.equal(d.faq.length, en.faq.length, `${file} faq`);
+    for (const s of d.steps) assert.ok(s.title && s.text, `${file} step`);
+    for (const f of d.faq) assert.ok(f.q && f.a, `${file} question`);
+  }
+});

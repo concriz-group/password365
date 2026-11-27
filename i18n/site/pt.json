@@ -184,7 +184,46 @@
     "extensionManual": "Até as lojas: descompacte e carregue como extensão sem compactação (modo desenvolvedor).",
     "android": "Password365 para Android",
     "androidText": "Preenchimento automático em navegadores e apps, sincronizado com o computador.",
-    "inDevelopment": "Em desenvolvimento"
+    "inDevelopment": "Em desenvolvimento",
+    "stepsTitle": "Comece em quatro passos",
+    "steps": [
+      {
+        "title": "Instale o app no computador",
+        "text": "Abra o instalador para Mac, Windows ou Linux. Não há conta para criar nem e-mail para informar."
+      },
+      {
+        "title": "Crie o seu cofre",
+        "text": "Escolha uma senha mestra. O app cria uma Chave Secreta no seu aparelho e um Kit de Emergência para imprimir ou guardar em lugar seguro."
+      },
+      {
+        "title": "Adicione o navegador",
+        "text": "Instale a extensão para Chrome, Edge ou Firefox. Ela funciona junto com o app no computador para preencher logins e chaves de acesso."
+      },
+      {
+        "title": "Adicione o celular",
+        "text": "Instale o app no iPhone e escaneie o código QR que o computador mostra. A partir daí, os aparelhos se mantêm atualizados entre si na sua própria rede."
+      }
+    ],
+    "importText": "Vem de outro gerenciador de senhas? Traga os seus logins, cartões, notas e chaves de acesso.",
+    "importLink": "Como importar as suas senhas",
+    "faq": [
+      {
+        "q": "O Password365 é grátis?",
+        "a": "Grátis no computador e no navegador; o app do iPhone é uma assinatura. Não há anúncios nem plano de nuvem pago, porque não há nuvem."
+      },
+      {
+        "q": "Preciso de uma conta para usar?",
+        "a": "Não. Você baixa o app e cria o cofre no seu próprio aparelho. Não há cadastro, nem e-mail, nem servidor que guarde os seus dados."
+      },
+      {
+        "q": "De onde vêm os downloads?",
+        "a": "Os instaladores para computador e a extensão são os arquivos publicados em cada versão no repositório público do projeto no GitHub, onde também está o código-fonte."
+      },
+      {
+        "q": "O código é aberto?",
+        "a": "Sim. O Password365 é de código aberto sob a licença GPL-3.0, então qualquer pessoa pode ler como o seu cofre é criptografado e sincronizado."
+      }
+    ]
   },
   "securityPage": {
     "title": "Segurança",

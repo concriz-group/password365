@@ -184,7 +184,46 @@
     "extensionManual": "Until the store listings: unzip it and load it as an unpacked extension (developer mode).",
     "android": "Password365 for Android",
     "androidText": "AutoFill in browsers and apps, synced with your computer.",
-    "inDevelopment": "In development"
+    "inDevelopment": "In development",
+    "stepsTitle": "Get started in four steps",
+    "steps": [
+      {
+        "title": "Install the app on your computer",
+        "text": "Open the installer for Mac, Windows or Linux. There is no account to create and no email to give."
+      },
+      {
+        "title": "Create your vault",
+        "text": "Choose a master password. The app creates a Secret Key on your device and an Emergency Kit to print or save somewhere safe."
+      },
+      {
+        "title": "Add your browser",
+        "text": "Install the extension for Chrome, Edge or Firefox. It works together with the app on your computer to fill in logins and passkeys."
+      },
+      {
+        "title": "Add your phone",
+        "text": "Install the iPhone app and scan the QR code your computer shows. From then on, your devices keep each other up to date on your own network."
+      }
+    ],
+    "importText": "Coming from another password manager? Bring your logins, cards, notes and passkeys with you.",
+    "importLink": "How to import your passwords",
+    "faq": [
+      {
+        "q": "Is Password365 free?",
+        "a": "Free on computer and browser; the iPhone app is a subscription. There are no ads and no paid cloud plan, because there is no cloud."
+      },
+      {
+        "q": "Do I need an account to use it?",
+        "a": "No. You download the app and create your vault on your own device. There is no sign-up, no email and no server that keeps your data."
+      },
+      {
+        "q": "Where do the downloads come from?",
+        "a": "The computer installers and the extension are the files published with each release in the project's public GitHub repository, where the source code is too."
+      },
+      {
+        "q": "Is the code open?",
+        "a": "Yes. Password365 is open source under the GPL-3.0 license, so anyone can read how your vault is encrypted and synced."
+      }
+    ]
   },
   "securityPage": {
     "title": "Security",

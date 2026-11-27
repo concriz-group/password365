@@ -1,11 +1,18 @@
 ---
 import Base from "../../layouts/Base.astro";
 import Icon from "../../components/Icon.astro";
-import { languagePaths, translator } from "../../i18n";
+import { catalog, href, languagePaths, translator } from "../../i18n";
+import { faqPage, organization } from "../../seo";
 import { download, site } from "../../config";
 export const getStaticPaths = languagePaths;
 const { tag } = Astro.props;
 const t = translator(tag);
+// The steps and questions are lists, so they come from the catalog (English if a language lacks them).
+type Download = { steps: { title: string; text: string }[]; faq: { q: string; a: string }[] };
+const pick = (code: string) => (catalog(code) as any).download as Partial<Download> | undefined;
+const steps = pick(tag)?.steps ?? pick("en")!.steps!;
+const faq = pick(tag)?.faq ?? pick("en")!.faq!;
+const jsonLd = [organization, faqPage(faq)];
 const rows = [
   { icon: "work", name: t("download.mac"), text: t("download.macText"), link: download("Password365-macOS.dmg") },
   { icon: "code", name: t("download.windows"), text: "", link: download("Password365-Windows-setup.exe") },
@@ -16,7 +23,7 @@ const rows = [
   { icon: "phone", name: t("download.android"), text: t("download.androidText"), link: null, label: t("download.inDevelopment") },
 ];
 ---
-<Base tag={tag} page="download" title={t("download.title")} description={t("meta.downloadDescription")}>
+<Base tag={tag} page="download" title={t("download.title")} description={t("meta.downloadDescription")} jsonLd={jsonLd}>
   <section class="page">
     <div class="wrap">
       <h1>{t("download.title")}</h1>
@@ -34,6 +41,13 @@ const rows = [
           </div>
         ))}
       </div>
+      <h2>{t("download.stepsTitle")}</h2>
+      <ol class="grid steps" style="text-align:left;list-style:none;padding:0">
+        {steps.map((s, i) => <li class="card"><h3>{i + 1}. {s.title}</h3><p>{s.text}</p></li>)}
+      </ol>
+      <p>{t("download.importText")} <a href={href(tag, "import-passwords")}>{t("download.importLink")}</a></p>
+      <h2>{t("guides.faqTitle")}</h2>
+      <div class="faq">{faq.map((f) => <details><summary>{f.q}</summary><p>{f.a}</p></details>)}</div>
     </div>
   </section>
 </Base>

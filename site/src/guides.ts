@@ -14,3 +14,13 @@ export const guides = [
 
 /** The pages every language has (besides the guides). */
 export const pages = ["", "download", "security", "support", "privacy", "compare"] as const;
+
+/** When each page's content last really changed (the sitemap's lastmod; update it with the page). */
+export const pageModified: Record<(typeof pages)[number], string> = {
+  "": "2026-11-23",
+  download: "2026-11-27",
+  security: "2026-11-23",
+  support: "2026-11-23",
+  privacy: "2026-11-23",
+  compare: "2026-11-23",
+};

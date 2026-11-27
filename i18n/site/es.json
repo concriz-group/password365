@@ -184,7 +184,46 @@
     "extensionManual": "Hasta las tiendas: descomprímela y cárgala como extensión sin empaquetar (modo desarrollador).",
     "android": "Password365 para Android",
     "androidText": "Autorrelleno en navegadores y apps, sincronizado con tu ordenador.",
-    "inDevelopment": "En desarrollo"
+    "inDevelopment": "En desarrollo",
+    "stepsTitle": "Empieza en cuatro pasos",
+    "steps": [
+      {
+        "title": "Instala la app en tu ordenador",
+        "text": "Abre el instalador para Mac, Windows o Linux. No hay cuenta que crear ni correo que dar."
+      },
+      {
+        "title": "Crea tu bóveda",
+        "text": "Elige una contraseña maestra. La app crea una Clave Secreta en tu dispositivo y un Kit de Emergencia para imprimir o guardar en un lugar seguro."
+      },
+      {
+        "title": "Añade tu navegador",
+        "text": "Instala la extensión para Chrome, Edge o Firefox. Funciona junto con la app de tu ordenador para rellenar inicios de sesión y llaves de acceso."
+      },
+      {
+        "title": "Añade tu móvil",
+        "text": "Instala la app de iPhone y escanea el código QR que muestra tu ordenador. Desde entonces, tus dispositivos se mantienen al día entre sí en tu propia red."
+      }
+    ],
+    "importText": "¿Vienes de otro gestor de contraseñas? Trae tus inicios de sesión, tarjetas, notas y llaves de acceso.",
+    "importLink": "Cómo importar tus contraseñas",
+    "faq": [
+      {
+        "q": "¿Password365 es gratis?",
+        "a": "Gratis en el ordenador y el navegador; la app de iPhone es una suscripción. No hay anuncios ni plan de nube de pago, porque no hay nube."
+      },
+      {
+        "q": "¿Necesito una cuenta para usarlo?",
+        "a": "No. Descargas la app y creas tu bóveda en tu propio dispositivo. No hay registro, ni correo, ni servidor que guarde tus datos."
+      },
+      {
+        "q": "¿De dónde vienen las descargas?",
+        "a": "Los instaladores para ordenador y la extensión son los archivos publicados con cada versión en el repositorio público del proyecto en GitHub, donde también está el código fuente."
+      },
+      {
+        "q": "¿El código es abierto?",
+        "a": "Sí. Password365 es de código abierto con la licencia GPL-3.0, así que cualquiera puede leer cómo se cifra y sincroniza tu bóveda."
+      }
+    ]
   },
   "securityPage": {
     "title": "Seguridad",
