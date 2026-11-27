@@ -8,5 +8,6 @@
   "noMatches": "No hay elementos que coincidan.",
   "empty": "Todavía no hay elementos.",
   "review": "Revisar",
-  "resize": "Ajustar el ancho de la lista"
+  "resize": "Ajustar el ancho de la lista",
+  "scopeAll": "Todos"
 }

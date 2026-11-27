@@ -8,5 +8,6 @@
   "noMatches": "No matching items.",
   "empty": "No items yet.",
   "review": "Review",
-  "resize": "Resize the item list"
+  "resize": "Resize the item list",
+  "scopeAll": "All"
 }
