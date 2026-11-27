@@ -16,6 +16,11 @@ Compare it with [1Password and Bitwarden](https://password365.app/1password-bitw
 
 > **Status:** early releases. Password365 has not had an independent security audit yet.
 
+> **Android beta testers wanted:** Google requires a 14-day closed test before the Android app can be
+> published. Testers who stay for the 14 days and send feedback get 1 year free at launch.
+> [How to join](https://password365.app/beta). (The Android app is built on this open-source core; the
+> code of its screens is not published.)
+
 ## Features
 
 - **Everything a password manager does:** logins, passkeys, one-time codes (TOTP), credit cards,
