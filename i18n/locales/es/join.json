@@ -16,5 +16,7 @@
   "showPlace": "Dispositivos › Añadir un dispositivo › Escanear el código del dispositivo nuevo",
   "showQr": "Código QR para unirse a esta bóveda",
   "showWaiting": "Esperando a que el otro dispositivo escanee… El código vale una sola vez y caduca en 5 minutos.",
-  "pasteInstead": "O pega un código del otro dispositivo"
+  "pasteInstead": "O pega un código del otro dispositivo",
+  "noWifi": "Este dispositivo no está en Wi-Fi. Conéctalo a la misma red Wi-Fi que el otro dispositivo e inténtalo de nuevo.",
+  "timeoutHint": "No se pudo contactar con el otro dispositivo. Comprueba que ambos estén en la misma red Wi-Fi (no datos móviles ni red de invitados), que Password365 esté abierto en el otro dispositivo y que su cortafuegos permita conexiones."
 }

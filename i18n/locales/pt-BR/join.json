@@ -16,5 +16,7 @@
   "showPlace": "Dispositivos › Adicionar um dispositivo › Escanear o código do dispositivo novo",
   "showQr": "QR code para entrar neste cofre",
   "showWaiting": "Aguardando o outro dispositivo escanear… O código vale uma única vez e expira em 5 minutos.",
-  "pasteInstead": "Ou cole um código do outro dispositivo"
+  "pasteInstead": "Ou cole um código do outro dispositivo",
+  "noWifi": "Este aparelho não está no Wi-Fi. Conecte-o à mesma rede Wi-Fi do outro dispositivo e tente de novo.",
+  "timeoutHint": "Não foi possível alcançar o outro dispositivo. Confira se os dois estão na mesma rede Wi-Fi (não dados móveis nem rede de visitantes), se o Password365 está aberto no outro dispositivo e se o firewall dele permite conexões."
 }

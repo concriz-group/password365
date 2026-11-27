@@ -16,5 +16,7 @@
   "showPlace": "Devices › Add a device › Scan the new device's code",
   "showQr": "QR code to join this vault",
   "showWaiting": "Waiting for the other device to scan… The code works once and expires in 5 minutes.",
-  "pasteInstead": "Or paste a code from the other device"
+  "pasteInstead": "Or paste a code from the other device",
+  "noWifi": "This phone is not on Wi-Fi. Connect it to the same Wi-Fi network as the other device, then try again.",
+  "timeoutHint": "Could not reach the other device. Check that both are on the same Wi-Fi network (not mobile data or a guest network), that Password365 is open on the other device, and that its firewall allows connections."
 }
