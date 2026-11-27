@@ -11,6 +11,11 @@ export const site = {
   latest: "https://github.com/concriz-group/password365/releases/latest/download/",
   /** The public repository (code, specifications, issues). */
   repo: "https://github.com/concriz-group/password365",
+  /** The Android closed test: testers join the Google Group, then opt in on Google Play. */
+  beta: {
+    group: "https://groups.google.com/g/password365-beta",
+    optIn: "https://play.google.com/apps/testing/app.password365.android",
+  },
   /** Store pages, once listed (null: not yet). */
   stores: {
     chrome: null as string | null,

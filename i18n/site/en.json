@@ -6,7 +6,8 @@
     "description": "Password365 (Password 365) is an open-source password manager with no cloud and no account. Passwords, passkeys and one-time codes stay on your devices and sync directly, 365 days a year.",
     "downloadDescription": "Download Password365 for Mac, Windows and Linux, plus the Chrome, Edge and Firefox extension. Free, open source, no account.",
     "supportDescription": "Get started with Password365, set up your phone and browser, and what to do if you are locked out. Contact the team.",
-    "privacyDescription": "What Password365 collects (nothing about your passwords), what stays on your devices, and the one optional network check."
+    "privacyDescription": "What Password365 collects (nothing about your passwords), what stays on your devices, and the one optional network check.",
+    "betaDescription": "Join the Password365 for Android beta: test the app for 14 days, send feedback and get 1 year free when it launches."
   },
   "nav": {
     "features": "Features",
@@ -291,7 +292,8 @@
     "privacy": "Privacy",
     "rights": "© {year} Password365",
     "source": "Source code",
-    "compare": "Compare"
+    "compare": "Compare",
+    "beta": "Android beta"
   },
   "notFound": {
     "title": "Page not found",
@@ -1268,5 +1270,26 @@
       }
     ],
     "card": "Compare Password365"
+  },
+  "betaPage": {
+    "title": "Password365 for Android: join the beta",
+    "lead": "Password365 for Android is almost ready. Before it can be published on Google Play, Google requires a closed test of 14 days. Help us test it and tell us what you think.",
+    "rewardTitle": "What you get",
+    "reward": "Everyone who stays in the test for the 14 days and sends us feedback gets 1 year of Password365 for Android free when it launches. We will send you a code by email.",
+    "howTitle": "How to join",
+    "step1": "Join the testers group with the Google account you use on your Android phone.",
+    "join": "Join the testers group",
+    "step2": "Open the test page on Google Play with that same account, accept the invitation and install Password365.",
+    "optIn": "Open the test on Google Play",
+    "step3": "Use the app for the 14 days: create your vault, add some logins and try autofill. Please stay in the test until the end.",
+    "step4": "Tell us what works, what is broken or confusing at {email}.",
+    "review": "If Google Play says the test is not available, it is still being reviewed by Google. Join the group now and try the second link again in a few days.",
+    "askTitle": "What we ask",
+    "ask1": "Use the app now and then during the 14 days, on a real Android phone.",
+    "ask2": "Do not leave the test before it ends: Google counts the testers who stay.",
+    "ask3": "Send honest feedback. We do not ask for ratings or reviews, and the reward does not depend on them.",
+    "privacyTitle": "Your privacy",
+    "privacy": "Only we can see the testers group's members. We use your email address only for this test and to send you the reward. Password365 itself has no account and collects nothing about your passwords.",
+    "audit": "To be clear: Password365 has not had an independent security audit yet. Do not keep the only copy of important passwords in a beta."
   }
 }

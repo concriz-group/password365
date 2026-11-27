@@ -6,7 +6,8 @@
     "description": "Password365 (Password 365) es un gestor de contraseñas de código abierto, sin nube y sin cuenta. Contraseñas, llaves de acceso y códigos de un solo uso se quedan en tus dispositivos y sincronizan directamente, los 365 días del año.",
     "downloadDescription": "Descarga Password365 para Mac, Windows y Linux, y la extensión para Chrome, Edge y Firefox. Gratis, código abierto, sin cuenta.",
     "supportDescription": "Empieza con Password365, configura tu móvil y tu navegador, y qué hacer si te quedas sin acceso. Contacta con el equipo.",
-    "privacyDescription": "Qué recopila Password365 (nada de tus contraseñas), qué se queda en tus dispositivos y la única comprobación opcional por red."
+    "privacyDescription": "Qué recopila Password365 (nada de tus contraseñas), qué se queda en tus dispositivos y la única comprobación opcional por red.",
+    "betaDescription": "Únete a la beta de Password365 para Android: prueba la app 14 días, envía tus comentarios y consigue 1 año gratis cuando se lance."
   },
   "nav": {
     "features": "Funciones",
@@ -291,7 +292,8 @@
     "privacy": "Privacidad",
     "rights": "© {year} Password365",
     "source": "Código fuente",
-    "compare": "Comparar"
+    "compare": "Comparar",
+    "beta": "Beta para Android"
   },
   "notFound": {
     "title": "Página no encontrada",
@@ -1268,5 +1270,26 @@
       }
     ],
     "card": "Compara Password365"
+  },
+  "betaPage": {
+    "title": "Password365 para Android: únete a la beta",
+    "lead": "Password365 para Android está casi listo. Antes de publicarlo en Google Play, Google exige una prueba cerrada de 14 días. Ayúdanos a probarlo y cuéntanos qué te parece.",
+    "rewardTitle": "Qué consigues",
+    "reward": "Quien siga en la prueba los 14 días y nos envíe sus comentarios tendrá 1 año de Password365 para Android gratis cuando se lance. Te enviaremos un código por correo.",
+    "howTitle": "Cómo participar",
+    "step1": "Únete al grupo de testers con la cuenta de Google que usas en tu móvil Android.",
+    "join": "Unirme al grupo de testers",
+    "step2": "Abre la página de la prueba en Google Play con esa misma cuenta, acepta la invitación e instala Password365.",
+    "optIn": "Abrir la prueba en Google Play",
+    "step3": "Usa la app durante los 14 días: crea tu bóveda, añade algunos inicios de sesión y prueba el autorrelleno. Por favor, sigue en la prueba hasta el final.",
+    "step4": "Cuéntanos qué funciona, qué falla o qué resulta confuso en {email}.",
+    "review": "Si Google Play dice que la prueba no está disponible, Google aún la está revisando. Únete al grupo ahora y vuelve a probar el segundo enlace en unos días.",
+    "askTitle": "Qué te pedimos",
+    "ask1": "Usa la app de vez en cuando durante los 14 días, en un móvil Android de verdad.",
+    "ask2": "No salgas de la prueba antes de que termine: Google cuenta los testers que se quedan.",
+    "ask3": "Envía comentarios sinceros. No pedimos valoraciones ni reseñas, y la recompensa no depende de ellas.",
+    "privacyTitle": "Tu privacidad",
+    "privacy": "Solo nosotros vemos los miembros del grupo de testers. Usamos tu correo solo para esta prueba y para enviarte la recompensa. Password365 en sí no tiene cuenta y no recopila nada sobre tus contraseñas.",
+    "audit": "Para ser claros: Password365 aún no ha pasado una auditoría de seguridad independiente. No guardes la única copia de contraseñas importantes en una beta."
   }
 }

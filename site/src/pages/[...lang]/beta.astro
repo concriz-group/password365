@@ -1,0 +1,42 @@
+---
+import Base from "../../layouts/Base.astro";
+import { languagePaths, translator } from "../../i18n";
+import { site } from "../../config";
+export const getStaticPaths = languagePaths;
+const { tag } = Astro.props;
+const t = translator(tag);
+const email = `<a href="mailto:${site.email}">${site.email}</a>`;
+---
+<Base tag={tag} page="beta" title={t("betaPage.title")} description={t("meta.betaDescription")}>
+  <section class="page">
+    <div class="wrap prose">
+      <h1>{t("betaPage.title")}</h1>
+      <p class="lead">{t("betaPage.lead")}</p>
+
+      <h2>{t("betaPage.rewardTitle")}</h2>
+      <p>{t("betaPage.reward")}</p>
+
+      <h2>{t("betaPage.howTitle")}</h2>
+      <ol>
+        <li>
+          {t("betaPage.step1")}
+          <p><a class="button primary" href={site.beta.group}>{t("betaPage.join")}</a></p>
+        </li>
+        <li>
+          {t("betaPage.step2")}
+          <p><a class="button primary" href={site.beta.optIn}>{t("betaPage.optIn")}</a></p>
+        </li>
+        <li>{t("betaPage.step3")}</li>
+        <li set:html={t("betaPage.step4", { email })} />
+      </ol>
+      <p class="note">{t("betaPage.review")}</p>
+
+      <h2>{t("betaPage.askTitle")}</h2>
+      <ul>{["ask1", "ask2", "ask3"].map((i) => <li>{t(`betaPage.${i}`)}</li>)}</ul>
+
+      <h2>{t("betaPage.privacyTitle")}</h2>
+      <p>{t("betaPage.privacy")}</p>
+      <p>{t("betaPage.audit")}</p>
+    </div>
+  </section>
+</Base>
